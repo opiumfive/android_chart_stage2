@@ -1,6 +1,7 @@
 package com.opiumfive.telechart;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,10 +17,21 @@ import com.opiumfive.telechart.chart.util.ChartUtils;
 import com.opiumfive.telechart.chart.view.LineChartView;
 import com.opiumfive.telechart.chart.view.PreviewLineChartView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class StatisticsActivity extends ChangeThemeActivity {
+
+    private static final String CHART_DATA_NAME = "chart_data.json";
 
     private LineChartView chart;
     private PreviewLineChartView previewChart;
@@ -34,6 +46,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
 
+        getDataFromJson();
+
         generateDefaultData();
 
         chart.setLineChartData(data);
@@ -47,6 +61,77 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         previewX(false);
     }
+
+    private ChartData getDataFromJson() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open(CHART_DATA_NAME);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        ChartData chartData = new ChartData();
+
+        if (!TextUtils.isEmpty(json)) {
+            try {
+                JSONArray obj = new JSONArray(json);
+                JSONObject chart1 = obj.getJSONObject(0);
+
+                JSONArray columns = chart1.getJSONArray("columns");
+                JSONObject types = chart1.getJSONObject("types");
+                JSONObject names = chart1.getJSONObject("names");
+                JSONObject colors = chart1.getJSONObject("colors");
+
+                List<ColumnData> columnsList = new ArrayList<>(columns.length());
+
+                for (int i = 0; i < columns.length(); i++) {
+                    JSONArray column = columns.getJSONArray(i);
+                    ColumnData columnData = new ColumnData();
+                    columnData.setTitle(column.getJSONObject(0).toString());
+                    List<Long> valuesList = new ArrayList<>(column.length() - 1);
+                    for (int j = 1; j < columns.length(); j++) {
+                        valuesList.add(Long.parseLong(column.getJSONObject(j).toString()));
+                    }
+                    columnData.setList(valuesList);
+                    columnsList.add(columnData);
+                }
+
+                Map<String, String> typesMap = new HashMap<>(types.names().length());
+                for(Iterator<String> keys = types.keys(); keys.hasNext();) {
+                    String key = keys.next();
+                    typesMap.put(key, types.get(key).toString());
+                }
+
+                Map<String, String> namesMap = new HashMap<>(names.names().length());
+                for(Iterator<String> keys = names.keys(); keys.hasNext();) {
+                    String key = keys.next();
+                    namesMap.put(key, names.get(key).toString());
+                }
+
+                Map<String, String> colorsMap = new HashMap<>(colors.names().length());
+                for(Iterator<String> keys = colors.keys(); keys.hasNext();) {
+                    String key = keys.next();
+                    colorsMap.put(key, colors.get(key).toString());
+                }
+
+                chartData.setColors(colorsMap);
+                chartData.setNames(namesMap);
+                chartData.setTypes(typesMap);
+                chartData.setColumns(columnsList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return chartData;
+    }
+
+
 
     private void generateDefaultData() {
         int numValues = 50;
