@@ -1,0 +1,3 @@
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/change_theme_time"
+    android:interpolator="@android:interpolator/accelerate_quad"/>

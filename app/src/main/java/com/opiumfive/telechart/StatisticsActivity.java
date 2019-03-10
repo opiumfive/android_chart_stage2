@@ -4,8 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class StatisticsActivity extends AppCompatActivity {
+public class StatisticsActivity extends ChangeThemeActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +25,13 @@ public class StatisticsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_theme) {
-            changeTheme();
+            View actionView = findViewById(R.id.action_theme);
+            int[] location = new int[2];
+            actionView.getLocationOnScreen(location);
+            changeTheme(location[0], location[1]);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void changeTheme() {
     }
 }
