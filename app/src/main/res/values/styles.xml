@@ -1,0 +1,66 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="LightTheme" parent="AppTheme">
+        <item name="windowBackground">@color/windowBackground</item>
+        <item name="titleColor">@color/titleColor</item>
+        <item name="textColor">@color/textColor</item>
+        <item name="labelColor">@color/labelColor</item>
+        <item name="joinedColor">@color/joinedColor</item>
+        <item name="leftColor">@color/leftColor</item>
+        <item name="previewBackColor">@color/previewBackColor</item>
+        <item name="previewFrameColor">@color/previewFrameColor</item>
+        <item name="itemBackground">@color/itemBackground</item>
+        <item name="dividerColor">@color/dividerColor</item>
+        <item name="detailJoinedColor">@color/detailJoinedColor</item>
+        <item name="detailLeftColor">@color/detailLeftColor</item>
+        <item name="detailTitleColor">@color/detailTitleColor</item>
+        <item name="detailBackgroundColor">@color/detailBackgroundColor</item>
+    </style>
+
+    <style name="DarkTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary_Dark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_Dark</item>
+        <item name="colorAccent">@color/colorAccent_Dark</item>
+
+        <item name="windowBackground">@color/windowBackground_Dark</item>
+        <item name="titleColor">@color/titleColor_Dark</item>
+        <item name="textColor">@color/textColor_Dark</item>
+        <item name="labelColor">@color/labelColor_Dark</item>
+        <item name="joinedColor">@color/joinedColor_Dark</item>
+        <item name="leftColor">@color/leftColor_Dark</item>
+        <item name="previewBackColor">@color/previewBackColor_Dark</item>
+        <item name="previewFrameColor">@color/previewFrameColor_Dark</item>
+        <item name="itemBackground">@color/itemBackground_Dark</item>
+        <item name="dividerColor">@color/dividerColor_Dark</item>
+        <item name="detailJoinedColor">@color/detailJoinedColor_Dark</item>
+        <item name="detailLeftColor">@color/detailLeftColor_Dark</item>
+        <item name="detailTitleColor">@color/detailTitleColor_Dark</item>
+        <item name="detailBackgroundColor">@color/detailBackgroundColor_Dark</item>
+    </style>
+
+    <attr name="windowBackground" format="color"/>
+    <attr name="titleColor" format="color"/>
+    <attr name="textColor" format="color"/>
+
+    <attr name="labelColor" format="color"/>
+    <attr name="joinedColor" format="color"/>
+    <attr name="leftColor" format="color"/>
+
+    <attr name="previewBackColor" format="color"/>
+    <attr name="previewFrameColor" format="color"/>
+    <attr name="itemBackground" format="color"/>
+
+    <attr name="dividerColor" format="color"/>
+    <attr name="detailJoinedColor" format="color"/>
+    <attr name="detailLeftColor" format="color"/>
+
+    <attr name="detailTitleColor" format="color"/>
+    <attr name="detailBackgroundColor" format="color"/>
+
+</resources>

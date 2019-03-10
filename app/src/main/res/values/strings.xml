@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TeleChart</string>
+    <string name="statistics">Statistics</string>
+    <string name="change_theme">Change theme</string>
+</resources>
