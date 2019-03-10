@@ -22,6 +22,8 @@
             android:textColor="?attr/titleColor"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
+            android:textStyle="bold"
+            android:textSize="14sp"
             android:layout_height="wrap_content" />
 
         <com.opiumfive.telechart.chart.view.LineChartView
@@ -41,6 +43,7 @@
             android:layout_height="70dp" />
 
         <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox1"
             android:layout_width="match_parent"
             android:text="@string/joined"
             android:checked="true"
@@ -58,6 +61,7 @@
             android:background="?attr/dividerColor" />
 
         <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox2"
             android:layout_width="match_parent"
             android:text="@string/left"
             android:checked="true"

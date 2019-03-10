@@ -67,7 +67,7 @@ public class ChartDataParser {
                 ColumnData columnData = new ColumnData();
                 columnData.setTitle(column.getString(0));
                 List<Long> valuesList = new ArrayList<>(column.length() - 1);
-                for (int j = 1; j < columns.length(); j++) {
+                for (int j = 1; j < column.length(); j++) {
                     valuesList.add(column.getLong(j));
                 }
                 columnData.setList(valuesList);
