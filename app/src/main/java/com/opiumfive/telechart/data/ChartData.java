@@ -1,4 +1,4 @@
-package com.opiumfive.telechart;
+package com.opiumfive.telechart.data;
 
 import java.util.List;
 import java.util.Map;

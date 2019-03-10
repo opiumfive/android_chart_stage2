@@ -1,4 +1,4 @@
-package com.opiumfive.telechart;
+package com.opiumfive.telechart.theming;
 
 import android.animation.Animator;
 import android.content.Intent;
@@ -15,6 +15,9 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
+
+import com.opiumfive.telechart.R;
+import com.opiumfive.telechart.theming.ThemeHolder;
 
 public class ChangeThemeActivity extends AppCompatActivity {
 

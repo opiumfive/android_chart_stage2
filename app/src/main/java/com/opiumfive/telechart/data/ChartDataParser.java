@@ -1,4 +1,4 @@
-package com.opiumfive.telechart;
+package com.opiumfive.telechart.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

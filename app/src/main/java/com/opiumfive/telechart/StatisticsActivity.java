@@ -15,6 +15,9 @@ import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 import com.opiumfive.telechart.chart.view.LineChartView;
 import com.opiumfive.telechart.chart.view.PreviewLineChartView;
+import com.opiumfive.telechart.data.ChartData;
+import com.opiumfive.telechart.data.ChartDataParser;
+import com.opiumfive.telechart.theming.ChangeThemeActivity;
 
 import java.util.ArrayList;
 import java.util.List;

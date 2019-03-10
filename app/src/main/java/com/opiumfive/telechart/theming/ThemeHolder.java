@@ -1,7 +1,9 @@
-package com.opiumfive.telechart;
+package com.opiumfive.telechart.theming;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import com.opiumfive.telechart.R;
 
 public class ThemeHolder {
 
