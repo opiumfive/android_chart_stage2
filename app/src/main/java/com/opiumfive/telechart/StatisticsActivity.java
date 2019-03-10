@@ -46,7 +46,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
 
-        getDataFromJson();
+        ChartData chartData = getDataFromJson();
 
         generateDefaultData();
 
@@ -92,10 +92,10 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 for (int i = 0; i < columns.length(); i++) {
                     JSONArray column = columns.getJSONArray(i);
                     ColumnData columnData = new ColumnData();
-                    columnData.setTitle(column.getJSONObject(0).toString());
+                    columnData.setTitle(column.getString(0));
                     List<Long> valuesList = new ArrayList<>(column.length() - 1);
                     for (int j = 1; j < columns.length(); j++) {
-                        valuesList.add(Long.parseLong(column.getJSONObject(j).toString()));
+                        valuesList.add(column.getLong(j));
                     }
                     columnData.setList(valuesList);
                     columnsList.add(columnData);
@@ -104,19 +104,19 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 Map<String, String> typesMap = new HashMap<>(types.names().length());
                 for(Iterator<String> keys = types.keys(); keys.hasNext();) {
                     String key = keys.next();
-                    typesMap.put(key, types.get(key).toString());
+                    typesMap.put(key, types.getString(key));
                 }
 
                 Map<String, String> namesMap = new HashMap<>(names.names().length());
                 for(Iterator<String> keys = names.keys(); keys.hasNext();) {
                     String key = keys.next();
-                    namesMap.put(key, names.get(key).toString());
+                    namesMap.put(key, names.getString(key));
                 }
 
                 Map<String, String> colorsMap = new HashMap<>(colors.names().length());
                 for(Iterator<String> keys = colors.keys(); keys.hasNext();) {
                     String key = keys.next();
-                    colorsMap.put(key, colors.get(key).toString());
+                    colorsMap.put(key, colors.getString(key));
                 }
 
                 chartData.setColors(colorsMap);
