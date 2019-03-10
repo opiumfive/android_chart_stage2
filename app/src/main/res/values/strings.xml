@@ -2,4 +2,7 @@
     <string name="app_name">TeleChart</string>
     <string name="statistics">Statistics</string>
     <string name="change_theme">Change theme</string>
+    <string name="followers">Followers</string>
+    <string name="joined">Joined</string>
+    <string name="left">Left</string>
 </resources>
