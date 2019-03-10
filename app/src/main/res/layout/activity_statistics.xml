@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
-            android:layout_height="150dp" />
+            android:layout_height="250dp" />
 
         <com.opiumfive.telechart.chart.view.PreviewLineChartView
             android:id="@+id/chart_preview"
@@ -46,7 +46,7 @@
             android:checked="true"
             app:buttonTint="?attr/joinedColor"
             android:layout_marginLeft="@dimen/margin"
-            android:layout_marginRight="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
             android:textColor="?attr/textColor"
             android:layout_marginTop="@dimen/margin"
             android:layout_height="@dimen/checkbox_height" />
@@ -63,12 +63,10 @@
             android:checked="true"
             app:buttonTint="?attr/leftColor"
             android:layout_marginLeft="@dimen/margin"
-            android:layout_marginRight="@dimen/margin"
+            android:layout_marginStart="@dimen/margin"
             android:textColor="?attr/textColor"
             android:layout_height="@dimen/checkbox_height" />
 
     </LinearLayout>
-
-
 
 </LinearLayout>

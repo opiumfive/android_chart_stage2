@@ -1,7 +1,6 @@
 package com.opiumfive.telechart;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,17 +16,8 @@ import com.opiumfive.telechart.chart.util.ChartUtils;
 import com.opiumfive.telechart.chart.view.LineChartView;
 import com.opiumfive.telechart.chart.view.PreviewLineChartView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class StatisticsActivity extends ChangeThemeActivity {
 
