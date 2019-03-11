@@ -147,7 +147,7 @@ public class LineChartRenderer {
         final LineChartData data = dataProvider.getLineChartData();
 
         final Canvas drawCanvas;
-        
+
         if (null != softwareBitmap) {
             drawCanvas = softwareCanvas;
             drawCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
