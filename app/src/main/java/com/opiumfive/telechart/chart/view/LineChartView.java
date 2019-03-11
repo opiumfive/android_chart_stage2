@@ -431,8 +431,7 @@ public class LineChartView extends View implements LineChartDataProvider {
         SelectedValue selectedValue = chartRenderer.getSelectedValue();
 
         if (selectedValue.isSet()) {
-            PointValue point = data.getLines().get(selectedValue.getFirstIndex()).getValues()
-                    .get(selectedValue.getSecondIndex());
+            PointValue point = data.getLines().get(selectedValue.getFirstIndex()).getValues().get(selectedValue.getSecondIndex());
             onValueTouchListener.onValueSelected(selectedValue.getFirstIndex(), selectedValue.getSecondIndex(), point);
         } else {
             onValueTouchListener.onValueDeselected();
