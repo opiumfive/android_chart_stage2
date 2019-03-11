@@ -4,17 +4,19 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+
+import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.LineChartView;
 
 public class ChartDataAnimator implements AnimatorListener, AnimatorUpdateListener {
 
     private final static int DEFAULT_ANIMATION_DURATION = 500;
 
-    private final LineChartView chart;
+    private final ILineChart chart;
     private ValueAnimator animator;
     private ChartAnimationListener animationListener = new DefaultChartAnimationListener();
 
-    public ChartDataAnimator(LineChartView chart) {
+    public ChartDataAnimator(ILineChart chart) {
         this.chart = chart;
         animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.addListener(this);

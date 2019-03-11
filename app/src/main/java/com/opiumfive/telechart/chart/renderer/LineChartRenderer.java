@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 
+import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
@@ -34,7 +35,7 @@ public class LineChartRenderer {
     private static final int MODE_HIGHLIGHT = 1;
 
     public int DEFAULT_LABEL_MARGIN_DP = 4;
-    protected LineChartView chart;
+    protected ILineChart chart;
     protected ChartComputator computator;
 
     protected Paint labelPaint = new Paint();
@@ -66,7 +67,7 @@ public class LineChartRenderer {
     private Canvas softwareCanvas = new Canvas();
     private Viewport tempMaximumViewport = new Viewport();
 
-    public LineChartRenderer(Context context, LineChartView chart, LineChartDataProvider dataProvider) {
+    public LineChartRenderer(Context context, ILineChart chart, LineChartDataProvider dataProvider) {
         this.density = context.getResources().getDisplayMetrics().density;
         this.scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         this.chart = chart;

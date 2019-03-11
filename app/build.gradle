@@ -10,12 +10,23 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        archivesBaseName = "TeleChart-v$versionName"
+    }
+
+    signingConfigs {
+        signing {
+            keyAlias        'teletest'
+            keyPassword     'teletest'
+            storeFile  file('../teletest.jks')
+            storePassword   'teletest'
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.signing
         }
     }
 }

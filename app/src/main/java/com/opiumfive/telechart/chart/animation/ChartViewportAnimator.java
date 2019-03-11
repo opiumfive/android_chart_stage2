@@ -5,6 +5,7 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 
+import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.LineChartView;
 
@@ -12,14 +13,14 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
 
     private final static int FAST_ANIMATION_DURATION = 300;
 
-    private final LineChartView chart;
+    private final ILineChart chart;
     private ValueAnimator animator;
     private Viewport startViewport = new Viewport();
     private Viewport targetViewport = new Viewport();
     private Viewport newViewport = new Viewport();
     private ChartAnimationListener animationListener = new DefaultChartAnimationListener();
 
-    public ChartViewportAnimator(LineChartView chart) {
+    public ChartViewportAnimator(ILineChart chart) {
         this.chart = chart;
         animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.addListener(this);

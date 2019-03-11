@@ -39,7 +39,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewChart = findViewById(R.id.chart_preview);
 
         ChartData chartData = ChartDataParser.loadAndParseInput(this, 4);
-
         inflateCharts(chartData);
     }
 
@@ -48,23 +47,37 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         List<PointValue> values = new ArrayList<>(chartData.getColumns().get(0).getList().size());
         List<PointValue> values2 = new ArrayList<>(chartData.getColumns().get(0).getList().size());
+        List<PointValue> values3 = new ArrayList<>(chartData.getColumns().get(0).getList().size());
+        List<PointValue> values4 = new ArrayList<>(chartData.getColumns().get(0).getList().size());
         for (int i = 0; i < chartData.getColumns().get(0).getList().size(); i++) {
             values.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(1).getList().get(i)));
             values2.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(2).getList().get(i)));
+            values3.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(3).getList().get(i)));
+            values4.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(4).getList().get(i)));
         }
 
         final Line line = new Line(values);
         final Line line2 = new Line(values2);
+        final Line line3 = new Line(values3);
+        final Line line4 = new Line(values4);
         line.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(1).getTitle())));
         line2.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(2).getTitle())));
+        line3.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(3).getTitle())));
+        line4.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(4).getTitle())));
         line.setHasPoints(false);
         line2.setHasPoints(false);
+        line3.setHasPoints(false);
+        line4.setHasPoints(false);
         line.setHasLabels(false);
         line2.setHasLabels(false);
+        line3.setHasLabels(false);
+        line4.setHasLabels(false);
 
         List<Line> lines = new ArrayList<>();
         lines.add(line);
         lines.add(line2);
+        lines.add(line3);
+        lines.add(line4);
 
         data = new LineChartData(lines);
         data.setBaseValue(Float.NEGATIVE_INFINITY);
@@ -86,8 +99,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setLineChartData(data);
         chart.setZoomEnabled(false);
         chart.setScrollEnabled(false);
-        chart.setValueSelectionEnabled(true);
-        chart.setViewportCalculationEnabled(false);
+
 
         previewChart.setLineChartData(previewData);
         previewChart.setViewportChangeListener(new ViewportListener());
@@ -114,8 +126,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 previewData.setLines(lines);
                 chart.setLineChartData(data);
                 previewChart.setLineChartData(previewData);
-
-                chart.resetViewports();
 
                 previewX(true);
             }

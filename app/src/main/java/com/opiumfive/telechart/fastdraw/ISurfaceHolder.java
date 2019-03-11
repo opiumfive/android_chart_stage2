@@ -7,5 +7,4 @@ public interface ISurfaceHolder {
     void unlockCanvasAndPost(Canvas canvas);
 
     Canvas lockCanvas();
-
 }

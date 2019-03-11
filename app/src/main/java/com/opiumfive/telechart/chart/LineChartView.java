@@ -24,7 +24,7 @@ import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
 
-public class LineChartView extends View implements LineChartDataProvider {
+public class LineChartView extends View implements ILineChart, LineChartDataProvider {
 
     protected LineChartData data;
     protected LineChartOnValueSelectListener onValueTouchListener = new DummyLineChartOnValueSelectListener();

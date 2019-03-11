@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 
+import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.AxisValue;
@@ -32,7 +33,7 @@ public class AxesRenderer {
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'};
 
-    private LineChartView chart;
+    private ILineChart chart;
     private ChartComputator computator;
     private int axisMargin;
     private float density;
@@ -66,7 +67,7 @@ public class AxesRenderer {
 
     private AxisAutoValues[] autoValuesBufferTab = new AxisAutoValues[]{new AxisAutoValues(), new AxisAutoValues(), new AxisAutoValues(), new AxisAutoValues()};
 
-    public AxesRenderer(Context context, LineChartView chart) {
+    public AxesRenderer(Context context, ILineChart chart) {
         this.chart = chart;
         computator = chart.getChartComputator();
         density = context.getResources().getDisplayMetrics().density;
@@ -497,7 +498,7 @@ public class AxesRenderer {
                 } else {
                     lineX1 = lineX2 = rawValuesTab[position][valueToDrawIndex];
                 }
-                linesDrawBufferTab[position][valueToDrawIndex * 4 + 0] = lineX1;
+                linesDrawBufferTab[position][valueToDrawIndex * 4] = lineX1;
                 linesDrawBufferTab[position][valueToDrawIndex * 4 + 1] = lineY1;
                 linesDrawBufferTab[position][valueToDrawIndex * 4 + 2] = lineX2;
                 linesDrawBufferTab[position][valueToDrawIndex * 4 + 3] = lineY2;

@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ViewParent;
 
+import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.gesture.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValue;
@@ -18,7 +19,7 @@ public class ChartTouchHandler {
     protected ScaleGestureDetector scaleGestureDetector;
     protected ChartScroller chartScroller;
     protected ChartZoomer chartZoomer;
-    protected LineChartView chart;
+    protected ILineChart chart;
     protected ChartComputator computator;
     protected LineChartRenderer renderer;
 
@@ -34,7 +35,7 @@ public class ChartTouchHandler {
 
     protected ViewParent viewParent;
 
-    public ChartTouchHandler(Context context, LineChartView chart) {
+    public ChartTouchHandler(Context context, ILineChart chart) {
         this.chart = chart;
         this.computator = chart.getChartComputator();
         this.renderer = chart.getChartRenderer();
