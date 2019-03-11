@@ -2,7 +2,7 @@ package com.opiumfive.telechart.fastdraw;
 
 import android.graphics.Rect;
 
-public class StressSceneModel implements IScene{
+public class StressSceneModel implements IScene {
 
     private Rect bound = new Rect(0, 0, 50, 50);
     private SceneFrame frame = new SceneFrame();
@@ -20,7 +20,7 @@ public class StressSceneModel implements IScene{
 
     }
 
-    public void change(int value){
+    public void change(int value) {
 
         for (int i = 0; i < bound.width(); i++) {
             for (int j = 0; j < bound.height(); j++) {

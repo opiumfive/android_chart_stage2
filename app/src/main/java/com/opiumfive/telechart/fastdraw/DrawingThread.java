@@ -3,12 +3,11 @@ package com.opiumfive.telechart.fastdraw;
 import android.graphics.Canvas;
 
 public class DrawingThread extends Thread {
+    private final int fps = 70;
     private SceneModelComposer sceneComposer;
-
     private ISurfaceHolder surfaceHolder;
     private boolean isRunning = false;
     private long previousTime;
-    private final int fps = 70;
 
     public DrawingThread(ISurfaceHolder surfaceHolder) {
         this.surfaceHolder = surfaceHolder;
@@ -28,7 +27,7 @@ public class DrawingThread extends Thread {
 
             long currentTimeMillis = System.currentTimeMillis();
             long elapsedTimeMs = currentTimeMillis - previousTime;
-            long sleepTimeMs = (long) (1000f/ fps - elapsedTimeMs);
+            long sleepTimeMs = (long) (1000f / fps - elapsedTimeMs);
 
             canvas = null;
             try {
@@ -40,7 +39,7 @@ public class DrawingThread extends Thread {
 
                     continue;
 
-                }else if (sleepTimeMs > 0){
+                } else if (sleepTimeMs > 0) {
 
                     Thread.sleep(sleepTimeMs);
 

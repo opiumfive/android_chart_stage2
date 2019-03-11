@@ -8,8 +8,8 @@ import android.graphics.Rect;
 
 public class RectShape extends Shape {
 
-    private final int strokeWidth;
     final Rect rect;
+    private final int strokeWidth;
 
     RectShape(Rect rect, int strokeWidth) {
         this.rect = rect;

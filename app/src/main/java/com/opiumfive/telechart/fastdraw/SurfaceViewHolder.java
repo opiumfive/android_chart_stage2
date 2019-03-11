@@ -8,7 +8,7 @@ public class SurfaceViewHolder implements ISurfaceHolder {
 
     private final SurfaceHolder surfaceHolder;
 
-    public SurfaceViewHolder(SurfaceHolder surfaceHolder){
+    public SurfaceViewHolder(SurfaceHolder surfaceHolder) {
         this.surfaceHolder = surfaceHolder;
     }
 

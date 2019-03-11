@@ -3,20 +3,20 @@ package com.opiumfive.telechart.fastdraw;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
 import java.util.LinkedList;
 
 public class SceneModelComposer {
 
-    private LinkedList<SceneFrame> drawnFrames = new LinkedList<>();
-    private LinkedList<SceneFrame> bufferedFrames = new LinkedList<>();
     private final Paint paint = new Paint() {{
-            setStyle(Paint.Style.FILL);
+        setStyle(Paint.Style.FILL);
     }};
     private final int countFrames = 120;
     private final SceneFrame initialFrame = new SceneFrame() {{
         shapes.add(new FillShape(Color.WHITE));
     }};
-
+    private LinkedList<SceneFrame> drawnFrames = new LinkedList<>();
+    private LinkedList<SceneFrame> bufferedFrames = new LinkedList<>();
     private IScene sceneModel = null;
     private int value;
 
@@ -24,8 +24,7 @@ public class SceneModelComposer {
 
         sceneModel = new StressSceneModel(widthPixels);
 
-        for (int i = 0; i < countFrames; i++)
-            drawnFrames.add(new SceneFrame());
+        for (int i = 0; i < countFrames; i++) drawnFrames.add(new SceneFrame());
     }
 
     public synchronized void drawOn(Canvas canvas) {
@@ -34,18 +33,15 @@ public class SceneModelComposer {
             initialFrame.drawOn(canvas, paint);
 
             if (bufferedFrames.size() > 0) {
-
                 SceneFrame frame = null;
                 boolean keepLastFrame = true;
 
                 if (bufferedFrames.size() > 1) {
-
                     keepLastFrame = false;
                     frame = bufferedFrames.removeLast();
-
-                } else
-
+                } else {
                     frame = bufferedFrames.getLast();
+                }
 
                 frame.drawOn(canvas, paint);
 
@@ -59,8 +55,7 @@ public class SceneModelComposer {
 
     public void changeModel(int value) {
         this.value = value;
-        if (drawnFrames.size() == 0)
-            return;
+        if (drawnFrames.size() == 0) return;
 
         sceneModel.change(value);
         SceneFrame sceneFrame = drawnFrames.removeFirst();

@@ -83,8 +83,7 @@ public class LineChartView extends View implements LineChartDataProvider {
 
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
-        chartComputator.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(),
-                getPaddingBottom());
+        chartComputator.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         chartRenderer.onChartSizeChanged();
         axesRenderer.onChartSizeChanged();
     }
