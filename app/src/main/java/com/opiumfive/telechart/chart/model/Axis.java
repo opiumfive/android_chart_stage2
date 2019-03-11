@@ -27,7 +27,7 @@ public class Axis {
 
     private boolean hasLines = false;
 
-    private boolean isInside = false;
+    private boolean isInside = true;
 
     private int textColor = Color.LTGRAY;
 

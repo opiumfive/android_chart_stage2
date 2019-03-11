@@ -68,10 +68,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
         line2.setHasPoints(false);
         line3.setHasPoints(false);
         line4.setHasPoints(false);
-        line.setHasLabels(false);
-        line2.setHasLabels(false);
-        line3.setHasLabels(false);
-        line4.setHasLabels(false);
 
         List<Line> lines = new ArrayList<>();
         lines.add(line);

@@ -1,7 +1,5 @@
 package com.opiumfive.telechart.chart.model;
 
-import android.graphics.PathEffect;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +10,7 @@ import com.opiumfive.telechart.chart.util.ChartUtils;
 
 public class Line {
 
-    private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 3;
+    private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_POINT_RADIUS_DP = 6;
     public static final int UNINITIALIZED = 0;
 
@@ -23,13 +21,11 @@ public class Line {
     private int strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
 
-    private boolean hasPoints = true;
+    private boolean hasPoints = false;
     private boolean hasLines = true;
-    private boolean hasLabels = false;
-    private boolean hasLabelsOnlyForSelected = false;
 
     private ValueShape shape = ValueShape.CIRCLE;
-    private PathEffect pathEffect;
+
     private LineChartValueFormatter formatter = new SimpleLineChartValueFormatter();
     private List<PointValue> values = new ArrayList<>();
 
@@ -44,15 +40,12 @@ public class Line {
     public Line(Line line) {
         this.color = line.color;
         this.pointColor = line.pointColor;
-        this.darkenColor = line.darkenColor;
+        //this.darkenColor = line.darkenColor;
         this.strokeWidth = line.strokeWidth;
         this.pointRadius = line.pointRadius;
         this.hasPoints = line.hasPoints;
         this.hasLines = line.hasLines;
-        this.hasLabels = line.hasLabels;
-        this.hasLabelsOnlyForSelected = line.hasLabelsOnlyForSelected;
         this.shape = line.shape;
-        this.pathEffect = line.pathEffect;
         this.formatter = line.formatter;
 
         for (PointValue pointValue : line.values) {
@@ -106,11 +99,6 @@ public class Line {
 
     public Line setPointColor(int pointColor) {
         this.pointColor = pointColor;
-        if (pointColor == UNINITIALIZED) {
-            this.darkenColor = ChartUtils.darkenColor(color);
-        } else {
-            this.darkenColor = ChartUtils.darkenColor(pointColor);
-        }
         return this;
     }
 
@@ -145,30 +133,6 @@ public class Line {
         return this;
     }
 
-    public boolean hasLabels() {
-        return hasLabels;
-    }
-
-    public Line setHasLabels(boolean hasLabels) {
-        this.hasLabels = hasLabels;
-        if (hasLabels) {
-            this.hasLabelsOnlyForSelected = false;
-        }
-        return this;
-    }
-
-    public boolean hasLabelsOnlyForSelected() {
-        return hasLabelsOnlyForSelected;
-    }
-
-    public Line setHasLabelsOnlyForSelected(boolean hasLabelsOnlyForSelected) {
-        this.hasLabelsOnlyForSelected = hasLabelsOnlyForSelected;
-        if (hasLabelsOnlyForSelected) {
-            this.hasLabels = false;
-        }
-        return this;
-    }
-
     public int getPointRadius() {
         return pointRadius;
     }
@@ -185,14 +149,6 @@ public class Line {
     public Line setShape(ValueShape shape) {
         this.shape = shape;
         return this;
-    }
-
-    public PathEffect getPathEffect() {
-        return pathEffect;
-    }
-
-    public void setPathEffect(PathEffect pathEffect) {
-        this.pathEffect = pathEffect;
     }
 
     public LineChartValueFormatter getFormatter() {

@@ -23,15 +23,15 @@
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
             android:textStyle="bold"
-            android:textSize="14sp"
+            android:textSize="15sp"
+            android:layout_marginBottom="@dimen/half_margin"
             android:layout_height="wrap_content" />
 
         <com.opiumfive.telechart.chart.LineChartView
             android:id="@+id/chart"
-            android:layout_marginTop="@dimen/half_margin"
             android:layout_width="match_parent"
-            android:paddingLeft="@dimen/margin"
-            android:paddingRight="@dimen/margin"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginRight="@dimen/margin"
             android:layout_height="250dp" />
 
         <com.opiumfive.telechart.chart.PreviewLineChartView

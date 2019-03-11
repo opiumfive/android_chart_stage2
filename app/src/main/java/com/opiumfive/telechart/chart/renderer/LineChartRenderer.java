@@ -23,12 +23,11 @@ import com.opiumfive.telechart.chart.model.ValueShape;
 import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
-import com.opiumfive.telechart.chart.LineChartView;
 
 
 public class LineChartRenderer {
 
-    private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 3;
+    private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 4;
 
     private static final int MODE_DRAW = 0;
@@ -273,8 +272,6 @@ public class LineChartRenderer {
     private void prepareLinePaint(final Line line) {
         linePaint.setStrokeWidth(ChartUtils.dp2px(density, line.getStrokeWidth()));
         linePaint.setColor(line.getColor());
-        linePaint.setPathEffect(line.getPathEffect());
-        linePaint.setShader(null);
     }
 
     private void drawPoints(Canvas canvas, Line line, int lineIndex, int mode) {
@@ -287,9 +284,7 @@ public class LineChartRenderer {
             if (computator.isWithinContentRect(rawX, rawY, checkPrecision)) {
                 if (MODE_DRAW == mode) {
                     drawPoint(canvas, line, pointValue, rawX, rawY, pointRadius);
-                    if (line.hasLabels()) {
-                        drawLabel(canvas, line, pointValue, rawX, rawY, pointRadius + labelOffset);
-                    }
+                    drawLabel(canvas, line, pointValue, rawX, rawY, pointRadius + labelOffset);
                 } else if (MODE_HIGHLIGHT == mode) {
                     highlightPoint(canvas, line, pointValue, rawX, rawY, lineIndex, valueIndex);
                 } else {
@@ -327,9 +322,7 @@ public class LineChartRenderer {
             int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
             pointPaint.setColor(line.getDarkenColor());
             drawPoint(canvas, line, pointValue, rawX, rawY, pointRadius + touchToleranceMargin);
-            if (line.hasLabels() || line.hasLabelsOnlyForSelected()) {
-                drawLabel(canvas, line, pointValue, rawX, rawY, pointRadius + labelOffset);
-            }
+            drawLabel(canvas, line, pointValue, rawX, rawY, pointRadius + labelOffset);
         }
     }
 

@@ -91,8 +91,8 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
     public void surfaceCreated(SurfaceHolder holder) {
         drawingThread = new DrawingThread(new SurfaceViewHolder(holder));
         drawingThread.setRunning(true);
-        drawingThread.setSceneComposer(sceneComposer);
         drawingThread.start();
+        drawingThread.setSceneComposer(sceneComposer);
     }
 
     @Override
