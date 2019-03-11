@@ -16,7 +16,7 @@ import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.util.AxisAutoValues;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 import com.opiumfive.telechart.chart.util.FloatUtils;
-import com.opiumfive.telechart.chart.view.LineChartView;
+import com.opiumfive.telechart.chart.LineChartView;
 
 public class AxesRenderer {
 

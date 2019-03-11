@@ -6,7 +6,7 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.view.LineChartView;
+import com.opiumfive.telechart.chart.LineChartView;
 
 public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateListener {
 

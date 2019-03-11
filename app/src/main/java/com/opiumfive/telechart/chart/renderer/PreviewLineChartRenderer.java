@@ -6,9 +6,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.provider.LineChartDataProvider;
+import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
-import com.opiumfive.telechart.chart.view.LineChartView;
+import com.opiumfive.telechart.chart.LineChartView;
 
 
 public class PreviewLineChartRenderer extends LineChartRenderer {

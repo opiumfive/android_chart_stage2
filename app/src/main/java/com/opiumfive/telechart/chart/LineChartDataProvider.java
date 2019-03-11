@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.provider;
+package com.opiumfive.telechart.chart;
 
 import com.opiumfive.telechart.chart.model.LineChartData;
 

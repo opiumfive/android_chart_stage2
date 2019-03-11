@@ -10,7 +10,7 @@ import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.gesture.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
-import com.opiumfive.telechart.chart.view.LineChartView;
+import com.opiumfive.telechart.chart.LineChartView;
 
 public class ChartTouchHandler {
 

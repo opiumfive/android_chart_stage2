@@ -5,7 +5,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-import com.opiumfive.telechart.chart.view.LineChartView;
+import com.opiumfive.telechart.chart.LineChartView;
 
 
 public class PreviewChartTouchHandler extends ChartTouchHandler {

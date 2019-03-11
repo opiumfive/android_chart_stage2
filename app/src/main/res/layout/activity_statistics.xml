@@ -26,7 +26,7 @@
             android:textSize="14sp"
             android:layout_height="wrap_content" />
 
-        <com.opiumfive.telechart.chart.view.LineChartView
+        <com.opiumfive.telechart.chart.LineChartView
             android:id="@+id/chart"
             android:layout_marginTop="@dimen/half_margin"
             android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             android:paddingRight="@dimen/margin"
             android:layout_height="250dp" />
 
-        <com.opiumfive.telechart.chart.view.PreviewLineChartView
+        <com.opiumfive.telechart.chart.PreviewLineChartView
             android:id="@+id/chart_preview"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/half_margin"

@@ -1,9 +1,10 @@
-package com.opiumfive.telechart.chart.view;
+package com.opiumfive.telechart.chart;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 
+import com.opiumfive.telechart.chart.LineChartView;
 import com.opiumfive.telechart.chart.computator.PreviewChartComputator;
 import com.opiumfive.telechart.chart.gesture.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;

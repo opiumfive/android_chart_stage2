@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.view;
+package com.opiumfive.telechart.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -19,7 +19,7 @@ import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.provider.LineChartDataProvider;
+import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.renderer.AxesRenderer;
 import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
 import com.opiumfive.telechart.chart.util.ChartUtils;
