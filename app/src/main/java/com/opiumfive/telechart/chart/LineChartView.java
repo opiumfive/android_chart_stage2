@@ -19,7 +19,6 @@ import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.renderer.AxesRenderer;
 import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
 import com.opiumfive.telechart.chart.util.ChartUtils;
