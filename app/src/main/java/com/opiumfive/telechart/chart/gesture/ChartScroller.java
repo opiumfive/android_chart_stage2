@@ -8,13 +8,10 @@ import android.support.v4.widget.ScrollerCompat;
 import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.model.Viewport;
 
-/**
- * Encapsulates scrolling functionality.
- */
 public class ChartScroller {
 
-    private Viewport scrollerStartViewport = new Viewport(); // Used only for zooms and flings
-    private Point surfaceSizeBuffer = new Point();// Used for scroll and flings
+    private Viewport scrollerStartViewport = new Viewport();
+    private Point surfaceSizeBuffer = new Point();
     private ScrollerCompat scroller;
 
     public ChartScroller(Context context) {
@@ -28,12 +25,6 @@ public class ChartScroller {
     }
 
     public boolean scroll(ChartComputator computator, float distanceX, float distanceY, ScrollResult scrollResult) {
-
-        // Scrolling uses math based on the viewport (as opposed to math using pixels). Pixel offset is the offset in
-        // screen pixels, while viewport offset is the offset within the current viewport. For additional
-        // information on
-        // surface sizes and pixel offsets, see the docs for {@link computeScrollSurfaceSize()}. For additional
-        // information about the viewport, see the comments for {@link mCurrentViewport}.
 
         final Viewport maxViewport = computator.getMaximumViewport();
         final Viewport visibleViewport = computator.getVisibleViewport();
@@ -67,8 +58,7 @@ public class ChartScroller {
             float viewportOffsetX = distanceX * visibleViewport.width() / contentRect.width();
             float viewportOffsetY = -distanceY * visibleViewport.height() / contentRect.height();
 
-            computator
-                    .setViewportTopLeft(currentViewport.left + viewportOffsetX, currentViewport.top + viewportOffsetY);
+            computator.setViewportTopLeft(currentViewport.left + viewportOffsetX, currentViewport.top + viewportOffsetY);
         }
 
         scrollResult.canScrollX = canScrollX;
@@ -79,17 +69,12 @@ public class ChartScroller {
 
     public boolean computeScrollOffset(ChartComputator computator) {
         if (scroller.computeScrollOffset()) {
-            // The scroller isn't finished, meaning a fling or programmatic pan operation is
-            // currently active.
-
             final Viewport maxViewport = computator.getMaximumViewport();
 
             computator.computeScrollSurfaceSize(surfaceSizeBuffer);
 
-            final float currXRange = maxViewport.left + maxViewport.width() * scroller.getCurrX() /
-                    surfaceSizeBuffer.x;
-            final float currYRange = maxViewport.top - maxViewport.height() * scroller.getCurrY() /
-                    surfaceSizeBuffer.y;
+            final float currXRange = maxViewport.left + maxViewport.width() * scroller.getCurrX() / surfaceSizeBuffer.x;
+            final float currYRange = maxViewport.top - maxViewport.height() * scroller.getCurrY() / surfaceSizeBuffer.y;
 
             computator.setViewportTopLeft(currXRange, currYRange);
 
@@ -100,22 +85,18 @@ public class ChartScroller {
     }
 
     public boolean fling(int velocityX, int velocityY, ChartComputator computator) {
-        // Flings use math in pixels (as opposed to math based on the viewport).
         computator.computeScrollSurfaceSize(surfaceSizeBuffer);
         scrollerStartViewport.set(computator.getCurrentViewport());
 
-        int startX = (int) (surfaceSizeBuffer.x * (scrollerStartViewport.left - computator.getMaximumViewport().left)
-                / computator.getMaximumViewport().width());
-        int startY = (int) (surfaceSizeBuffer.y * (computator.getMaximumViewport().top - scrollerStartViewport.top) /
-                computator.getMaximumViewport().height());
+        int startX = (int) (surfaceSizeBuffer.x * (scrollerStartViewport.left - computator.getMaximumViewport().left) / computator.getMaximumViewport().width());
+        int startY = (int) (surfaceSizeBuffer.y * (computator.getMaximumViewport().top - scrollerStartViewport.top) / computator.getMaximumViewport().height());
 
-        // TODO probably should be mScroller.forceFinish but ScrollerCompat doesn't have that method.
+        // probably should be mScroller.forceFinish but ScrollerCompat doesn't have that method.
         scroller.abortAnimation();
 
         final int width = computator.getContentRectMinusAllMargins().width();
         final int height = computator.getContentRectMinusAllMargins().height();
-        scroller.fling(startX, startY, velocityX, velocityY, 0, surfaceSizeBuffer.x - width + 1, 0,
-                surfaceSizeBuffer.y - height + 1);
+        scroller.fling(startX, startY, velocityX, velocityY, 0, surfaceSizeBuffer.x - width + 1, 0, surfaceSizeBuffer.y - height + 1);
         return true;
     }
 

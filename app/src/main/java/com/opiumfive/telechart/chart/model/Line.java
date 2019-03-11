@@ -8,37 +8,30 @@ import java.util.List;
 import com.opiumfive.telechart.chart.formatter.LineChartValueFormatter;
 import com.opiumfive.telechart.chart.formatter.SimpleLineChartValueFormatter;
 import com.opiumfive.telechart.chart.util.ChartUtils;
-import com.opiumfive.telechart.chart.view.Chart;
 
-/**
- * Single line for line chart.
- */
+
 public class Line {
+
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 3;
     private static final int DEFAULT_POINT_RADIUS_DP = 6;
-    private static final int DEFAULT_AREA_TRANSPARENCY = 64;
     public static final int UNINITIALIZED = 0;
+
     private int color = ChartUtils.DEFAULT_COLOR;
     private int pointColor = UNINITIALIZED;
     private int darkenColor = ChartUtils.DEFAULT_DARKEN_COLOR;
-    /**
-     * Transparency of area when line is filled. *
-     */
-    private int areaTransparency = DEFAULT_AREA_TRANSPARENCY;
+
     private int strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
-    private boolean hasGradientToTransparent = false;
+
     private boolean hasPoints = true;
     private boolean hasLines = true;
     private boolean hasLabels = false;
     private boolean hasLabelsOnlyForSelected = false;
-    private boolean isCubic = false;
-    private boolean isSquare = false;
-    private boolean isFilled = false;
+
     private ValueShape shape = ValueShape.CIRCLE;
     private PathEffect pathEffect;
     private LineChartValueFormatter formatter = new SimpleLineChartValueFormatter();
-    private List<PointValue> values = new ArrayList<PointValue>();
+    private List<PointValue> values = new ArrayList<>();
 
     public Line() {
 
@@ -52,17 +45,12 @@ public class Line {
         this.color = line.color;
         this.pointColor = line.pointColor;
         this.darkenColor = line.darkenColor;
-        this.areaTransparency = line.areaTransparency;
         this.strokeWidth = line.strokeWidth;
         this.pointRadius = line.pointRadius;
-        this.hasGradientToTransparent = line.hasGradientToTransparent;
         this.hasPoints = line.hasPoints;
         this.hasLines = line.hasLines;
         this.hasLabels = line.hasLabels;
         this.hasLabelsOnlyForSelected = line.hasLabelsOnlyForSelected;
-        this.isSquare = line.isSquare;
-        this.isCubic = line.isCubic;
-        this.isFilled = line.isFilled;
         this.shape = line.shape;
         this.pathEffect = line.pathEffect;
         this.formatter = line.formatter;
@@ -130,24 +118,6 @@ public class Line {
         return darkenColor;
     }
 
-    /**
-     * @see #setAreaTransparency(int)
-     */
-    public int getAreaTransparency() {
-        return areaTransparency;
-    }
-
-    /**
-     * Set area transparency(255 is full opacity) for filled lines
-     *
-     * @param areaTransparency
-     * @return
-     */
-    public Line setAreaTransparency(int areaTransparency) {
-        this.areaTransparency = areaTransparency;
-        return this;
-    }
-
     public int getStrokeWidth() {
         return strokeWidth;
     }
@@ -187,17 +157,10 @@ public class Line {
         return this;
     }
 
-    /**
-     * @see #setHasLabelsOnlyForSelected(boolean)
-     */
     public boolean hasLabelsOnlyForSelected() {
         return hasLabelsOnlyForSelected;
     }
 
-    /**
-     * Set true if you want to show value labels only for selected value, works best when chart has
-     * isValueSelectionEnabled set to true {@link Chart#setValueSelectionEnabled(boolean)}.
-     */
     public Line setHasLabelsOnlyForSelected(boolean hasLabelsOnlyForSelected) {
         this.hasLabelsOnlyForSelected = hasLabelsOnlyForSelected;
         if (hasLabelsOnlyForSelected) {
@@ -210,70 +173,15 @@ public class Line {
         return pointRadius;
     }
 
-    /**
-     * Set radius for points for this line.
-     *
-     * @param pointRadius
-     * @return
-     */
     public Line setPointRadius(int pointRadius) {
         this.pointRadius = pointRadius;
         return this;
     }
 
-    public boolean getGradientToTransparent() {
-        return hasGradientToTransparent;
-    }
-
-    public Line setHasGradientToTransparent(boolean hasGradientToTransparent) {
-        this.hasGradientToTransparent = hasGradientToTransparent;
-        return this;
-    }
-
-    public boolean isCubic() {
-        return isCubic;
-    }
-
-    public Line setCubic(boolean isCubic) {
-        this.isCubic = isCubic;
-        if (isSquare)
-            setSquare(false);
-        return this;
-    }
-
-    public boolean isSquare() {
-        return isSquare;
-    }
-
-    public Line setSquare(boolean isSquare) {
-        this.isSquare = isSquare;
-        if (isCubic)
-            setCubic(false);
-        return this;
-    }
-
-    public boolean isFilled() {
-        return isFilled;
-    }
-
-    public Line setFilled(boolean isFilled) {
-        this.isFilled = isFilled;
-        return this;
-    }
-
-    /**
-     * @see #setShape(ValueShape)
-     */
     public ValueShape getShape() {
         return shape;
     }
 
-    /**
-     * Set shape for points, possible values: SQUARE, CIRCLE
-     *
-     * @param shape
-     * @return
-     */
     public Line setShape(ValueShape shape) {
         this.shape = shape;
         return this;
@@ -283,12 +191,6 @@ public class Line {
         return pathEffect;
     }
 
-    /**
-     * Set path effect for this line, note: it will slow down drawing, try to not use complicated effects,
-     * DashPathEffect should be safe choice.
-     *
-     * @param pathEffect
-     */
     public void setPathEffect(PathEffect pathEffect) {
         this.pathEffect = pathEffect;
     }

@@ -5,19 +5,16 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-import com.opiumfive.telechart.chart.view.Chart;
+import com.opiumfive.telechart.chart.view.LineChartView;
 
-/**
- * Touch Handler for preview charts. It scroll and zoom only preview area, not all preview chart data.
- */
+
 public class PreviewChartTouchHandler extends ChartTouchHandler {
 
-    public PreviewChartTouchHandler(Context context, Chart chart) {
+    public PreviewChartTouchHandler(Context context, LineChartView chart) {
         super(context, chart);
         gestureDetector = new GestureDetector(context, new PreviewChartGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(context, new ChartScaleGestureListener());
 
-        // Disable value touch and selection mode, by default not needed for preview chart.
         isValueTouchEnabled = false;
         isValueSelectionEnabled = false;
     }

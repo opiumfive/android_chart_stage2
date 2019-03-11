@@ -4,33 +4,52 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Path;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
-import android.graphics.Shader;
+import android.graphics.RectF;
+import android.graphics.Typeface;
 
+import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
+import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.model.SelectedValue.SelectedValueType;
 import com.opiumfive.telechart.chart.model.ValueShape;
 import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.provider.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
-import com.opiumfive.telechart.chart.view.Chart;
+import com.opiumfive.telechart.chart.view.LineChartView;
 
 
-public class LineChartRenderer extends AbstractChartRenderer {
+public class LineChartRenderer {
 
-    private static final float LINE_SMOOTHNESS = 0.16f;
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 3;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 4;
 
     private static final int MODE_DRAW = 0;
     private static final int MODE_HIGHLIGHT = 1;
+
+    public int DEFAULT_LABEL_MARGIN_DP = 4;
+    protected LineChartView chart;
+    protected ChartComputator computator;
+
+    protected Paint labelPaint = new Paint();
+    protected Paint labelBackgroundPaint = new Paint();
+    protected RectF labelBackgroundRect = new RectF();
+    protected Paint.FontMetricsInt fontMetrics = new Paint.FontMetricsInt();
+    protected boolean isViewportCalculationEnabled = true;
+    protected float density;
+    protected float scaledDensity;
+    protected SelectedValue selectedValue = new SelectedValue();
+    protected char[] labelBuffer = new char[64];
+    protected int labelOffset;
+    protected int labelMargin;
+    protected boolean isValueLabelBackgroundEnabled;
+    protected boolean isValueLabelBackgroundAuto;
 
     private LineChartDataProvider dataProvider;
 
@@ -47,8 +66,23 @@ public class LineChartRenderer extends AbstractChartRenderer {
     private Canvas softwareCanvas = new Canvas();
     private Viewport tempMaximumViewport = new Viewport();
 
-    public LineChartRenderer(Context context, Chart chart, LineChartDataProvider dataProvider) {
-        super(context, chart);
+    public LineChartRenderer(Context context, LineChartView chart, LineChartDataProvider dataProvider) {
+        this.density = context.getResources().getDisplayMetrics().density;
+        this.scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        this.chart = chart;
+        this.computator = chart.getChartComputator();
+
+        labelMargin = ChartUtils.dp2px(density, DEFAULT_LABEL_MARGIN_DP);
+        labelOffset = labelMargin;
+
+        labelPaint.setAntiAlias(true);
+        labelPaint.setStyle(Paint.Style.FILL);
+        labelPaint.setTextAlign(Paint.Align.LEFT);
+        labelPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        labelPaint.setColor(Color.WHITE);
+
+        labelBackgroundPaint.setAntiAlias(true);
+        labelBackgroundPaint.setStyle(Paint.Style.FILL);
         this.dataProvider = dataProvider;
 
         touchToleranceMargin = ChartUtils.dp2px(density, DEFAULT_TOUCH_TOLERANCE_MARGIN_DP);
@@ -76,18 +110,31 @@ public class LineChartRenderer extends AbstractChartRenderer {
         }
     }
 
-    @Override
     public void onChartDataChanged() {
-        super.onChartDataChanged();
+        final LineChartData data = chart.getChartData();
+
+        Typeface typeface = chart.getChartData().getValueLabelTypeface();
+        if (null != typeface) {
+            labelPaint.setTypeface(typeface);
+        }
+
+        labelPaint.setColor(data.getValueLabelTextColor());
+        labelPaint.setTextSize(ChartUtils.sp2px(scaledDensity, data.getValueLabelTextSize()));
+        labelPaint.getFontMetricsInt(fontMetrics);
+
+        this.isValueLabelBackgroundEnabled = data.isValueLabelBackgroundEnabled();
+        this.isValueLabelBackgroundAuto = data.isValueLabelBackgroundAuto();
+        this.labelBackgroundPaint.setColor(data.getValueLabelBackgroundColor());
+
+        selectedValue.clear();
+
         final int internalMargin = calculateContentRectInternalMargin();
-        computator.insetContentRectByInternalMargins(internalMargin, internalMargin,
-                internalMargin, internalMargin);
+        computator.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
         baseValue = dataProvider.getLineChartData().getBaseValue();
 
         onChartViewportChanged();
     }
 
-    @Override
     public void onChartViewportChanged() {
         if (isViewportCalculationEnabled) {
             calculateMaxViewport();
@@ -96,7 +143,6 @@ public class LineChartRenderer extends AbstractChartRenderer {
         }
     }
 
-    @Override
     public void draw(Canvas canvas) {
         final LineChartData data = dataProvider.getLineChartData();
 
@@ -113,13 +159,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
 
         for (Line line : data.getLines()) {
             if (line.hasLines()) {
-                if (line.isCubic()) {
-                    drawSmoothPath(drawCanvas, line);
-                } else if (line.isSquare()) {
-                    drawSquarePath(drawCanvas, line);
-                } else {
-                    drawPath(drawCanvas, line);
-                }
+                drawPath(drawCanvas, line);
             }
         }
 
@@ -128,7 +168,6 @@ public class LineChartRenderer extends AbstractChartRenderer {
         }
     }
 
-    @Override
     public void drawUnclipped(Canvas canvas) {
         final LineChartData data = dataProvider.getLineChartData();
         int lineIndex = 0;
@@ -148,7 +187,6 @@ public class LineChartRenderer extends AbstractChartRenderer {
         return line.hasPoints() || line.getValues().size() == 1;
     }
 
-    @Override
     public boolean checkTouch(float touchX, float touchY) {
         selectedValue.clear();
         final LineChartData data = dataProvider.getLineChartData();
@@ -209,9 +247,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
         return ChartUtils.dp2px(density, contentAreaMargin);
     }
 
-    /**
-     * Draws lines, uses path for drawing filled area on software canvas. Line is drawn with canvas.drawLines() method.
-     */
+
     private void drawPath(Canvas canvas, final Line line) {
         prepareLinePaint(line);
 
@@ -228,132 +264,10 @@ public class LineChartRenderer extends AbstractChartRenderer {
             }
 
             ++valueIndex;
-
         }
 
         canvas.drawPath(path, linePaint);
 
-        if (line.isFilled()) {
-            drawArea(canvas, line);
-        }
-
-        path.reset();
-    }
-
-    private void drawSquarePath(Canvas canvas, final Line line) {
-        prepareLinePaint(line);
-
-        int valueIndex = 0;
-        float previousRawY = 0;
-        for (PointValue pointValue : line.getValues()) {
-
-            final float rawX = computator.computeRawX(pointValue.getX());
-            final float rawY = computator.computeRawY(pointValue.getY());
-
-            if (valueIndex == 0) {
-                path.moveTo(rawX, rawY);
-            } else {
-                path.lineTo(rawX, previousRawY);
-                path.lineTo(rawX, rawY);
-            }
-
-            previousRawY = rawY;
-
-            ++valueIndex;
-
-        }
-
-        canvas.drawPath(path, linePaint);
-
-        if (line.isFilled()) {
-            drawArea(canvas, line);
-        }
-
-        path.reset();
-    }
-
-    private void drawSmoothPath(Canvas canvas, final Line line) {
-        prepareLinePaint(line);
-
-        final int lineSize = line.getValues().size();
-        float prePreviousPointX = Float.NaN;
-        float prePreviousPointY = Float.NaN;
-        float previousPointX = Float.NaN;
-        float previousPointY = Float.NaN;
-        float currentPointX = Float.NaN;
-        float currentPointY = Float.NaN;
-        float nextPointX = Float.NaN;
-        float nextPointY = Float.NaN;
-
-        for (int valueIndex = 0; valueIndex < lineSize; ++valueIndex) {
-            if (Float.isNaN(currentPointX)) {
-                PointValue linePoint = line.getValues().get(valueIndex);
-                currentPointX = computator.computeRawX(linePoint.getX());
-                currentPointY = computator.computeRawY(linePoint.getY());
-            }
-            if (Float.isNaN(previousPointX)) {
-                if (valueIndex > 0) {
-                    PointValue linePoint = line.getValues().get(valueIndex - 1);
-                    previousPointX = computator.computeRawX(linePoint.getX());
-                    previousPointY = computator.computeRawY(linePoint.getY());
-                } else {
-                    previousPointX = currentPointX;
-                    previousPointY = currentPointY;
-                }
-            }
-
-            if (Float.isNaN(prePreviousPointX)) {
-                if (valueIndex > 1) {
-                    PointValue linePoint = line.getValues().get(valueIndex - 2);
-                    prePreviousPointX = computator.computeRawX(linePoint.getX());
-                    prePreviousPointY = computator.computeRawY(linePoint.getY());
-                } else {
-                    prePreviousPointX = previousPointX;
-                    prePreviousPointY = previousPointY;
-                }
-            }
-
-            // nextPoint is always new one or it is equal currentPoint.
-            if (valueIndex < lineSize - 1) {
-                PointValue linePoint = line.getValues().get(valueIndex + 1);
-                nextPointX = computator.computeRawX(linePoint.getX());
-                nextPointY = computator.computeRawY(linePoint.getY());
-            } else {
-                nextPointX = currentPointX;
-                nextPointY = currentPointY;
-            }
-
-            if (valueIndex == 0) {
-                // Move to start point.
-                path.moveTo(currentPointX, currentPointY);
-            } else {
-                // Calculate control points.
-                final float firstDiffX = (currentPointX - prePreviousPointX);
-                final float firstDiffY = (currentPointY - prePreviousPointY);
-                final float secondDiffX = (nextPointX - previousPointX);
-                final float secondDiffY = (nextPointY - previousPointY);
-                final float firstControlPointX = previousPointX + (LINE_SMOOTHNESS * firstDiffX);
-                final float firstControlPointY = previousPointY + (LINE_SMOOTHNESS * firstDiffY);
-                final float secondControlPointX = currentPointX - (LINE_SMOOTHNESS * secondDiffX);
-                final float secondControlPointY = currentPointY - (LINE_SMOOTHNESS * secondDiffY);
-                path.cubicTo(firstControlPointX, firstControlPointY, secondControlPointX, secondControlPointY,
-                        currentPointX, currentPointY);
-            }
-
-            // Shift values by one back to prevent recalculation of values that have
-            // been already calculated.
-            prePreviousPointX = previousPointX;
-            prePreviousPointY = previousPointY;
-            previousPointX = currentPointX;
-            previousPointY = currentPointY;
-            currentPointX = nextPointX;
-            currentPointY = nextPointY;
-        }
-
-        canvas.drawPath(path, linePaint);
-        if (line.isFilled()) {
-            drawArea(canvas, line);
-        }
         path.reset();
     }
 
@@ -364,9 +278,6 @@ public class LineChartRenderer extends AbstractChartRenderer {
         linePaint.setShader(null);
     }
 
-    // TODO Drawing points can be done in the same loop as drawing lines but it
-    // may cause problems in the future with
-    // implementing point styles.
     private void drawPoints(Canvas canvas, Line line, int lineIndex, int mode) {
         pointPaint.setColor(line.getPointColor());
         int valueIndex = 0;
@@ -375,9 +286,6 @@ public class LineChartRenderer extends AbstractChartRenderer {
             final float rawX = computator.computeRawX(pointValue.getX());
             final float rawY = computator.computeRawY(pointValue.getY());
             if (computator.isWithinContentRect(rawX, rawY, checkPrecision)) {
-                // Draw points only if they are within contentRectMinusAllMargins, using contentRectMinusAllMargins
-                // instead of viewport to avoid some
-                // float rounding problems.
                 if (MODE_DRAW == mode) {
                     drawPoint(canvas, line, pointValue, rawX, rawY, pointRadius);
                     if (line.hasLabels()) {
@@ -393,8 +301,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
         }
     }
 
-    private void drawPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY,
-                           float pointRadius) {
+    private void drawPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, float pointRadius) {
         if (ValueShape.SQUARE.equals(line.getShape())) {
             canvas.drawRect(rawX - pointRadius, rawY - pointRadius, rawX + pointRadius, rawY + pointRadius,
                     pointPaint);
@@ -403,8 +310,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
         } else if (ValueShape.DIAMOND.equals(line.getShape())) {
             canvas.save();
             canvas.rotate(45, rawX, rawY);
-            canvas.drawRect(rawX - pointRadius, rawY - pointRadius, rawX + pointRadius, rawY + pointRadius,
-                    pointPaint);
+            canvas.drawRect(rawX - pointRadius, rawY - pointRadius, rawX + pointRadius, rawY + pointRadius, pointPaint);
             canvas.restore();
         } else {
             throw new IllegalArgumentException("Invalid point shape: " + line.getShape());
@@ -417,8 +323,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
         drawPoints(canvas, line, lineIndex, MODE_HIGHLIGHT);
     }
 
-    private void highlightPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, int lineIndex,
-                                int valueIndex) {
+    private void highlightPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, int lineIndex, int valueIndex) {
         if (selectedValue.getFirstIndex() == lineIndex && selectedValue.getSecondIndex() == valueIndex) {
             int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
             pointPaint.setColor(line.getDarkenColor());
@@ -475,39 +380,81 @@ public class LineChartRenderer extends AbstractChartRenderer {
                 line.getDarkenColor());
     }
 
-    private void drawArea(Canvas canvas, Line line) {
-        final int lineSize = line.getValues().size();
-        if (lineSize < 2) {
-            //No point to draw area for one point or empty line.
-            return;
-        }
-
-        final Rect contentRect = computator.getContentRectMinusAllMargins();
-        final float baseRawValue = Math.min(contentRect.bottom, Math.max(computator.computeRawY(baseValue),
-                contentRect.top));
-        //That checks works only if the last point is the right most one.
-        final float left = Math.max(computator.computeRawX(line.getValues().get(0).getX()), contentRect.left);
-        final float right = Math.min(computator.computeRawX(line.getValues().get(lineSize - 1).getX()),
-                contentRect.right);
-
-        path.lineTo(right, baseRawValue);
-        path.lineTo(left, baseRawValue);
-        path.close();
-
-        linePaint.setStyle(Paint.Style.FILL);
-        linePaint.setAlpha(line.getAreaTransparency());
-        linePaint.setShader(line.getGradientToTransparent() ?
-                new LinearGradient(0, 0, 0, canvas.getHeight(), line.getColor(),
-                        line.getColor() & 0x00ffffff, Shader.TileMode.MIRROR) :
-                null);
-        canvas.drawPath(path, linePaint);
-        linePaint.setStyle(Paint.Style.STROKE);
-    }
-
     private boolean isInArea(float x, float y, float touchX, float touchY, float radius) {
         float diffX = touchX - x;
         float diffY = touchY - y;
         return Math.pow(diffX, 2) + Math.pow(diffY, 2) <= 2 * Math.pow(radius, 2);
+    }
+
+    public void resetRenderer() {
+        this.computator = chart.getChartComputator();
+    }
+
+    protected void drawLabelTextAndBackground(Canvas canvas, char[] labelBuffer, int startIndex, int numChars,
+                                              int autoBackgroundColor) {
+        final float textX;
+        final float textY;
+
+        if (isValueLabelBackgroundEnabled) {
+
+            if (isValueLabelBackgroundAuto) {
+                labelBackgroundPaint.setColor(autoBackgroundColor);
+            }
+
+            canvas.drawRect(labelBackgroundRect, labelBackgroundPaint);
+
+            textX = labelBackgroundRect.left + labelMargin;
+            textY = labelBackgroundRect.bottom - labelMargin;
+        } else {
+            textX = labelBackgroundRect.left;
+            textY = labelBackgroundRect.bottom;
+        }
+
+        canvas.drawText(labelBuffer, startIndex, numChars, textX, textY, labelPaint);
+    }
+
+    public boolean isTouched() {
+        return selectedValue.isSet();
+    }
+
+    public void clearTouch() {
+        selectedValue.clear();
+    }
+
+    public Viewport getMaximumViewport() {
+        return computator.getMaximumViewport();
+    }
+
+    public void setMaximumViewport(Viewport maxViewport) {
+        if (null != maxViewport) {
+            computator.setMaxViewport(maxViewport);
+        }
+    }
+
+    public Viewport getCurrentViewport() {
+        return computator.getCurrentViewport();
+    }
+
+    public void setCurrentViewport(Viewport viewport) {
+        if (null != viewport) {
+            computator.setCurrentViewport(viewport);
+        }
+    }
+
+    public boolean isViewportCalculationEnabled() {
+        return isViewportCalculationEnabled;
+    }
+
+    public void setViewportCalculationEnabled(boolean isEnabled) {
+        this.isViewportCalculationEnabled = isEnabled;
+    }
+
+    public void selectValue(SelectedValue selectedValue) {
+        this.selectedValue.set(selectedValue);
+    }
+
+    public SelectedValue getSelectedValue() {
+        return selectedValue;
     }
 
 }

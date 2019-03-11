@@ -1,13 +1,30 @@
 package com.opiumfive.telechart.chart.model;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
+
+import com.opiumfive.telechart.chart.util.ChartUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Data model for LineChartView.
- */
-public class LineChartData extends AbstractChartData {
+
+public class LineChartData {
+
     public static final float DEFAULT_BASE_VALUE = 0.0f;
+    public static final int DEFAULT_TEXT_SIZE_SP = 12;
+
+    protected Axis axisXBottom;
+    protected Axis axisYLeft;
+    protected Axis axisXTop;
+    protected Axis axisYRight;
+    protected int valueLabelTextColor = Color.WHITE;
+    protected int valueLabelTextSize = DEFAULT_TEXT_SIZE_SP;
+    protected Typeface valueLabelTypeface;
+
+    protected boolean isValueLabelBackgroundEnabled = true;
+    protected boolean isValueLabelBackgrountAuto = true;
+    protected int valueLabelBackgroundColor = ChartUtils.darkenColor(ChartUtils.DEFAULT_DARKEN_COLOR);
 
     private List<Line> lines = new ArrayList<Line>();
     private float baseValue = DEFAULT_BASE_VALUE;
@@ -20,11 +37,22 @@ public class LineChartData extends AbstractChartData {
         setLines(lines);
     }
 
-    /**
-     * Copy constructor to perform deep copy of chart data.
-     */
     public LineChartData(LineChartData data) {
-        super(data);
+        if (null != data.axisXBottom) {
+            this.axisXBottom = new Axis(data.axisXBottom);
+        }
+        if (null != data.axisXTop) {
+            this.axisXTop = new Axis(data.axisXTop);
+        }
+        if (null != data.axisYLeft) {
+            this.axisYLeft = new Axis(data.axisYLeft);
+        }
+        if (null != data.axisYRight) {
+            this.axisYRight = new Axis(data.axisYRight);
+        }
+        this.valueLabelTextColor = data.valueLabelTextColor;
+        this.valueLabelTextSize = data.valueLabelTextSize;
+        this.valueLabelTypeface = data.valueLabelTypeface;
         this.baseValue = data.baseValue;
 
         for (Line line : data.lines) {
@@ -47,14 +75,12 @@ public class LineChartData extends AbstractChartData {
         return data;
     }
 
-    @Override
     public void update(float scale) {
         for (Line line : lines) {
             line.update(scale);
         }
     }
 
-    @Override
     public void finish() {
         for (Line line : lines) {
             line.finish();
@@ -74,19 +100,92 @@ public class LineChartData extends AbstractChartData {
         return this;
     }
 
-    /**
-     * @see #setBaseValue(float)
-     */
     public float getBaseValue() {
         return baseValue;
     }
 
-    /**
-     * Set value below which values will be drawn as negative, important attribute for drawing filled area charts, by
-     * default 0.
-     */
     public LineChartData setBaseValue(float baseValue) {
         this.baseValue = baseValue;
         return this;
+    }
+
+    public Axis getAxisXBottom() {
+        return axisXBottom;
+    }
+
+    public void setAxisXBottom(Axis axisX) {
+        this.axisXBottom = axisX;
+    }
+
+    public Axis getAxisYLeft() {
+        return axisYLeft;
+    }
+
+    public void setAxisYLeft(Axis axisY) {
+        this.axisYLeft = axisY;
+    }
+
+    public Axis getAxisXTop() {
+        return axisXTop;
+    }
+
+    public void setAxisXTop(Axis axisX) {
+        this.axisXTop = axisX;
+    }
+
+    public Axis getAxisYRight() {
+        return axisYRight;
+    }
+
+    public void setAxisYRight(Axis axisY) {
+        this.axisYRight = axisY;
+    }
+
+    public int getValueLabelTextColor() {
+        return valueLabelTextColor;
+    }
+
+    public void setValueLabelsTextColor(int valueLabelTextColor) {
+        this.valueLabelTextColor = valueLabelTextColor;
+    }
+
+    public int getValueLabelTextSize() {
+        return valueLabelTextSize;
+    }
+
+    public void setValueLabelTextSize(int valueLabelTextSize) {
+        this.valueLabelTextSize = valueLabelTextSize;
+    }
+
+    public Typeface getValueLabelTypeface() {
+        return valueLabelTypeface;
+    }
+
+    public void setValueLabelTypeface(Typeface typeface) {
+        this.valueLabelTypeface = typeface;
+    }
+
+    public boolean isValueLabelBackgroundEnabled() {
+        return isValueLabelBackgroundEnabled;
+    }
+
+    public void setValueLabelBackgroundEnabled(boolean isValueLabelBackgroundEnabled) {
+        this.isValueLabelBackgroundEnabled = isValueLabelBackgroundEnabled;
+    }
+
+    public boolean isValueLabelBackgroundAuto() {
+        return isValueLabelBackgrountAuto;
+    }
+
+    public void setValueLabelBackgroundAuto(boolean isValueLabelBackgrountAuto) {
+        this.isValueLabelBackgrountAuto = isValueLabelBackgrountAuto;
+    }
+
+    public int getValueLabelBackgroundColor() {
+        return valueLabelBackgroundColor;
+    }
+
+    public void setValueLabelBackgroundColor(int valueLabelBackgroundColor) {
+        this.valueLabelBackgroundColor = valueLabelBackgroundColor;
     }
 }

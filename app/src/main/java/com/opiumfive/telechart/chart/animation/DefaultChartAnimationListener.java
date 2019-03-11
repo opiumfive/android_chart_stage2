@@ -1,17 +1,12 @@
 package com.opiumfive.telechart.chart.animation;
 
-public class DummyChartAnimationListener implements ChartAnimationListener {
+public class DefaultChartAnimationListener implements ChartAnimationListener {
 
     @Override
     public void onAnimationStarted() {
-        // do nothing
-
     }
 
     @Override
     public void onAnimationFinished() {
-        // do nothing
-
     }
-
 }

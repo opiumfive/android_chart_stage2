@@ -2,11 +2,7 @@ package com.opiumfive.telechart.chart.model;
 
 import java.util.Arrays;
 
-import com.opiumfive.telechart.chart.view.Chart;
 
-/**
- * Single point coordinates, used for LineChartData.
- */
 public class PointValue {
 
     private float x;
@@ -49,9 +45,6 @@ public class PointValue {
         return this;
     }
 
-    /**
-     * Set target values that should be reached when data animation finish then call {@link Chart#startDataAnimation()}
-     */
     public PointValue setTarget(float targetX, float targetY) {
         set(x, y);
         this.diffX = targetX - originX;

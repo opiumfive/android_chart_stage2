@@ -9,46 +9,34 @@ import android.view.ViewParent;
 import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.gesture.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValue;
-import com.opiumfive.telechart.chart.renderer.ChartRenderer;
-import com.opiumfive.telechart.chart.view.Chart;
+import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
+import com.opiumfive.telechart.chart.view.LineChartView;
 
-/**
- * Default touch handler for most charts. Handles value touch, scroll, fling and zoom.
- */
 public class ChartTouchHandler {
+
     protected GestureDetector gestureDetector;
     protected ScaleGestureDetector scaleGestureDetector;
     protected ChartScroller chartScroller;
     protected ChartZoomer chartZoomer;
-    protected Chart chart;
+    protected LineChartView chart;
     protected ChartComputator computator;
-    protected ChartRenderer renderer;
+    protected LineChartRenderer renderer;
 
     protected boolean isZoomEnabled = true;
     protected boolean isScrollEnabled = true;
     protected boolean isValueTouchEnabled = true;
     protected boolean isValueSelectionEnabled = false;
 
-    /**
-     * Used only for selection mode to avoid calling listener multiple times for the same selection. Small thing but it
-     * is more intuitive this way.
-     */
     protected SelectedValue selectionModeOldValue = new SelectedValue();
 
     protected SelectedValue selectedValue = new SelectedValue();
     protected SelectedValue oldSelectedValue = new SelectedValue();
 
-    /**
-     * ViewParent to disallow touch events interception if chart is within scroll container.
-     */
     protected ViewParent viewParent;
 
-    /**
-     * Type of scroll of container, horizontal or vertical.
-     */
     protected ContainerScrollType containerScrollType;
 
-    public ChartTouchHandler(Context context, Chart chart) {
+    public ChartTouchHandler(Context context, LineChartView chart) {
         this.chart = chart;
         this.computator = chart.getChartComputator();
         this.renderer = chart.getChartRenderer();
@@ -63,10 +51,6 @@ public class ChartTouchHandler {
         this.renderer = chart.getChartRenderer();
     }
 
-    /**
-     * Computes scroll and zoom using {@link ChartScroller} and {@link ChartZoomer}. This method returns true if
-     * scroll/zoom was computed and chart needs to be invalidated.
-     */
     public boolean computeScroll() {
         boolean needInvalidate = false;
         if (isScrollEnabled && chartScroller.computeScrollOffset(computator)) {
@@ -78,22 +62,14 @@ public class ChartTouchHandler {
         return needInvalidate;
     }
 
-    /**
-     * Handle chart touch event(gestures, clicks). Return true if gesture was handled and chart needs to be
-     * invalidated.
-     */
     public boolean handleTouchEvent(MotionEvent event) {
         boolean needInvalidate = false;
 
-        // TODO: detectors always return true, use class member needInvalidate instead local variable as workaround.
-        // This flag should be computed inside gesture listeners methods to avoid invalidation.
         needInvalidate = gestureDetector.onTouchEvent(event);
 
         needInvalidate = scaleGestureDetector.onTouchEvent(event) || needInvalidate;
 
         if (isZoomEnabled && scaleGestureDetector.isInProgress()) {
-            // Special case: if view is inside scroll container and user is scaling disable touch interception by
-            // parent.
             disallowParentInterceptTouchEvent();
         }
 
@@ -104,43 +80,24 @@ public class ChartTouchHandler {
         return needInvalidate;
     }
 
-    /**
-     * Handle chart touch event(gestures, clicks). Return true if gesture was handled and chart needs to be
-     * invalidated.
-     * If viewParent and containerScrollType are not null chart can be scrolled and scaled within horizontal or
-     * vertical
-     * scroll container like ViewPager.
-     */
-    public boolean handleTouchEvent(MotionEvent event, ViewParent viewParent,
-                                    ContainerScrollType containerScrollType) {
+    public boolean handleTouchEvent(MotionEvent event, ViewParent viewParent, ContainerScrollType containerScrollType) {
         this.viewParent = viewParent;
         this.containerScrollType = containerScrollType;
 
         return handleTouchEvent(event);
     }
 
-    /**
-     * Disallow parent view from intercepting touch events. Use it for chart that is within some scroll container i.e.
-     * ViewPager.
-     */
     private void disallowParentInterceptTouchEvent() {
         if (null != viewParent) {
             viewParent.requestDisallowInterceptTouchEvent(true);
         }
     }
 
-    /**
-     * Allow parent view to intercept touch events if chart cannot be scroll horizontally or vertically according to
-     * the
-     * current value of {@link #containerScrollType}.
-     */
     private void allowParentInterceptTouchEvent(ScrollResult scrollResult) {
         if (null != viewParent) {
-            if (ContainerScrollType.HORIZONTAL == containerScrollType && !scrollResult.canScrollX
-                    && !scaleGestureDetector.isInProgress()) {
+            if (ContainerScrollType.HORIZONTAL == containerScrollType && !scrollResult.canScrollX && !scaleGestureDetector.isInProgress()) {
                 viewParent.requestDisallowInterceptTouchEvent(false);
-            } else if (ContainerScrollType.VERTICAL == containerScrollType && !scrollResult.canScrollY
-                    && !scaleGestureDetector.isInProgress()) {
+            } else if (ContainerScrollType.VERTICAL == containerScrollType && !scrollResult.canScrollY && !scaleGestureDetector.isInProgress()) {
                 viewParent.requestDisallowInterceptTouchEvent(false);
             }
         }
@@ -167,9 +124,6 @@ public class ChartTouchHandler {
                 if (renderer.isTouched()) {
                     if (checkTouch(event.getX(), event.getY())) {
                         if (isValueSelectionEnabled) {
-                            // For selection mode call listener only if selected value changed,
-                            // that means that should be
-                            // first(selection) click on given value.
                             if (!selectionModeOldValue.equals(selectedValue)) {
                                 selectionModeOldValue.set(selectedValue);
                                 chart.callTouchListener();
@@ -185,8 +139,6 @@ public class ChartTouchHandler {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                // If value was touched and now touch point is outside of value area - clear touch and invalidate, user
-                // probably moved finger away from given chart value.
                 if (renderer.isTouched()) {
                     if (!checkTouch(event.getX(), event.getY())) {
                         renderer.clearTouch();
@@ -213,7 +165,6 @@ public class ChartTouchHandler {
             selectedValue.set(renderer.getSelectedValue());
         }
 
-        // Check if selection is still on the same value, if not return false.
         if (oldSelectedValue.isSet() && selectedValue.isSet() && !oldSelectedValue.equals(selectedValue)) {
             return false;
         } else {

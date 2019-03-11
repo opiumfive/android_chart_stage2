@@ -39,7 +39,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
 
-        ChartData chartData = ChartDataParser.loadAndParseInput(this, 0);
+        ChartData chartData = ChartDataParser.loadAndParseInput(this, 4);
 
         inflateCharts(chartData);
     }
@@ -68,6 +68,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         lines.add(line2);
 
         data = new LineChartData(lines);
+        data.setBaseValue(Float.NEGATIVE_INFINITY);
         data.setAxisXBottom(new Axis().setFormatter(new AxisValueFormatter() {
             @Override
             public int formatValueForManualAxis(char[] formattedValue, AxisValue axisValue) {
@@ -87,10 +88,12 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setZoomEnabled(false);
         chart.setScrollEnabled(false);
         chart.setValueSelectionEnabled(true);
+        chart.setViewportCalculationEnabled(false);
 
         previewChart.setLineChartData(previewData);
         previewChart.setViewportChangeListener(new ViewportListener());
         previewChart.setZoomEnabled(false);
+        previewChart.setViewportCalculationEnabled(false);
 
         final AppCompatCheckBox checkBox1 = findViewById(R.id.checkbox1);
         final AppCompatCheckBox checkBox2 = findViewById(R.id.checkbox2);
@@ -112,6 +115,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 previewData.setLines(lines);
                 chart.setLineChartData(data);
                 previewChart.setLineChartData(previewData);
+
+                chart.resetViewports();
 
                 previewX(true);
             }

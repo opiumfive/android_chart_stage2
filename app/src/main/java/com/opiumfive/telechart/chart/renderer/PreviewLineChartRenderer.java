@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.provider.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
-import com.opiumfive.telechart.chart.view.Chart;
+import com.opiumfive.telechart.chart.view.LineChartView;
 
 
 public class PreviewLineChartRenderer extends LineChartRenderer {
@@ -19,7 +19,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
 
     private Paint previewPaint = new Paint();
 
-    public PreviewLineChartRenderer(Context context, Chart chart, LineChartDataProvider dataProvider) {
+    public PreviewLineChartRenderer(Context context, LineChartView chart, LineChartDataProvider dataProvider) {
         super(context, chart, dataProvider);
         previewPaint.setAntiAlias(true);
         previewPaint.setColor(Color.LTGRAY);

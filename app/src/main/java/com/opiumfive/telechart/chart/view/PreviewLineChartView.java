@@ -3,9 +3,7 @@ package com.opiumfive.telechart.chart.view;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 
-import com.opiumfive.telechart.BuildConfig;
 import com.opiumfive.telechart.chart.computator.PreviewChartComputator;
 import com.opiumfive.telechart.chart.gesture.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
@@ -13,8 +11,6 @@ import com.opiumfive.telechart.chart.renderer.PreviewLineChartRenderer;
 
 
 public class PreviewLineChartView extends LineChartView {
-
-    private static final String TAG = "PreviewLineChartView";
 
     protected PreviewLineChartRenderer previewChartRenderer;
 
@@ -40,10 +36,6 @@ public class PreviewLineChartView extends LineChartView {
     }
 
     public void setPreviewColor(int color) {
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "Changing preview area color");
-        }
-
         previewChartRenderer.setPreviewColor(color);
         ViewCompat.postInvalidateOnAnimation(this);
     }

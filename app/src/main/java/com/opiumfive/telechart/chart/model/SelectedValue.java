@@ -1,23 +1,12 @@
 package com.opiumfive.telechart.chart.model;
 
-/**
- * Holds selected values indexes, i.e. for LineChartModel it will be firstIndex=lineIndex; secondIndex=valueIndex.
- */
+
 public class SelectedValue {
 
-    /**
-     * First index i.e for LineChart that will be line index.
-     */
     private int firstIndex;
 
-    /**
-     * Second index i.e for LineChart that will be PointValue index.
-     */
     private int secondIndex;
 
-    /**
-     * Used only for combo charts, in other cases should have value NONE.
-     */
     private SelectedValueType type = SelectedValueType.NONE;
 
     public SelectedValue() {
@@ -48,9 +37,6 @@ public class SelectedValue {
         set(Integer.MIN_VALUE, Integer.MIN_VALUE, SelectedValueType.NONE);
     }
 
-    /**
-     * Return true if selected value have meaningful value.
-     */
     public boolean isSet() {
         if (firstIndex >= 0 && secondIndex >= 0) {
             return true;
@@ -59,9 +45,6 @@ public class SelectedValue {
         }
     }
 
-    /**
-     * First index i.e for LineChart that will be line index.
-     */
     public int getFirstIndex() {
         return firstIndex;
     }
@@ -70,9 +53,6 @@ public class SelectedValue {
         this.firstIndex = firstIndex;
     }
 
-    /**
-     * Second index i.e for LineChart that will be PointValue index.
-     */
     public int getSecondIndex() {
         return secondIndex;
     }
@@ -122,11 +102,8 @@ public class SelectedValue {
         return "SelectedValue [firstIndex=" + firstIndex + ", secondIndex=" + secondIndex + ", type=" + type + "]";
     }
 
-    /**
-     * Used in combo chart to determine if selected value is used for line or column selection.
-     */
     public enum SelectedValueType {
-        NONE, LINE, COLUMN
+        NONE, LINE
     }
 
 }

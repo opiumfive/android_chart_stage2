@@ -6,20 +6,20 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.view.Chart;
+import com.opiumfive.telechart.chart.view.LineChartView;
 
 public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateListener {
 
     private final static int FAST_ANIMATION_DURATION = 300;
 
-    private final Chart chart;
+    private final LineChartView chart;
     private ValueAnimator animator;
     private Viewport startViewport = new Viewport();
     private Viewport targetViewport = new Viewport();
     private Viewport newViewport = new Viewport();
-    private ChartAnimationListener animationListener = new DummyChartAnimationListener();
+    private ChartAnimationListener animationListener = new DefaultChartAnimationListener();
 
-    public ChartViewportAnimator(Chart chart) {
+    public ChartViewportAnimator(LineChartView chart) {
         this.chart = chart;
         animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.addListener(this);
@@ -82,7 +82,7 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
 
     public void setChartAnimationListener(ChartAnimationListener animationListener) {
         if (null == animationListener) {
-            this.animationListener = new DummyChartAnimationListener();
+            this.animationListener = new DefaultChartAnimationListener();
         } else {
             this.animationListener = animationListener;
         }
