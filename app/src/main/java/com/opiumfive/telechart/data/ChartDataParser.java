@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,7 +34,6 @@ public class ChartDataParser {
 
     @Nullable
     private static String getDataFromJson(@NonNull Context context) {
-        String json = null;
         try {
             InputStream is = context.getAssets().open(CHART_DATA_NAME);
             int size = is.available();
@@ -41,7 +41,6 @@ public class ChartDataParser {
             is.read(buffer);
             is.close();
             return new String(buffer, "UTF-8");
-
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;

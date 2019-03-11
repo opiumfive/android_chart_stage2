@@ -10,11 +10,7 @@ import android.view.View;
 
 import com.opiumfive.telechart.chart.animation.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animation.ChartDataAnimator;
-import com.opiumfive.telechart.chart.animation.ChartDataAnimatorV14;
-import com.opiumfive.telechart.chart.animation.ChartDataAnimatorV8;
 import com.opiumfive.telechart.chart.animation.ChartViewportAnimator;
-import com.opiumfive.telechart.chart.animation.ChartViewportAnimatorV14;
-import com.opiumfive.telechart.chart.animation.ChartViewportAnimatorV8;
 import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
 import com.opiumfive.telechart.chart.gesture.ContainerScrollType;
@@ -55,14 +51,8 @@ public abstract class AbstractChartView extends View implements Chart {
         chartComputator = new ChartComputator();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            this.dataAnimator = new ChartDataAnimatorV8(this);
-            this.viewportAnimator = new ChartViewportAnimatorV8(this);
-        } else {
-            this.viewportAnimator = new ChartViewportAnimatorV14(this);
-            this.dataAnimator = new ChartDataAnimatorV14(this);
-        }
+        this.viewportAnimator = new ChartViewportAnimator(this);
+        this.dataAnimator = new ChartDataAnimator(this);
     }
 
     @Override

@@ -11,14 +11,9 @@ import com.opiumfive.telechart.chart.gesture.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.renderer.PreviewLineChartRenderer;
 
-/**
- * Preview chart that can be used as overview for other LineChart. When you change Viewport of this chart, visible area
- * of other chart will change. For that you need also to use
- * {@link Chart#setViewportChangeListener(lecho.lib.hellocharts.listener.ViewportChangeListener)}
- *
- * @author Leszek Wach
- */
+
 public class PreviewLineChartView extends LineChartView {
+
     private static final String TAG = "PreviewLineChartView";
 
     protected PreviewLineChartRenderer previewChartRenderer;

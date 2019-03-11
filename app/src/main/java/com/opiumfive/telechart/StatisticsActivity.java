@@ -90,6 +90,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         previewChart.setLineChartData(previewData);
         previewChart.setViewportChangeListener(new ViewportListener());
+        previewChart.setZoomEnabled(false);
 
         final AppCompatCheckBox checkBox1 = findViewById(R.id.checkbox1);
         final AppCompatCheckBox checkBox2 = findViewById(R.id.checkbox2);
@@ -126,8 +127,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         @Override
         public void onViewportChanged(Viewport newViewport) {
-            // don't use animation, it is unnecessary when using preview chart.
-            chart.setCurrentViewportWithAnimation(newViewport);
+            chart.setCurrentViewport(newViewport);
         }
 
     }

@@ -22,10 +22,9 @@ import com.opiumfive.telechart.chart.provider.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 import com.opiumfive.telechart.chart.view.Chart;
 
-/**
- * Renderer for line chart. Can draw lines, cubic lines, filled area chart and scattered chart.
- */
+
 public class LineChartRenderer extends AbstractChartRenderer {
+
     private static final float LINE_SMOOTHNESS = 0.16f;
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 3;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 4;
