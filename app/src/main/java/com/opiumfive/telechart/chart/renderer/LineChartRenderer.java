@@ -147,9 +147,7 @@ public class LineChartRenderer {
         final LineChartData data = dataProvider.getLineChartData();
 
         final Canvas drawCanvas;
-
-        // softwareBitmap can be null if chart is rendered in layout editor. In that case use default canvas and not
-        // softwareCanvas.
+        
         if (null != softwareBitmap) {
             drawCanvas = softwareCanvas;
             drawCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
