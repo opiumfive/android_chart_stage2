@@ -34,8 +34,6 @@ public class ChartTouchHandler {
 
     protected ViewParent viewParent;
 
-    protected ContainerScrollType containerScrollType;
-
     public ChartTouchHandler(Context context, LineChartView chart) {
         this.chart = chart;
         this.computator = chart.getChartComputator();
@@ -43,7 +41,7 @@ public class ChartTouchHandler {
         gestureDetector = new GestureDetector(context, new ChartGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(context, new ChartScaleGestureListener());
         chartScroller = new ChartScroller(context);
-        chartZoomer = new ChartZoomer(context, ZoomType.HORIZONTAL_AND_VERTICAL);
+        chartZoomer = new ChartZoomer(context);
     }
 
     public void resetTouchHandler() {
@@ -80,9 +78,8 @@ public class ChartTouchHandler {
         return needInvalidate;
     }
 
-    public boolean handleTouchEvent(MotionEvent event, ViewParent viewParent, ContainerScrollType containerScrollType) {
+    public boolean handleTouchEvent(MotionEvent event, ViewParent viewParent) {
         this.viewParent = viewParent;
-        this.containerScrollType = containerScrollType;
 
         return handleTouchEvent(event);
     }
@@ -94,12 +91,8 @@ public class ChartTouchHandler {
     }
 
     private void allowParentInterceptTouchEvent(ScrollResult scrollResult) {
-        if (null != viewParent) {
-            if (ContainerScrollType.HORIZONTAL == containerScrollType && !scrollResult.canScrollX && !scaleGestureDetector.isInProgress()) {
-                viewParent.requestDisallowInterceptTouchEvent(false);
-            } else if (ContainerScrollType.VERTICAL == containerScrollType && !scrollResult.canScrollY && !scaleGestureDetector.isInProgress()) {
-                viewParent.requestDisallowInterceptTouchEvent(false);
-            }
+        if (null != viewParent && !scrollResult.canScrollX && !scaleGestureDetector.isInProgress()) {
+            viewParent.requestDisallowInterceptTouchEvent(false);
         }
     }
 
@@ -187,14 +180,6 @@ public class ChartTouchHandler {
 
     public void setScrollEnabled(boolean isScrollEnabled) {
         this.isScrollEnabled = isScrollEnabled;
-    }
-
-    public ZoomType getZoomType() {
-        return chartZoomer.getZoomType();
-    }
-
-    public void setZoomType(ZoomType zoomType) {
-        chartZoomer.setZoomType(zoomType);
     }
 
     public boolean isValueTouchEnabled() {

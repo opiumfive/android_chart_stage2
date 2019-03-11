@@ -13,14 +13,12 @@ public class ChartZoomer {
     public static final float ZOOM_AMOUNT = 0.25f;
 
     private ZoomerCompat zoomer;
-    private ZoomType zoomType;
     private PointF zoomFocalPoint = new PointF();
     private PointF viewportFocus = new PointF();
     private Viewport scrollerStartViewport = new Viewport();
 
-    public ChartZoomer(Context context, ZoomType zoomType) {
+    public ChartZoomer(Context context) {
         zoomer = new ZoomerCompat(context);
-        this.zoomType = zoomType;
     }
 
     public boolean startZoom(MotionEvent e, ChartComputator computator) {
@@ -68,20 +66,6 @@ public class ChartZoomer {
 
     private void setCurrentViewport(ChartComputator computator, float left, float top, float right, float bottom) {
         Viewport currentViewport = computator.getCurrentViewport();
-        if (ZoomType.HORIZONTAL_AND_VERTICAL == zoomType) {
-            computator.setCurrentViewport(left, top, right, bottom);
-        } else if (ZoomType.HORIZONTAL == zoomType) {
-            computator.setCurrentViewport(left, currentViewport.top, right, currentViewport.bottom);
-        } else if (ZoomType.VERTICAL == zoomType) {
-            computator.setCurrentViewport(currentViewport.left, top, currentViewport.right, bottom);
-        }
-    }
-
-    public ZoomType getZoomType() {
-        return zoomType;
-    }
-
-    public void setZoomType(ZoomType zoomType) {
-        this.zoomType = zoomType;
+        computator.setCurrentViewport(left, currentViewport.top, right, currentViewport.bottom);
     }
 }

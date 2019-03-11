@@ -7,7 +7,6 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.formatter.AxisValueFormatter;
-import com.opiumfive.telechart.chart.gesture.ZoomType;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.AxisValue;
@@ -146,6 +145,5 @@ public class StatisticsActivity extends ChangeThemeActivity {
         } else {
             previewChart.setCurrentViewport(tempViewport);
         }
-        previewChart.setZoomType(ZoomType.HORIZONTAL);
     }
 }

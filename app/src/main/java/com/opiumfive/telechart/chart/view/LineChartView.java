@@ -12,8 +12,6 @@ import com.opiumfive.telechart.chart.animation.ChartDataAnimator;
 import com.opiumfive.telechart.chart.animation.ChartViewportAnimator;
 import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
-import com.opiumfive.telechart.chart.gesture.ContainerScrollType;
-import com.opiumfive.telechart.chart.gesture.ZoomType;
 import com.opiumfive.telechart.chart.listener.DummyLineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
@@ -41,7 +39,6 @@ public class LineChartView extends View implements LineChartDataProvider {
     protected ChartViewportAnimator viewportAnimator;
     protected boolean isInteractive = true;
     protected boolean isContainerScrollEnabled = false;
-    protected ContainerScrollType containerScrollType;
 
     public LineChartView(Context context) {
         this(context, null, 0);
@@ -116,7 +113,7 @@ public class LineChartView extends View implements LineChartDataProvider {
             boolean needInvalidate;
 
             if (isContainerScrollEnabled) {
-                needInvalidate = touchHandler.handleTouchEvent(event, getParent(), containerScrollType);
+                needInvalidate = touchHandler.handleTouchEvent(event, getParent());
             } else {
                 needInvalidate = touchHandler.handleTouchEvent(event);
             }
@@ -265,14 +262,6 @@ public class LineChartView extends View implements LineChartDataProvider {
         touchHandler.setValueTouchEnabled(isValueTouchEnabled);
     }
 
-    public ZoomType getZoomType() {
-        return touchHandler.getZoomType();
-    }
-
-    public void setZoomType(ZoomType zoomType) {
-        touchHandler.setZoomType(zoomType);
-    }
-
     public float getMaxZoom() {
         return chartComputator.getMaxZoom();
     }
@@ -313,15 +302,10 @@ public class LineChartView extends View implements LineChartDataProvider {
             }
 
             final float newWidth = zoomViewport.width() / zoomLevel;
-            final float newHeight = zoomViewport.height() / zoomLevel;
-
             final float halfWidth = newWidth / 2;
-            final float halfHeight = newHeight / 2;
 
             float left = x - halfWidth;
             float right = x + halfWidth;
-            float top = y + halfHeight;
-            float bottom = y - halfHeight;
 
             if (left < maxViewport.left) {
                 left = maxViewport.left;
@@ -331,25 +315,8 @@ public class LineChartView extends View implements LineChartDataProvider {
                 left = right - newWidth;
             }
 
-            if (top > maxViewport.top) {
-                top = maxViewport.top;
-                bottom = top - newHeight;
-            } else if (bottom < maxViewport.bottom) {
-                bottom = maxViewport.bottom;
-                top = bottom + newHeight;
-            }
-
-            ZoomType zoomType = getZoomType();
-            if (ZoomType.HORIZONTAL_AND_VERTICAL == zoomType) {
-                zoomViewport.set(left, top, right, bottom);
-            } else if (ZoomType.HORIZONTAL == zoomType) {
-                zoomViewport.left = left;
-                zoomViewport.right = right;
-            } else if (ZoomType.VERTICAL == zoomType) {
-                zoomViewport.top = top;
-                zoomViewport.bottom = bottom;
-            }
-
+            zoomViewport.left = left;
+            zoomViewport.right = right;
         }
         return zoomViewport;
     }
@@ -425,9 +392,8 @@ public class LineChartView extends View implements LineChartDataProvider {
         return isContainerScrollEnabled;
     }
 
-    public void setContainerScrollEnabled(boolean isContainerScrollEnabled, ContainerScrollType containerScrollType) {
+    public void setContainerScrollEnabled(boolean isContainerScrollEnabled) {
         this.isContainerScrollEnabled = isContainerScrollEnabled;
-        this.containerScrollType = containerScrollType;
     }
 
     protected void onChartDataChange() {
