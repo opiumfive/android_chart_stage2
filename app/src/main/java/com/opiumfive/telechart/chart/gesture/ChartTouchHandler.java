@@ -1,6 +1,7 @@
 package com.opiumfive.telechart.chart.gesture;
 
 import android.content.Context;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -15,7 +16,7 @@ import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
 
 public class ChartTouchHandler {
 
-    protected GestureDetector gestureDetector;
+    protected GestureDetectorCompat gestureDetector;
     protected ScaleGestureDetector scaleGestureDetector;
     protected ChartScroller chartScroller;
     protected ChartZoomer chartZoomer;
@@ -39,7 +40,7 @@ public class ChartTouchHandler {
         this.chart = chart;
         this.computator = chart.getChartViewportHandler();
         this.renderer = chart.getChartRenderer();
-        gestureDetector = new GestureDetector(context, new ChartGestureListener());
+        gestureDetector = new GestureDetectorCompat(context, new ChartGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(context, new ChartScaleGestureListener());
         chartScroller = new ChartScroller(context);
         chartZoomer = new ChartZoomer(context);
@@ -137,7 +138,6 @@ public class ChartTouchHandler {
                         needInvalidate = true;
                     }
                 }
-
                 break;
             case MotionEvent.ACTION_CANCEL:
                 if (renderer.isTouched()) {

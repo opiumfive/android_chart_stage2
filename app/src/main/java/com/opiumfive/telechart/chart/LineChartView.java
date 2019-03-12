@@ -121,9 +121,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
 
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
-
         if (isInteractive) {
-
             boolean needInvalidate;
 
             if (isContainerScrollEnabled) {
@@ -138,7 +136,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
 
             return true;
         } else {
-
             return false;
         }
     }
@@ -146,7 +143,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     @Override
     public void computeScroll() {
         super.computeScroll();
-        Log.d("compute_scroll" + this.getId(), "time = " + System.currentTimeMillis());
         if (isInteractive) {
             if (touchHandler.computeScroll()) {
                 ViewCompat.postInvalidateOnAnimation(this);

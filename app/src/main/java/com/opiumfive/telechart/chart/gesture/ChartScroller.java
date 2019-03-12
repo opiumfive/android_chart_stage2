@@ -3,9 +3,6 @@ package com.opiumfive.telechart.chart.gesture;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.v4.widget.ScrollerCompat;
-import android.util.Log;
-import android.widget.OverScroller;
 import android.widget.Scroller;
 
 import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
@@ -15,10 +12,10 @@ public class ChartScroller {
 
     private Viewport scrollerStartViewport = new Viewport();
     private Point surfaceSizeBuffer = new Point();
-    private OverScroller scroller;
+    private Scroller scroller;
 
     public ChartScroller(Context context) {
-        scroller = new OverScroller(context);
+        scroller = new Scroller(context);
     }
 
     public boolean startScroll(ChartViewportHandler chartViewportHandler) {

@@ -1,6 +1,7 @@
 package com.opiumfive.telechart.chart.gesture;
 
 import android.content.Context;
+import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -13,7 +14,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
 
     public PreviewChartTouchHandler(Context context, ILineChart chart) {
         super(context, chart);
-        gestureDetector = new GestureDetector(context, new PreviewChartGestureListener());
+        gestureDetector = new GestureDetectorCompat(context, new PreviewChartGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(context, new ChartScaleGestureListener());
 
         isValueTouchEnabled = false;
