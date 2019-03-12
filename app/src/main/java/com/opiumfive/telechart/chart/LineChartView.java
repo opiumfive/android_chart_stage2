@@ -50,7 +50,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
 
     public LineChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setLayerType(View.LAYER_TYPE_NONE, null);
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
         chartViewportHandler = new ChartViewportHandler();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
@@ -92,6 +92,8 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        long time = System.currentTimeMillis();
+
         if (isEnabled()) {
             axesRenderer.drawInBackground(canvas);
             int clipRestoreCount = canvas.save();
@@ -104,10 +106,17 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
             chartRenderer.drawUnclipped(canvas);
 
             axesRenderer.drawInForeground(canvas);
+
+
         } else {
             canvas.drawColor(ChartUtils.DEFAULT_COLOR);
         }
+        if (!(this instanceof PreviewLineChartView)) {
+            long end = System.currentTimeMillis();
+            Log.d("drawing_thread" + this.getId(), "elapsedTimeMs = " + (end - time));
 
+            Log.d("drawing_thread2" + this.getId(), "time = " + end);
+        }
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -134,8 +143,10 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         }
     }
 
+    @Override
     public void computeScroll() {
         super.computeScroll();
+        Log.d("compute_scroll" + this.getId(), "time = " + System.currentTimeMillis());
         if (isInteractive) {
             if (touchHandler.computeScroll()) {
                 ViewCompat.postInvalidateOnAnimation(this);

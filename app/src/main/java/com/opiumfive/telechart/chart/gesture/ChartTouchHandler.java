@@ -1,6 +1,7 @@
 package com.opiumfive.telechart.chart.gesture;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -63,9 +64,7 @@ public class ChartTouchHandler {
     public boolean handleTouchEvent(MotionEvent event) {
         boolean needInvalidate = false;
 
-        needInvalidate = gestureDetector.onTouchEvent(event);
-
-        needInvalidate = scaleGestureDetector.onTouchEvent(event) || needInvalidate;
+        needInvalidate = gestureDetector.onTouchEvent(event) | scaleGestureDetector.onTouchEvent(event);
 
         if (isZoomEnabled && scaleGestureDetector.isInProgress()) {
             disallowParentInterceptTouchEvent();
@@ -236,6 +235,7 @@ public class ChartTouchHandler {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            Log.d("scrollins", "elapsedTimeMs = " + System.currentTimeMillis());
             if (isScrollEnabled) {
                 boolean canScroll = chartScroller.scroll(computator, distanceX, distanceY, scrollResult);
                 allowParentInterceptTouchEvent(scrollResult);

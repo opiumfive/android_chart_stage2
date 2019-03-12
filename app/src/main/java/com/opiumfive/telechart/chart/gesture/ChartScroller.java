@@ -5,6 +5,8 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.v4.widget.ScrollerCompat;
 import android.util.Log;
+import android.widget.OverScroller;
+import android.widget.Scroller;
 
 import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.model.Viewport;
@@ -13,24 +15,24 @@ public class ChartScroller {
 
     private Viewport scrollerStartViewport = new Viewport();
     private Point surfaceSizeBuffer = new Point();
-    private ScrollerCompat scroller;
+    private OverScroller scroller;
 
     public ChartScroller(Context context) {
-        scroller = ScrollerCompat.create(context);
+        scroller = new OverScroller(context);
     }
 
-    public boolean startScroll(ChartViewportHandler computator) {
+    public boolean startScroll(ChartViewportHandler chartViewportHandler) {
         scroller.abortAnimation();
-        scrollerStartViewport.set(computator.getCurrentViewport());
+        scrollerStartViewport.set(chartViewportHandler.getCurrentViewport());
         return true;
     }
 
-    public boolean scroll(ChartViewportHandler computator, float distanceX, float distanceY, ScrollResult scrollResult) {
+    public boolean scroll(ChartViewportHandler chartViewportHandler, float distanceX, float distanceY, ScrollResult scrollResult) {
 
-        final Viewport maxViewport = computator.getMaximumViewport();
-        final Viewport visibleViewport = computator.getVisibleViewport();
-        final Viewport currentViewport = computator.getCurrentViewport();
-        final Rect contentRect = computator.getContentRectMinusAllMargins();
+        final Viewport maxViewport = chartViewportHandler.getMaximumViewport();
+        final Viewport visibleViewport = chartViewportHandler.getVisibleViewport();
+        final Viewport currentViewport = chartViewportHandler.getCurrentViewport();
+        final Rect contentRect = chartViewportHandler.getContentRectMinusAllMargins();
 
         final boolean canScrollLeft = currentViewport.left > maxViewport.left;
         final boolean canScrollRight = currentViewport.right < maxViewport.right;
@@ -40,26 +42,17 @@ public class ChartScroller {
         boolean canScrollX = false;
         boolean canScrollY = false;
 
-        if (canScrollLeft && distanceX <= 0) {
-            canScrollX = true;
-        } else if (canScrollRight && distanceX >= 0) {
-            canScrollX = true;
-        }
+        canScrollX = canScrollLeft && distanceX <= 0 || canScrollRight && distanceX >= 0;
 
-        if (canScrollTop && distanceY <= 0) {
-            canScrollY = true;
-        } else if (canScrollBottom && distanceY >= 0) {
-            canScrollY = true;
-        }
+        canScrollY = canScrollTop && distanceY <= 0 || canScrollBottom && distanceY >= 0;
 
         if (canScrollX || canScrollY) {
-
-            computator.computeScrollSurfaceSize(surfaceSizeBuffer);
+            chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
 
             float viewportOffsetX = distanceX * visibleViewport.width() / contentRect.width();
             float viewportOffsetY = -distanceY * visibleViewport.height() / contentRect.height();
 
-            computator.setViewportTopLeft(currentViewport.left + viewportOffsetX, currentViewport.top + viewportOffsetY);
+            chartViewportHandler.setViewportTopLeft(currentViewport.left + viewportOffsetX, currentViewport.top + viewportOffsetY);
         }
 
         scrollResult.canScrollX = canScrollX;
@@ -92,8 +85,7 @@ public class ChartScroller {
         int startX = (int) (surfaceSizeBuffer.x * (scrollerStartViewport.left - computator.getMaximumViewport().left) / computator.getMaximumViewport().width());
         int startY = (int) (surfaceSizeBuffer.y * (computator.getMaximumViewport().top - scrollerStartViewport.top) / computator.getMaximumViewport().height());
 
-        // probably should be mScroller.forceFinish but ScrollerCompat doesn't have that method.
-        scroller.abortAnimation();
+        scroller.forceFinished(true);
 
         final int width = computator.getContentRectMinusAllMargins().width();
         final int height = computator.getContentRectMinusAllMargins().height();

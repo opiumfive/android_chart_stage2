@@ -39,9 +39,7 @@ public class DrawingThread extends Thread {
 
             canvas = null;
             try {
-
                 canvas = surfaceHolder.lockCanvas();
-
 
                 if (canvas == null) {
                     Thread.sleep(1);
@@ -53,8 +51,6 @@ public class DrawingThread extends Thread {
                 synchronized (surfaceHolder) {
                     chartCanvasDrawer.drawOn(canvas);
                 }
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

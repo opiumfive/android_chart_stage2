@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
