@@ -7,6 +7,7 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.formatter.AxisValueFormatter;
+import com.opiumfive.telechart.chart.listener.DummyLineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.AxisValue;
@@ -47,15 +48,19 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private void inflateCharts(@Nullable final ChartData chartData) {
         if (chartData == null) return;
 
-        List<PointValue> values = new ArrayList<>(chartData.getColumns().get(0).getList().size());
-        List<PointValue> values2 = new ArrayList<>(chartData.getColumns().get(0).getList().size());
-        List<PointValue> values3 = new ArrayList<>(chartData.getColumns().get(0).getList().size());
-        List<PointValue> values4 = new ArrayList<>(chartData.getColumns().get(0).getList().size());
-        for (int i = 0; i < chartData.getColumns().get(0).getList().size(); i++) {
+        int divider = 1;
+
+        List<PointValue> values = new ArrayList<>(chartData.getColumns().get(0).getList().size() / divider);
+        List<PointValue> values2 = new ArrayList<>(chartData.getColumns().get(0).getList().size() / divider);
+        List<PointValue> values3 = new ArrayList<>(chartData.getColumns().get(0).getList().size() / divider);
+        List<PointValue> values4 = new ArrayList<>(chartData.getColumns().get(0).getList().size() / divider);
+        for (int i = 0; i < chartData.getColumns().get(0).getList().size() / divider; i++) {
             values.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(1).getList().get(i)));
             values2.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(2).getList().get(i)));
-            values3.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(3).getList().get(i)));
-            values4.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(4).getList().get(i)));
+            if (chartData.getColumns().size() > 3) {
+                values3.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(3).getList().get(i)));
+                values4.add(new PointValue(chartData.getColumns().get(0).getList().get(i), chartData.getColumns().get(4).getList().get(i)));
+            }
         }
 
         final Line line = new Line(values);
@@ -64,18 +69,18 @@ public class StatisticsActivity extends ChangeThemeActivity {
         final Line line4 = new Line(values4);
         line.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(1).getTitle())));
         line2.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(2).getTitle())));
-        line3.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(3).getTitle())));
-        line4.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(4).getTitle())));
-        line.setHasPoints(false);
-        line2.setHasPoints(false);
-        line3.setHasPoints(false);
-        line4.setHasPoints(false);
+        if (chartData.getColumns().size() > 3) {
+            line3.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(3).getTitle())));
+            line4.setColor(Color.parseColor(chartData.getColors().get(chartData.getColumns().get(4).getTitle())));
+        }
 
         List<Line> lines = new ArrayList<>();
         lines.add(line);
         lines.add(line2);
-        lines.add(line3);
-        lines.add(line4);
+        if (chartData.getColumns().size() > 3) {
+            lines.add(line3);
+            lines.add(line4);
+        }
 
         data = new LineChartData(lines);
         data.setBaseValue(Float.NEGATIVE_INFINITY);
@@ -97,6 +102,9 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setLineChartData(data);
         chart.setZoomEnabled(false);
         chart.setScrollEnabled(false);
+        chart.setValueSelectionEnabled(true);
+        chart.setValueTouchEnabled(true);
+        chart.setOnValueTouchListener(new DummyLineChartOnValueSelectListener());
 
 
         previewChart.setLineChartData(previewData);

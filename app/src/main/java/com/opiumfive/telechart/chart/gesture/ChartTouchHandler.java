@@ -7,11 +7,10 @@ import android.view.ScaleGestureDetector;
 import android.view.ViewParent;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.computator.ChartComputator;
+import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
-import com.opiumfive.telechart.chart.LineChartView;
 
 public class ChartTouchHandler {
 
@@ -20,7 +19,7 @@ public class ChartTouchHandler {
     protected ChartScroller chartScroller;
     protected ChartZoomer chartZoomer;
     protected ILineChart chart;
-    protected ChartComputator computator;
+    protected ChartViewportHandler computator;
     protected LineChartRenderer renderer;
 
     protected boolean isZoomEnabled = true;
@@ -37,7 +36,7 @@ public class ChartTouchHandler {
 
     public ChartTouchHandler(Context context, ILineChart chart) {
         this.chart = chart;
-        this.computator = chart.getChartComputator();
+        this.computator = chart.getChartViewportHandler();
         this.renderer = chart.getChartRenderer();
         gestureDetector = new GestureDetector(context, new ChartGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(context, new ChartScaleGestureListener());
@@ -46,7 +45,7 @@ public class ChartTouchHandler {
     }
 
     public void resetTouchHandler() {
-        this.computator = chart.getChartComputator();
+        this.computator = chart.getChartViewportHandler();
         this.renderer = chart.getChartRenderer();
     }
 
@@ -222,9 +221,7 @@ public class ChartTouchHandler {
         @Override
         public boolean onDown(MotionEvent e) {
             if (isScrollEnabled) {
-
                 disallowParentInterceptTouchEvent();
-
                 return chartScroller.startScroll(computator);
             }
 
@@ -234,26 +231,18 @@ public class ChartTouchHandler {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            if (isZoomEnabled) {
-                return chartZoomer.startZoom(e, computator);
-            }
-
             return false;
         }
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (isScrollEnabled) {
-                boolean canScroll = chartScroller
-                        .scroll(computator, distanceX, distanceY, scrollResult);
-
+                boolean canScroll = chartScroller.scroll(computator, distanceX, distanceY, scrollResult);
                 allowParentInterceptTouchEvent(scrollResult);
-
                 return canScroll;
             }
 
             return false;
-
         }
 
         @Override

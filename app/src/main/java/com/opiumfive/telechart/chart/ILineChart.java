@@ -1,6 +1,6 @@
 package com.opiumfive.telechart.chart;
 
-import com.opiumfive.telechart.chart.computator.ChartComputator;
+import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewport;
@@ -13,7 +13,7 @@ public interface ILineChart {
     public LineChartRenderer getChartRenderer();
     public void setChartRenderer(LineChartRenderer renderer);
     public AxesRenderer getAxesRenderer();
-    public ChartComputator getChartComputator();
+    public ChartViewportHandler getChartViewportHandler();
     public ChartTouchHandler getTouchHandler();
     public void callTouchListener();
     public void setCurrentViewport(Viewport targetViewport);

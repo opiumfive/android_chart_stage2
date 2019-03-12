@@ -21,7 +21,6 @@ public class Line {
     private int strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
 
-    private boolean hasPoints = false;
     private boolean hasLines = true;
 
     private ValueShape shape = ValueShape.CIRCLE;
@@ -43,7 +42,6 @@ public class Line {
         //this.darkenColor = line.darkenColor;
         this.strokeWidth = line.strokeWidth;
         this.pointRadius = line.pointRadius;
-        this.hasPoints = line.hasPoints;
         this.hasLines = line.hasLines;
         this.shape = line.shape;
         this.formatter = line.formatter;
@@ -112,15 +110,6 @@ public class Line {
 
     public Line setStrokeWidth(int strokeWidth) {
         this.strokeWidth = strokeWidth;
-        return this;
-    }
-
-    public boolean hasPoints() {
-        return hasPoints;
-    }
-
-    public Line setHasPoints(boolean hasPoints) {
-        this.hasPoints = hasPoints;
         return this;
     }
 

@@ -4,8 +4,9 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.v4.widget.ScrollerCompat;
+import android.util.Log;
 
-import com.opiumfive.telechart.chart.computator.ChartComputator;
+import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.model.Viewport;
 
 public class ChartScroller {
@@ -18,13 +19,13 @@ public class ChartScroller {
         scroller = ScrollerCompat.create(context);
     }
 
-    public boolean startScroll(ChartComputator computator) {
+    public boolean startScroll(ChartViewportHandler computator) {
         scroller.abortAnimation();
         scrollerStartViewport.set(computator.getCurrentViewport());
         return true;
     }
 
-    public boolean scroll(ChartComputator computator, float distanceX, float distanceY, ScrollResult scrollResult) {
+    public boolean scroll(ChartViewportHandler computator, float distanceX, float distanceY, ScrollResult scrollResult) {
 
         final Viewport maxViewport = computator.getMaximumViewport();
         final Viewport visibleViewport = computator.getVisibleViewport();
@@ -67,7 +68,7 @@ public class ChartScroller {
         return canScrollX || canScrollY;
     }
 
-    public boolean computeScrollOffset(ChartComputator computator) {
+    public boolean computeScrollOffset(ChartViewportHandler computator) {
         if (scroller.computeScrollOffset()) {
             final Viewport maxViewport = computator.getMaximumViewport();
 
@@ -84,7 +85,7 @@ public class ChartScroller {
         return false;
     }
 
-    public boolean fling(int velocityX, int velocityY, ChartComputator computator) {
+    public boolean fling(int velocityX, int velocityY, ChartViewportHandler computator) {
         computator.computeScrollSurfaceSize(surfaceSizeBuffer);
         scrollerStartViewport.set(computator.getCurrentViewport());
 

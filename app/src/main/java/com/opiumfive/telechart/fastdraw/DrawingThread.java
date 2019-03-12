@@ -16,6 +16,8 @@ public class DrawingThread extends Thread {
         this.surfaceHolder = surfaceHolder;
         this.chartCanvasDrawer = chartCanvasDrawer;
 
+
+
         previousTime = System.currentTimeMillis();
     }
 
@@ -33,7 +35,7 @@ public class DrawingThread extends Thread {
             long elapsedTimeMs = currentTimeMillis - previousTime;
             long sleepTimeMs = (long) (1000f / fps - elapsedTimeMs);
 
-            Log.d("drawing_thread", "elapsedTimeMs = " + elapsedTimeMs + "; sleepTimeMs = " + sleepTimeMs);
+            Log.d("drawing_thread + " + this.getId(), "elapsedTimeMs = " + elapsedTimeMs + "; sleepTimeMs = " + sleepTimeMs);
 
             canvas = null;
             try {

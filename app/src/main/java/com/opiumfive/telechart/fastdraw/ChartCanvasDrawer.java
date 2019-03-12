@@ -3,15 +3,16 @@ package com.opiumfive.telechart.fastdraw;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
-import com.opiumfive.telechart.chart.computator.ChartComputator;
+import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.renderer.AxesRenderer;
 import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
 
 
 public class ChartCanvasDrawer {
 
-    private ChartComputator chartComputator;
+    private ChartViewportHandler chartViewportHandler;
     private AxesRenderer axesRenderer;
     private LineChartRenderer chartRenderer;
 
@@ -20,8 +21,8 @@ public class ChartCanvasDrawer {
         setColor(Color.YELLOW);
     }};
 
-    public ChartCanvasDrawer(ChartComputator chartComputator, AxesRenderer axesRenderer, LineChartRenderer chartRenderer) {
-        this.chartComputator = chartComputator;
+    public ChartCanvasDrawer(ChartViewportHandler chartViewportHandler, AxesRenderer axesRenderer, LineChartRenderer chartRenderer) {
+        this.chartViewportHandler = chartViewportHandler;
         this.axesRenderer = axesRenderer;
         this.chartRenderer = chartRenderer;
     }
@@ -31,7 +32,7 @@ public class ChartCanvasDrawer {
             canvas.drawPaint(paint);
             axesRenderer.drawInForeground(canvas);
             int clipRestoreCount = canvas.save();
-            canvas.clipRect(chartComputator.getContentRectMinusAllMargins());
+            canvas.clipRect(chartViewportHandler.getContentRectMinusAllMargins());
             chartRenderer.draw(canvas);
             canvas.restoreToCount(clipRestoreCount);
             chartRenderer.drawUnclipped(canvas);

@@ -1,8 +1,9 @@
-package com.opiumfive.telechart.chart.computator;
+package com.opiumfive.telechart.chart.renderer;
 
 import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 
-public class PreviewChartComputator extends ChartComputator {
+public class PreviewChartViewportHandler extends ChartViewportHandler {
 
     public float computeRawX(float valueX) {
         final float pixelOffset = (valueX - maxViewport.left) * (contentRectMinusAllMargins.width() / maxViewport.width());
@@ -18,13 +19,8 @@ public class PreviewChartComputator extends ChartComputator {
         return maxViewport;
     }
 
-    public void setVisibleViewport(Viewport visibleViewport) {
-        setMaxViewport(visibleViewport);
-    }
-
     public void constrainViewport(float left, float top, float right, float bottom) {
         super.constrainViewport(left, top, right, bottom);
         viewportChangeListener.onViewportChanged(currentViewport);
     }
-
 }

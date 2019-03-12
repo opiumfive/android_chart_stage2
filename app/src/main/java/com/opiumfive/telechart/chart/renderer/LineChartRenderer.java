@@ -7,13 +7,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Path;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
@@ -24,18 +23,23 @@ import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class LineChartRenderer {
 
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 4;
+    private static final float DEFAULT_MAX_ANGLE_VARIATION = 20f;
 
     private static final int MODE_DRAW = 0;
     private static final int MODE_HIGHLIGHT = 1;
 
+
     public int DEFAULT_LABEL_MARGIN_DP = 4;
     protected ILineChart chart;
-    protected ChartComputator computator;
+    protected ChartViewportHandler computator;
 
     protected Paint labelPaint = new Paint();
     protected Paint labelBackgroundPaint = new Paint();
@@ -50,6 +54,7 @@ public class LineChartRenderer {
     protected int labelMargin;
     protected boolean isValueLabelBackgroundEnabled;
     protected boolean isValueLabelBackgroundAuto;
+    protected float maxAngleVariation = DEFAULT_MAX_ANGLE_VARIATION;
 
     private LineChartDataProvider dataProvider;
 
@@ -58,7 +63,6 @@ public class LineChartRenderer {
     private float baseValue;
 
     private int touchToleranceMargin;
-    private Path path = new Path();
     private Paint linePaint = new Paint();
     private Paint pointPaint = new Paint();
 
@@ -70,7 +74,7 @@ public class LineChartRenderer {
         this.density = context.getResources().getDisplayMetrics().density;
         this.scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         this.chart = chart;
-        this.computator = chart.getChartComputator();
+        this.computator = chart.getChartViewportHandler();
 
         labelMargin = ChartUtils.dp2px(density, DEFAULT_LABEL_MARGIN_DP);
         labelOffset = labelMargin;
@@ -97,6 +101,14 @@ public class LineChartRenderer {
 
         checkPrecision = ChartUtils.dp2px(density, 2);
 
+    }
+
+    public float getMaxAngleVariation() {
+        return maxAngleVariation;
+    }
+
+    public void setMaxAngleVariation(float maxAngleVariation) {
+        this.maxAngleVariation = maxAngleVariation;
     }
 
     public void onChartSizeChanged() {
@@ -146,61 +158,36 @@ public class LineChartRenderer {
     public void draw(Canvas canvas) {
         final LineChartData data = dataProvider.getLineChartData();
 
-        final Canvas drawCanvas;
-
-        if (null != softwareBitmap) {
-            drawCanvas = softwareCanvas;
-            drawCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
-        } else {
-            drawCanvas = canvas;
-        }
-
         for (Line line : data.getLines()) {
             if (line.hasLines()) {
-                drawPath(drawCanvas, line);
+                drawPath(canvas, line);
             }
-        }
-
-        if (null != softwareBitmap) {
-            canvas.drawBitmap(softwareBitmap, 0, 0, null);
         }
     }
 
     public void drawUnclipped(Canvas canvas) {
-        final LineChartData data = dataProvider.getLineChartData();
-        int lineIndex = 0;
-        for (Line line : data.getLines()) {
-            if (checkIfShouldDrawPoints(line)) {
-                drawPoints(canvas, line, lineIndex, MODE_DRAW);
-            }
-            ++lineIndex;
-        }
         if (isTouched()) {
-            // Redraw touched point to bring it to the front
-            highlightPoints(canvas);
+            // TODO draw touched point to bring it to the front
+            //highlightPoint(canvas);
         }
     }
 
-    private boolean checkIfShouldDrawPoints(Line line) {
-        return line.hasPoints() || line.getValues().size() == 1;
-    }
+
 
     public boolean checkTouch(float touchX, float touchY) {
         selectedValue.clear();
         final LineChartData data = dataProvider.getLineChartData();
         int lineIndex = 0;
         for (Line line : data.getLines()) {
-            if (checkIfShouldDrawPoints(line)) {
-                int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
-                int valueIndex = 0;
-                for (PointValue pointValue : line.getValues()) {
-                    final float rawValueX = computator.computeRawX(pointValue.getX());
-                    final float rawValueY = computator.computeRawY(pointValue.getY());
-                    if (isInArea(rawValueX, rawValueY, touchX, touchY, pointRadius + touchToleranceMargin)) {
-                        selectedValue.set(lineIndex, valueIndex, SelectedValueType.LINE);
-                    }
-                    ++valueIndex;
+            int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
+            int valueIndex = 0;
+            for (PointValue pointValue : line.getValues()) {
+                final float rawValueX = computator.computeRawX(pointValue.getX());
+                final float rawValueY = computator.computeRawY(pointValue.getY());
+                if (isInArea(rawValueX, rawValueY, touchX, touchY, pointRadius + touchToleranceMargin)) {
+                    selectedValue.set(lineIndex, valueIndex, SelectedValueType.LINE);
                 }
+                ++valueIndex;
             }
             ++lineIndex;
         }
@@ -235,38 +222,47 @@ public class LineChartRenderer {
         int contentAreaMargin = 0;
         final LineChartData data = dataProvider.getLineChartData();
         for (Line line : data.getLines()) {
-            if (checkIfShouldDrawPoints(line)) {
-                int margin = line.getPointRadius() + DEFAULT_TOUCH_TOLERANCE_MARGIN_DP;
-                if (margin > contentAreaMargin) {
-                    contentAreaMargin = margin;
-                }
+            int margin = line.getPointRadius() + DEFAULT_TOUCH_TOLERANCE_MARGIN_DP;
+            if (margin > contentAreaMargin) {
+                contentAreaMargin = margin;
             }
         }
         return ChartUtils.dp2px(density, contentAreaMargin);
     }
 
+    private float angleBetween(PointValue center, PointValue current, PointValue previous) {
+        return Math.abs(180f - (float) Math.toDegrees(Math.atan2(computator.computeRawX(current.getX()) - computator.computeRawX(center.getX()),
+                computator.computeRawY(current.getY()) - computator.computeRawY(center.getY()))- Math.atan2(computator.computeRawX(previous.getX()) - computator.computeRawX(center.getX()),
+                computator.computeRawY(previous.getY()) - computator.computeRawY(center.getY()))));
+    }
 
     private void drawPath(Canvas canvas, final Line line) {
+
         prepareLinePaint(line);
+        List<PointValue> optimizedList = computator.optimizeLine(line.getValues(), maxAngleVariation);
+        float[] lines = new float[optimizedList.size() * 4];
 
         int valueIndex = 0;
-        for (PointValue pointValue : line.getValues()) {
+        for (PointValue pointValue : optimizedList) {
 
             final float rawX = computator.computeRawX(pointValue.getX());
             final float rawY = computator.computeRawY(pointValue.getY());
 
             if (valueIndex == 0) {
-                path.moveTo(rawX, rawY);
+                lines[valueIndex * 4] = rawX;
+                lines[valueIndex * 4 + 1] = rawY;
             } else {
-                path.lineTo(rawX, rawY);
+                lines[valueIndex * 4] =  lines[valueIndex * 4 - 2];
+                lines[valueIndex * 4 + 1] =  lines[valueIndex * 4 - 1];
             }
 
-            ++valueIndex;
+            lines[valueIndex * 4 + 2] = rawX;
+            lines[valueIndex * 4 + 3] = rawY;
+
+            valueIndex++;
         }
 
-        canvas.drawPath(path, linePaint);
-
-        path.reset();
+        canvas.drawLines(lines, linePaint);
     }
 
     private void prepareLinePaint(final Line line) {
@@ -274,31 +270,9 @@ public class LineChartRenderer {
         linePaint.setColor(line.getColor());
     }
 
-    private void drawPoints(Canvas canvas, Line line, int lineIndex, int mode) {
-        pointPaint.setColor(line.getPointColor());
-        int valueIndex = 0;
-        for (PointValue pointValue : line.getValues()) {
-            int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
-            final float rawX = computator.computeRawX(pointValue.getX());
-            final float rawY = computator.computeRawY(pointValue.getY());
-            if (computator.isWithinContentRect(rawX, rawY, checkPrecision)) {
-                if (MODE_DRAW == mode) {
-                    drawPoint(canvas, line, pointValue, rawX, rawY, pointRadius);
-                    drawLabel(canvas, line, pointValue, rawX, rawY, pointRadius + labelOffset);
-                } else if (MODE_HIGHLIGHT == mode) {
-                    highlightPoint(canvas, line, pointValue, rawX, rawY, lineIndex, valueIndex);
-                } else {
-                    throw new IllegalStateException("Cannot process points in mode: " + mode);
-                }
-            }
-            ++valueIndex;
-        }
-    }
-
     private void drawPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, float pointRadius) {
         if (ValueShape.SQUARE.equals(line.getShape())) {
-            canvas.drawRect(rawX - pointRadius, rawY - pointRadius, rawX + pointRadius, rawY + pointRadius,
-                    pointPaint);
+            canvas.drawRect(rawX - pointRadius, rawY - pointRadius, rawX + pointRadius, rawY + pointRadius, pointPaint);
         } else if (ValueShape.CIRCLE.equals(line.getShape())) {
             canvas.drawCircle(rawX, rawY, pointRadius, pointPaint);
         } else if (ValueShape.DIAMOND.equals(line.getShape())) {
@@ -309,12 +283,6 @@ public class LineChartRenderer {
         } else {
             throw new IllegalArgumentException("Invalid point shape: " + line.getShape());
         }
-    }
-
-    private void highlightPoints(Canvas canvas) {
-        int lineIndex = selectedValue.getFirstIndex();
-        Line line = dataProvider.getLineChartData().getLines().get(lineIndex);
-        drawPoints(canvas, line, lineIndex, MODE_HIGHLIGHT);
     }
 
     private void highlightPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, int lineIndex, int valueIndex) {
@@ -368,8 +336,7 @@ public class LineChartRenderer {
         }
 
         labelBackgroundRect.set(left, top, right, bottom);
-        drawLabelTextAndBackground(canvas, labelBuffer, labelBuffer.length - numChars, numChars,
-                line.getDarkenColor());
+        drawLabelTextAndBackground(canvas, labelBuffer, labelBuffer.length - numChars, numChars, line.getDarkenColor());
     }
 
     private boolean isInArea(float x, float y, float touchX, float touchY, float radius) {
@@ -379,11 +346,10 @@ public class LineChartRenderer {
     }
 
     public void resetRenderer() {
-        this.computator = chart.getChartComputator();
+        this.computator = chart.getChartViewportHandler();
     }
 
-    protected void drawLabelTextAndBackground(Canvas canvas, char[] labelBuffer, int startIndex, int numChars,
-                                              int autoBackgroundColor) {
+    protected void drawLabelTextAndBackground(Canvas canvas, char[] labelBuffer, int startIndex, int numChars, int autoBackgroundColor) {
         final float textX;
         final float textY;
 

@@ -3,12 +3,10 @@ package com.opiumfive.telechart.chart;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import com.opiumfive.telechart.chart.computator.PreviewChartComputator;
+import com.opiumfive.telechart.chart.renderer.PreviewChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.renderer.PreviewLineChartRenderer;
-import com.opiumfive.telechart.fastdraw.FastSurfaceView;
-import com.opiumfive.telechart.fastdraw.FastTextureView;
 
 
 public class PreviewLineChartView extends LineChartView {
@@ -25,7 +23,7 @@ public class PreviewLineChartView extends LineChartView {
 
     public PreviewLineChartView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        chartComputator = new PreviewChartComputator();
+        chartViewportHandler = new PreviewChartViewportHandler();
         previewChartRenderer = new PreviewLineChartRenderer(context, this, this);
         touchHandler = new PreviewChartTouchHandler(context, this);
         setChartRenderer(previewChartRenderer);

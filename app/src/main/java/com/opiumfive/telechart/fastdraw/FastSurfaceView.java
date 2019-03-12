@@ -6,14 +6,13 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.animation.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animation.ChartDataAnimator;
 import com.opiumfive.telechart.chart.animation.ChartViewportAnimator;
-import com.opiumfive.telechart.chart.computator.ChartComputator;
+import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.DummyLineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
@@ -31,7 +30,7 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
     protected LineChartOnValueSelectListener onValueTouchListener = new DummyLineChartOnValueSelectListener();
 
 
-    protected ChartComputator chartComputator;
+    protected ChartViewportHandler chartViewportHandler;
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
@@ -57,7 +56,7 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
         super(context, attrs, defStyleAttr);
         getHolder().addCallback(this);
 
-        chartComputator = new ChartComputator();
+        chartViewportHandler = new ChartViewportHandler();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
         this.viewportAnimator = new ChartViewportAnimator(this);
@@ -66,11 +65,11 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
         setChartRenderer(new LineChartRenderer(context, this, this));
         setLineChartData(LineChartData.generateDummyData());
 
-        chartCanvasDrawer = new ChartCanvasDrawer(chartComputator, axesRenderer, chartRenderer);
+        chartCanvasDrawer = new ChartCanvasDrawer(chartViewportHandler, axesRenderer, chartRenderer);
     }
 
     public void updateCanvasDrawer() {
-        chartCanvasDrawer = new ChartCanvasDrawer(chartComputator, axesRenderer, chartRenderer);
+        chartCanvasDrawer = new ChartCanvasDrawer(chartViewportHandler, axesRenderer, chartRenderer);
     }
 
     @Override
@@ -124,7 +123,7 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
 
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
-        chartComputator.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        chartViewportHandler.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         chartRenderer.onChartSizeChanged();
         axesRenderer.onChartSizeChanged();
     }
@@ -195,7 +194,7 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
     }
 
     public void setViewportChangeListener(ViewportChangeListener viewportChangeListener) {
-        chartComputator.setViewportChangeListener(viewportChangeListener);
+        chartViewportHandler.setViewportChangeListener(viewportChangeListener);
     }
 
     public LineChartRenderer getChartRenderer() {
@@ -212,8 +211,8 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
         return axesRenderer;
     }
 
-    public ChartComputator getChartComputator() {
-        return chartComputator;
+    public ChartViewportHandler getChartViewportHandler() {
+        return chartViewportHandler;
     }
 
     public ChartTouchHandler getTouchHandler() {
@@ -287,11 +286,11 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
     }
 
     public float getMaxZoom() {
-        return chartComputator.getMaxZoom();
+        return chartViewportHandler.getMaxZoom();
     }
 
     public void setMaxZoom(float maxZoom) {
-        chartComputator.setMaxZoom(maxZoom);
+        chartViewportHandler.setMaxZoom(maxZoom);
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
@@ -421,7 +420,7 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
     }
 
     protected void onChartDataChange() {
-        chartComputator.resetContentRect();
+        chartViewportHandler.resetContentRect();
         chartRenderer.onChartDataChanged();
         axesRenderer.onChartDataChanged();
         ViewCompat.postInvalidateOnAnimation(this);

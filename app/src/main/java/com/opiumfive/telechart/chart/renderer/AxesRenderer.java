@@ -10,14 +10,12 @@ import android.graphics.Typeface;
 import android.text.TextUtils;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.computator.ChartComputator;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.AxisValue;
 import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.util.AxisAutoValues;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 import com.opiumfive.telechart.chart.util.FloatUtils;
-import com.opiumfive.telechart.chart.LineChartView;
 
 public class AxesRenderer {
 
@@ -34,7 +32,7 @@ public class AxesRenderer {
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'};
 
     private ILineChart chart;
-    private ChartComputator computator;
+    private ChartViewportHandler computator;
     private int axisMargin;
     private float density;
     private float scaledDensity;
@@ -69,7 +67,7 @@ public class AxesRenderer {
 
     public AxesRenderer(Context context, ILineChart chart) {
         this.chart = chart;
-        computator = chart.getChartComputator();
+        computator = chart.getChartViewportHandler();
         density = context.getResources().getDisplayMetrics().density;
         scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         axisMargin = ChartUtils.dp2px(density, DEFAULT_AXIS_MARGIN_DP);
@@ -100,7 +98,7 @@ public class AxesRenderer {
     }
 
     public void resetRenderer() {
-        this.computator = chart.getChartComputator();
+        this.computator = chart.getChartViewportHandler();
     }
 
     private void initAxis(Axis axis, int position) {
@@ -228,13 +226,13 @@ public class AxesRenderer {
 
     private void insetContentRectWithAxesMargins(int axisMargin, int position) {
         if (LEFT == position) {
-            chart.getChartComputator().insetContentRect(axisMargin, 0, 0, 0);
+            chart.getChartViewportHandler().insetContentRect(axisMargin, 0, 0, 0);
         } else if (RIGHT == position) {
-            chart.getChartComputator().insetContentRect(0, 0, axisMargin, 0);
+            chart.getChartViewportHandler().insetContentRect(0, 0, axisMargin, 0);
         } else if (TOP == position) {
-            chart.getChartComputator().insetContentRect(0, axisMargin, 0, 0);
+            chart.getChartViewportHandler().insetContentRect(0, axisMargin, 0, 0);
         } else if (BOTTOM == position) {
-            chart.getChartComputator().insetContentRect(0, 0, 0, axisMargin);
+            chart.getChartViewportHandler().insetContentRect(0, 0, 0, axisMargin);
         }
     }
 

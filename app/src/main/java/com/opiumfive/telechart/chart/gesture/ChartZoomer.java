@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
-import com.opiumfive.telechart.chart.computator.ChartComputator;
+import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.model.Viewport;
 
 
@@ -21,7 +21,7 @@ public class ChartZoomer {
         zoomer = new ZoomerCompat(context);
     }
 
-    public boolean startZoom(MotionEvent e, ChartComputator computator) {
+    public boolean startZoom(MotionEvent e, ChartViewportHandler computator) {
         zoomer.forceFinished(true);
         scrollerStartViewport.set(computator.getCurrentViewport());
         if (!computator.rawPixelsToDataPoint(e.getX(), e.getY(), zoomFocalPoint)) {
@@ -31,7 +31,7 @@ public class ChartZoomer {
         return true;
     }
 
-    public boolean computeZoom(ChartComputator computator) {
+    public boolean computeZoom(ChartViewportHandler computator) {
         if (zoomer.computeZoom()) {
             final float newWidth = (1.0f - zoomer.getCurrZoom()) * scrollerStartViewport.width();
             final float newHeight = (1.0f - zoomer.getCurrZoom()) * scrollerStartViewport.height();
@@ -48,7 +48,7 @@ public class ChartZoomer {
         return false;
     }
 
-    public boolean scale(ChartComputator computator, float focusX, float focusY, float scale) {
+    public boolean scale(ChartViewportHandler computator, float focusX, float focusY, float scale) {
 
         final float newWidth = scale * computator.getCurrentViewport().width();
         final float newHeight = scale * computator.getCurrentViewport().height();
@@ -64,7 +64,7 @@ public class ChartZoomer {
         return true;
     }
 
-    private void setCurrentViewport(ChartComputator computator, float left, float top, float right, float bottom) {
+    private void setCurrentViewport(ChartViewportHandler computator, float left, float top, float right, float bottom) {
         Viewport currentViewport = computator.getCurrentViewport();
         computator.setCurrentViewport(left, currentViewport.top, right, currentViewport.bottom);
     }
