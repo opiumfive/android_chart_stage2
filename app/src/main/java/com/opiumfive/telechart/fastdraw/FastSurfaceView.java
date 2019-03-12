@@ -1,8 +1,6 @@
 package com.opiumfive.telechart.fastdraw;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -26,7 +24,6 @@ import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.renderer.AxesRenderer;
 import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
-import com.opiumfive.telechart.chart.util.ChartUtils;
 
 public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceHolder.Callback, LineChartDataProvider {
 
@@ -44,7 +41,7 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
     protected boolean isContainerScrollEnabled = false;
 
 
-    private SceneModelComposer sceneComposer;
+    private ChartCanvasDrawer chartCanvasDrawer;
 
     private DrawingThread drawingThread;
 
@@ -59,8 +56,6 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
     public FastSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         getHolder().addCallback(this);
-        //setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
         chartComputator = new ChartComputator();
         touchHandler = new ChartTouchHandler(context, this);
@@ -71,15 +66,11 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
         setChartRenderer(new LineChartRenderer(context, this, this));
         setLineChartData(LineChartData.generateDummyData());
 
-        sceneComposer = new SceneModelComposer(chartComputator, axesRenderer, chartRenderer);
-        invalidate();
+        chartCanvasDrawer = new ChartCanvasDrawer(chartComputator, axesRenderer, chartRenderer);
+    }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                invalidate();
-            }
-        }, 200);
+    public void updateCanvasDrawer() {
+        chartCanvasDrawer = new ChartCanvasDrawer(chartComputator, axesRenderer, chartRenderer);
     }
 
     @Override
@@ -89,10 +80,9 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        drawingThread = new DrawingThread(new SurfaceViewHolder(holder));
+        drawingThread = new DrawingThread(new SurfaceViewHolder(holder), chartCanvasDrawer);
         drawingThread.setRunning(true);
         drawingThread.start();
-        drawingThread.setSceneComposer(sceneComposer);
     }
 
     @Override
@@ -137,22 +127,6 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
         chartComputator.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         chartRenderer.onChartSizeChanged();
         axesRenderer.onChartSizeChanged();
-    }
-
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        if (isEnabled()) {
-            axesRenderer.drawInBackground(canvas);
-            int clipRestoreCount = canvas.save();
-            canvas.clipRect(chartComputator.getContentRectMinusAllMargins());
-            chartRenderer.draw(canvas);
-            canvas.restoreToCount(clipRestoreCount);
-            chartRenderer.drawUnclipped(canvas);
-            axesRenderer.drawInForeground(canvas);
-        } else {
-            canvas.drawColor(ChartUtils.DEFAULT_COLOR);
-        }
     }
 
     public boolean onTouchEvent(MotionEvent event) {

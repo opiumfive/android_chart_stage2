@@ -19,6 +19,6 @@ public class SurfaceViewHolder implements ISurfaceHolder {
 
     @Override
     public Canvas lockCanvas() {
-        return surfaceHolder.lockCanvas();
+        return surfaceHolder.lockCanvas(null);
     }
 }

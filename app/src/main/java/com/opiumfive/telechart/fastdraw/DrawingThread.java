@@ -1,18 +1,20 @@
 package com.opiumfive.telechart.fastdraw;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class DrawingThread extends Thread {
 
-    private SceneModelComposer sceneComposer;
+    private ChartCanvasDrawer chartCanvasDrawer;
 
     final private ISurfaceHolder surfaceHolder;
     private boolean isRunning = false;
     private long previousTime;
-    private final int fps = 70;
+    private final int fps = 60;
 
-    public DrawingThread(ISurfaceHolder surfaceHolder) {
+    public DrawingThread(ISurfaceHolder surfaceHolder, ChartCanvasDrawer chartCanvasDrawer) {
         this.surfaceHolder = surfaceHolder;
+        this.chartCanvasDrawer = chartCanvasDrawer;
 
         previousTime = System.currentTimeMillis();
     }
@@ -29,24 +31,24 @@ public class DrawingThread extends Thread {
 
             long currentTimeMillis = System.currentTimeMillis();
             long elapsedTimeMs = currentTimeMillis - previousTime;
-            long sleepTimeMs = (long) (1000f/ fps - elapsedTimeMs);
+            long sleepTimeMs = (long) (1000f / fps - elapsedTimeMs);
+
+            Log.d("drawing_thread", "elapsedTimeMs = " + elapsedTimeMs + "; sleepTimeMs = " + sleepTimeMs);
 
             canvas = null;
             try {
-
                 canvas = surfaceHolder.lockCanvas();
 
                 if (canvas == null) {
                     Thread.sleep(1);
                     continue;
-                } else if (sleepTimeMs > 0){
+                } else if (sleepTimeMs > 0 && elapsedTimeMs < 16){
                     Thread.sleep(sleepTimeMs);
                 }
 
                 synchronized (surfaceHolder) {
-                    sceneComposer.drawOn(canvas);
+                    chartCanvasDrawer.drawOn(canvas);
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -56,9 +58,5 @@ public class DrawingThread extends Thread {
                 }
             }
         }
-    }
-
-    public void setSceneComposer(SceneModelComposer sceneComposer) {
-        this.sceneComposer = sceneComposer;
     }
 }

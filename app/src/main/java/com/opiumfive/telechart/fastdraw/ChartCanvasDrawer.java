@@ -9,7 +9,7 @@ import com.opiumfive.telechart.chart.renderer.AxesRenderer;
 import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
 
 
-public class SceneModelComposer {
+public class ChartCanvasDrawer {
 
     private ChartComputator chartComputator;
     private AxesRenderer axesRenderer;
@@ -20,7 +20,7 @@ public class SceneModelComposer {
         setColor(Color.YELLOW);
     }};
 
-    public SceneModelComposer(ChartComputator chartComputator, AxesRenderer axesRenderer, LineChartRenderer chartRenderer) {
+    public ChartCanvasDrawer(ChartComputator chartComputator, AxesRenderer axesRenderer, LineChartRenderer chartRenderer) {
         this.chartComputator = chartComputator;
         this.axesRenderer = axesRenderer;
         this.chartRenderer = chartRenderer;
@@ -29,7 +29,6 @@ public class SceneModelComposer {
     public synchronized void drawOn(Canvas canvas) {
         synchronized (paint) {
             canvas.drawPaint(paint);
-
             axesRenderer.drawInForeground(canvas);
             int clipRestoreCount = canvas.save();
             canvas.clipRect(chartComputator.getContentRectMinusAllMargins());

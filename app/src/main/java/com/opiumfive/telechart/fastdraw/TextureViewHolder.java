@@ -19,6 +19,6 @@ public class TextureViewHolder implements ISurfaceHolder {
 
     @Override
     public Canvas lockCanvas() {
-        return textureView.lockCanvas();
+        return textureView.lockCanvas(null);
     }
 }

@@ -24,11 +24,21 @@ public class ChartDataParser {
 
     @Nullable
     public static ChartData loadAndParseInput(@NonNull Context context, int pos) {
+        List<ChartData> charts = loadAndParseInput(context);
+        if (charts != null && charts.size() > pos) {
+            return loadAndParseInput(context).get(pos);
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static List<ChartData> loadAndParseInput(@NonNull Context context) {
         String json = getDataFromJson(context);
         if (TextUtils.isEmpty(json)) {
             return null;
         } else {
-            return parseData(json, pos);
+            return parseData(json);
         }
     }
 
@@ -38,7 +48,7 @@ public class ChartDataParser {
             InputStream is = context.getAssets().open(CHART_DATA_NAME);
             int size = is.available();
             byte[] buffer = new byte[size];
-            is.read(buffer);
+            int bytes = is.read(buffer);
             is.close();
             return new String(buffer, "UTF-8");
         } catch (IOException ex) {
@@ -47,59 +57,67 @@ public class ChartDataParser {
         }
     }
 
-    private static ChartData parseData(@NonNull String json, int position) {
-        ChartData chartData = new ChartData();
+    private static List<ChartData> parseData(@NonNull String json) {
+        List<ChartData> chartDatas = new ArrayList<>();
 
         try {
-            JSONArray obj = new JSONArray(json);
-            JSONObject chart1 = obj.getJSONObject(position);
+            JSONArray fullObject = new JSONArray(json);
 
-            JSONArray columns = chart1.getJSONArray("columns");
-            JSONObject types = chart1.getJSONObject("types");
-            JSONObject names = chart1.getJSONObject("names");
-            JSONObject colors = chart1.getJSONObject("colors");
+            for (int chartNum = 0; chartNum < fullObject.length(); chartNum++) {
+                JSONObject chart = fullObject.getJSONObject(chartNum);
 
-            List<ColumnData> columnsList = new ArrayList<>(columns.length());
+                ChartData chartData = new ChartData();
 
-            for (int i = 0; i < columns.length(); i++) {
-                JSONArray column = columns.getJSONArray(i);
-                ColumnData columnData = new ColumnData();
-                columnData.setTitle(column.getString(0));
-                List<Long> valuesList = new ArrayList<>(column.length() - 1);
-                for (int j = 1; j < column.length(); j++) {
-                    valuesList.add(column.getLong(j));
+                JSONArray columns = chart.getJSONArray("columns");
+                JSONObject types = chart.getJSONObject("types");
+                JSONObject names = chart.getJSONObject("names");
+                JSONObject colors = chart.getJSONObject("colors");
+
+                List<ColumnData> columnsList = new ArrayList<>(columns.length());
+
+                for (int i = 0; i < columns.length(); i++) {
+                    JSONArray column = columns.getJSONArray(i);
+                    ColumnData columnData = new ColumnData();
+                    columnData.setTitle(column.getString(0));
+
+                    List<Long> valuesList = new ArrayList<>(column.length() - 1);
+                    for (int j = 1; j < column.length(); j++) {
+                        valuesList.add(column.getLong(j));
+                    }
+
+                    columnData.setList(valuesList);
+                    columnsList.add(columnData);
                 }
-                columnData.setList(valuesList);
-                columnsList.add(columnData);
-            }
 
-            Map<String, String> typesMap = new HashMap<>(types.names().length());
-            for(Iterator<String> keys = types.keys(); keys.hasNext();) {
-                String key = keys.next();
-                typesMap.put(key, types.getString(key));
-            }
+                Map<String, String> typesMap = new HashMap<>(types.names().length());
+                for(Iterator<String> keys = types.keys(); keys.hasNext();) {
+                    String key = keys.next();
+                    typesMap.put(key, types.getString(key));
+                }
 
-            Map<String, String> namesMap = new HashMap<>(names.names().length());
-            for(Iterator<String> keys = names.keys(); keys.hasNext();) {
-                String key = keys.next();
-                namesMap.put(key, names.getString(key));
-            }
+                Map<String, String> namesMap = new HashMap<>(names.names().length());
+                for(Iterator<String> keys = names.keys(); keys.hasNext();) {
+                    String key = keys.next();
+                    namesMap.put(key, names.getString(key));
+                }
 
-            Map<String, String> colorsMap = new HashMap<>(colors.names().length());
-            for(Iterator<String> keys = colors.keys(); keys.hasNext();) {
-                String key = keys.next();
-                colorsMap.put(key, colors.getString(key));
-            }
+                Map<String, String> colorsMap = new HashMap<>(colors.names().length());
+                for(Iterator<String> keys = colors.keys(); keys.hasNext();) {
+                    String key = keys.next();
+                    colorsMap.put(key, colors.getString(key));
+                }
 
-            chartData.setColors(colorsMap);
-            chartData.setNames(namesMap);
-            chartData.setTypes(typesMap);
-            chartData.setColumns(columnsList);
+                chartData.setColors(colorsMap);
+                chartData.setNames(namesMap);
+                chartData.setTypes(typesMap);
+                chartData.setColumns(columnsList);
+
+                chartDatas.add(chartData);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
-            chartData = null;
         }
 
-        return chartData;
+        return chartDatas;
     }
 }

@@ -18,6 +18,8 @@ import com.opiumfive.telechart.chart.LineChartView;
 import com.opiumfive.telechart.chart.PreviewLineChartView;
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.ChartDataParser;
+import com.opiumfive.telechart.fastdraw.FastSurfaceView;
+import com.opiumfive.telechart.fastdraw.FastTextureView;
 import com.opiumfive.telechart.theming.ChangeThemeActivity;
 
 import java.util.ArrayList;
