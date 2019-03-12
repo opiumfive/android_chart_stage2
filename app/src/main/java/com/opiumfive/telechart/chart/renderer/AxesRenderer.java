@@ -318,14 +318,16 @@ public class AxesRenderer {
             drawAxisLabelsAndName(canvas, axis, LEFT);
         }
 
-        axis = chart.getChartData().getAxisYRight();
-        if (null != axis) {
-            drawAxisLabelsAndName(canvas, axis, RIGHT);
-        }
+
 
         axis = chart.getChartData().getAxisXBottom();
         if (null != axis) {
             drawAxisLabelsAndName(canvas, axis, BOTTOM);
+        }
+
+        axis = chart.getChartData().getAxisYRight();
+        if (null != axis) {
+            drawAxisLabelsAndName(canvas, axis, RIGHT);
         }
 
         axis = chart.getChartData().getAxisXTop();

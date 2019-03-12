@@ -7,6 +7,8 @@ import com.opiumfive.telechart.chart.renderer.PreviewChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.renderer.PreviewLineChartRenderer;
+import com.opiumfive.telechart.fastdraw.FastSurfaceView;
+import com.opiumfive.telechart.fastdraw.FastTextureView;
 
 
 public class PreviewLineChartView extends LineChartView {

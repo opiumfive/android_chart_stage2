@@ -1,6 +1,7 @@
 package com.opiumfive.telechart.fastdraw;
 
 import android.graphics.Canvas;
+import android.os.Build;
 import android.view.SurfaceHolder;
 
 
@@ -19,6 +20,10 @@ public class SurfaceViewHolder implements ISurfaceHolder {
 
     @Override
     public Canvas lockCanvas() {
-        return surfaceHolder.lockCanvas(null);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            return surfaceHolder.lockHardwareCanvas();
+        }else{
+            return surfaceHolder.lockCanvas(null);
+        }
     }
 }

@@ -153,7 +153,7 @@ public class ChangeThemeActivity extends AppCompatActivity {
             View actionView = findViewById(R.id.action_theme);
             int[] location = new int[2];
             actionView.getLocationOnScreen(location);
-            changeTheme(location[0], location[1]);
+            //changeTheme(location[0], location[1]);
             return true;
         }
 

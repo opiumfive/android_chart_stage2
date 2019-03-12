@@ -118,7 +118,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Line> lines = new ArrayList<>();
+                /*List<Line> lines = new ArrayList<>();
 
                 if (checkBox1.isChecked()) {
                     lines.add(line);
@@ -133,7 +133,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 chart.setLineChartData(data);
                 previewChart.setLineChartData(previewData);
 
-                previewX(true);
+                previewX(true);*/
             }
         };
 

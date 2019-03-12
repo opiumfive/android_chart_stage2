@@ -60,6 +60,8 @@ public class FastTextureView extends TextureView implements ILineChart, TextureV
         //setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
+        setOpaque(false);
+
         chartViewportHandler = new ChartViewportHandler();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);

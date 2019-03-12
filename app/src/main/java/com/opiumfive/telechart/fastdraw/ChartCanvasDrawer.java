@@ -18,7 +18,7 @@ public class ChartCanvasDrawer {
 
     private final Paint paint = new Paint() {{
         setStyle(Paint.Style.FILL);
-        setColor(Color.YELLOW);
+        setColor(Color.WHITE);
     }};
 
     public ChartCanvasDrawer(ChartViewportHandler chartViewportHandler, AxesRenderer axesRenderer, LineChartRenderer chartRenderer) {
@@ -28,15 +28,13 @@ public class ChartCanvasDrawer {
     }
 
     public synchronized void drawOn(Canvas canvas) {
-        synchronized (paint) {
-            canvas.drawPaint(paint);
-            axesRenderer.drawInForeground(canvas);
-            int clipRestoreCount = canvas.save();
-            canvas.clipRect(chartViewportHandler.getContentRectMinusAllMargins());
-            chartRenderer.draw(canvas);
-            canvas.restoreToCount(clipRestoreCount);
-            chartRenderer.drawUnclipped(canvas);
-            axesRenderer.drawInForeground(canvas);
-        }
+        canvas.drawPaint(paint);
+        axesRenderer.drawInForeground(canvas);
+        int clipRestoreCount = canvas.save();
+        canvas.clipRect(chartViewportHandler.getContentRectMinusAllMargins());
+        chartRenderer.draw(canvas);
+        canvas.restoreToCount(clipRestoreCount);
+        chartRenderer.drawUnclipped(canvas);
+        axesRenderer.drawInForeground(canvas);
     }
 }
