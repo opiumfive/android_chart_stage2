@@ -42,37 +42,6 @@
             android:paddingRight="@dimen/margin"
             android:layout_height="70dp" />
 
-        <!--
-
-        <android.support.v7.widget.AppCompatCheckBox
-            android:id="@+id/checkbox1"
-            android:layout_width="match_parent"
-            android:text="@string/joined"
-            android:checked="true"
-            app:buttonTint="?attr/joinedColor"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            android:textColor="?attr/textColor"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_height="@dimen/checkbox_height" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="@dimen/divider_margin"
-            android:background="?attr/dividerColor" />
-
-        <android.support.v7.widget.AppCompatCheckBox
-            android:id="@+id/checkbox2"
-            android:layout_width="match_parent"
-            android:text="@string/left"
-            android:checked="true"
-            app:buttonTint="?attr/leftColor"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginStart="@dimen/margin"
-            android:textColor="?attr/textColor"
-            android:layout_height="@dimen/checkbox_height" />-->
-
     </LinearLayout>
 
 </LinearLayout>

@@ -92,34 +92,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewChart.setZoomEnabled(false);
         previewChart.setViewportCalculationEnabled(false);
 
-         /*final AppCompatCheckBox checkBox1 = findViewById(R.id.checkbox1);
-        final AppCompatCheckBox checkBox2 = findViewById(R.id.checkbox2);
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               List<Line> lines = new ArrayList<>();
-
-                if (checkBox1.isChecked()) {
-                    lines.add(line);
-                }
-
-                if (checkBox2.isChecked()) {
-                    lines.add(line2);
-                }
-
-                data.setLines(lines);
-                previewData.setLines(lines);
-                chart.setLineChartData(data);
-                previewChart.setLineChartData(previewData);
-
-                previewX(true);
-            }
-        };
-
-        checkBox1.setOnClickListener(listener);
-        checkBox2.setOnClickListener(listener);*/
-
         previewX(true);
     }
 
