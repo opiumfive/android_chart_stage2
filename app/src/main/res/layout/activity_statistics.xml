@@ -42,6 +42,8 @@
             android:paddingRight="@dimen/margin"
             android:layout_height="70dp" />
 
+        <!--
+
         <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkbox1"
             android:layout_width="match_parent"
@@ -69,7 +71,7 @@
             android:layout_marginLeft="@dimen/margin"
             android:layout_marginStart="@dimen/margin"
             android:textColor="?attr/textColor"
-            android:layout_height="@dimen/checkbox_height" />
+            android:layout_height="@dimen/checkbox_height" />-->
 
     </LinearLayout>
 
