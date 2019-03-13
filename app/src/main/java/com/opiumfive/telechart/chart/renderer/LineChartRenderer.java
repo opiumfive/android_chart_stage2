@@ -1,12 +1,10 @@
 package com.opiumfive.telechart.chart.renderer;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -23,7 +21,6 @@ import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -65,9 +62,8 @@ public class LineChartRenderer {
     private int touchToleranceMargin;
     private Paint linePaint = new Paint();
     private Paint pointPaint = new Paint();
+    private float[] preparedLinesForDraw;
 
-    private Bitmap softwareBitmap;
-    private Canvas softwareCanvas = new Canvas();
     private Viewport tempMaximumViewport = new Viewport();
 
     public LineChartRenderer(Context context, ILineChart chart, LineChartDataProvider dataProvider) {
@@ -103,23 +99,13 @@ public class LineChartRenderer {
 
     }
 
-    public float getMaxAngleVariation() {
-        return maxAngleVariation;
-    }
-
     public void setMaxAngleVariation(float maxAngleVariation) {
         this.maxAngleVariation = maxAngleVariation;
     }
 
     public void onChartSizeChanged() {
         final int internalMargin = calculateContentRectInternalMargin();
-        computator.insetContentRectByInternalMargins(internalMargin, internalMargin,
-                internalMargin, internalMargin);
-        if (computator.getChartWidth() > 0 && computator.getChartHeight() > 0) {
-            softwareBitmap = Bitmap.createBitmap(computator.getChartWidth(), computator.getChartHeight(),
-                    Bitmap.Config.ARGB_8888);
-            softwareCanvas.setBitmap(softwareBitmap);
-        }
+        computator.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
     }
 
     public void onChartDataChanged() {
@@ -158,11 +144,11 @@ public class LineChartRenderer {
     public void draw(Canvas canvas) {
         final LineChartData data = dataProvider.getLineChartData();
 
+
         for (Line line : data.getLines()) {
-            if (line.hasLines()) {
-                drawPath(canvas, line);
-            }
+            drawPath(canvas, line);
         }
+
     }
 
     public void drawUnclipped(Canvas canvas) {
@@ -196,6 +182,7 @@ public class LineChartRenderer {
         tempMaximumViewport.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, Float.MAX_VALUE);
         LineChartData data = dataProvider.getLineChartData();
 
+
         for (Line line : data.getLines()) {
             // Calculate max and min for viewport.
             for (PointValue pointValue : line.getValues()) {
@@ -214,6 +201,8 @@ public class LineChartRenderer {
 
             }
         }
+
+
     }
 
     private int calculateContentRectInternalMargin() {
@@ -228,14 +217,13 @@ public class LineChartRenderer {
         return ChartUtils.dp2px(density, contentAreaMargin);
     }
 
-    private float angleBetween(PointValue center, PointValue current, PointValue previous) {
-        return Math.abs(180f - (float) Math.toDegrees(Math.atan2(computator.computeRawX(current.getX()) - computator.computeRawX(center.getX()),
-                computator.computeRawY(current.getY()) - computator.computeRawY(center.getY()))- Math.atan2(computator.computeRawX(previous.getX()) - computator.computeRawX(center.getX()),
-                computator.computeRawY(previous.getY()) - computator.computeRawY(center.getY()))));
+    private void prepareLinesForDraw() {
+
     }
 
     private void drawPath(Canvas canvas, final Line line) {
 
+        long timeNano = System.nanoTime();
         prepareLinePaint(line);
         List<PointValue> optimizedList = computator.optimizeLine(line.getValues(), maxAngleVariation);
         float[] lines = new float[optimizedList.size() * 4];
@@ -259,8 +247,10 @@ public class LineChartRenderer {
 
             valueIndex++;
         }
+        Log.d("pather", "draw: " + (System.nanoTime() - timeNano));
 
         canvas.drawLines(lines, linePaint);
+
     }
 
     private void prepareLinePaint(final Line line) {

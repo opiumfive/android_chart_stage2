@@ -2,6 +2,7 @@ package com.opiumfive.telechart.chart.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.opiumfive.telechart.chart.formatter.LineChartValueFormatter;
 import com.opiumfive.telechart.chart.formatter.SimpleLineChartValueFormatter;
@@ -27,6 +28,7 @@ public class Line {
 
     private LineChartValueFormatter formatter = new SimpleLineChartValueFormatter();
     private List<PointValue> values = new ArrayList<>();
+    private String id = UUID.randomUUID().toString();
 
     public Line() {
 
@@ -149,5 +151,9 @@ public class Line {
             this.formatter = formatter;
         }
         return this;
+    }
+
+    public String getId() {
+        return id;
     }
 }

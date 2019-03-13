@@ -90,6 +90,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     }
 
     protected void onDraw(Canvas canvas) {
+
         super.onDraw(canvas);
 
         long time = System.currentTimeMillis();
@@ -98,22 +99,12 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
             axesRenderer.drawInBackground(canvas);
             int clipRestoreCount = canvas.save();
             canvas.clipRect(chartViewportHandler.getContentRectMinusAllMargins());
-
             chartRenderer.draw(canvas);
-
             canvas.restoreToCount(clipRestoreCount);
-
             chartRenderer.drawUnclipped(canvas);
-
             axesRenderer.drawInForeground(canvas);
         } else {
             canvas.drawColor(ChartUtils.DEFAULT_COLOR);
-        }
-        if (!(this instanceof PreviewLineChartView)) {
-            long end = System.currentTimeMillis();
-            Log.d("drawing_thread" + this.getId(), "elapsedTimeMs = " + (end - time));
-
-            Log.d("drawing_thread2" + this.getId(), "time = " + end);
         }
     }
 
@@ -141,6 +132,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
 
     @Override
     public void computeScroll() {
+
         super.computeScroll();
         if (isInteractive) {
             if (touchHandler.computeScroll()) {
@@ -242,6 +234,8 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     }
 
     private Viewport computeScrollViewport(float x, float y) {
+
+
         Viewport maxViewport = getMaximumViewport();
         Viewport currentViewport = getCurrentViewport();
         Viewport scrollViewport = new Viewport(currentViewport);
@@ -301,6 +295,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     }
 
     private Viewport computeZoomViewport(float x, float y, float zoomLevel) {
+
         final Viewport maxViewport = getMaximumViewport();
         Viewport zoomViewport = new Viewport(getMaximumViewport());
 
@@ -342,6 +337,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     }
 
     public void setCurrentViewportWithAnimation(Viewport targetViewport) {
+
         if (null != targetViewport) {
             viewportAnimator.cancelAnimation();
             viewportAnimator.startAnimation(getCurrentViewport(), targetViewport);
@@ -362,6 +358,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     }
 
     public void setCurrentViewport(Viewport targetViewport) {
+
         if (null != targetViewport) {
             chartRenderer.setCurrentViewport(targetViewport);
         }

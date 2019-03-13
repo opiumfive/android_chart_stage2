@@ -3,14 +3,12 @@ package com.opiumfive.telechart.chart.renderer;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.opiumfive.telechart.chart.listener.DummyVieportChangeListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.Viewport;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
