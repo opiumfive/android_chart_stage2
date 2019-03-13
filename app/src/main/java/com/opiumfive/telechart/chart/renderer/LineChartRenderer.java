@@ -172,8 +172,6 @@ public class LineChartRenderer {
         }
     }
 
-
-
     public boolean checkTouch(float touchX, float touchY) {
         selectedValue.clear();
         final LineChartData data = dataProvider.getLineChartData();

@@ -106,8 +106,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
             chartRenderer.drawUnclipped(canvas);
 
             axesRenderer.drawInForeground(canvas);
-
-
         } else {
             canvas.drawColor(ChartUtils.DEFAULT_COLOR);
         }
@@ -121,6 +119,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
 
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
+
         if (isInteractive) {
             boolean needInvalidate;
 
