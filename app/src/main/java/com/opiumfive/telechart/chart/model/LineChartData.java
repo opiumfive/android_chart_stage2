@@ -16,8 +16,8 @@ public class LineChartData {
 
     protected Axis axisXBottom;
     protected Axis axisYLeft;
-    protected Axis axisXTop;
-    protected Axis axisYRight;
+
+
     protected int valueLabelTextColor = Color.WHITE;
     protected int valueLabelTextSize = DEFAULT_TEXT_SIZE_SP;
     protected Typeface valueLabelTypeface;
@@ -41,14 +41,8 @@ public class LineChartData {
         if (null != data.axisXBottom) {
             this.axisXBottom = new Axis(data.axisXBottom);
         }
-        if (null != data.axisXTop) {
-            this.axisXTop = new Axis(data.axisXTop);
-        }
         if (null != data.axisYLeft) {
             this.axisYLeft = new Axis(data.axisYLeft);
-        }
-        if (null != data.axisYRight) {
-            this.axisYRight = new Axis(data.axisYRight);
         }
         this.valueLabelTextColor = data.valueLabelTextColor;
         this.valueLabelTextSize = data.valueLabelTextSize;
@@ -123,22 +117,6 @@ public class LineChartData {
 
     public void setAxisYLeft(Axis axisY) {
         this.axisYLeft = axisY;
-    }
-
-    public Axis getAxisXTop() {
-        return axisXTop;
-    }
-
-    public void setAxisXTop(Axis axisX) {
-        this.axisXTop = axisX;
-    }
-
-    public Axis getAxisYRight() {
-        return axisYRight;
-    }
-
-    public void setAxisYRight(Axis axisY) {
-        this.axisYRight = axisY;
     }
 
     public int getValueLabelTextColor() {

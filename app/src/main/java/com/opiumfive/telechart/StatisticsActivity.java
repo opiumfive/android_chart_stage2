@@ -1,8 +1,10 @@
 package com.opiumfive.telechart;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 
@@ -42,7 +44,33 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
 
-        ChartData chartData = ChartDataParser.loadAndParseInput(this, 4);
+        String[] charts = new String[5];
+        charts[0] = "1";
+        charts[1] = "2";
+        charts[2] = "3";
+        charts[3] = "4";
+        charts[4] = "5";
+
+        new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle("Chart number")
+                .setSingleChoiceItems(charts, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        chooseChart(which);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        chooseChart(0);
+                    }
+                }).show();
+    }
+
+    private void chooseChart(int pos) {
+        ChartData chartData = ChartDataParser.loadAndParseInput(this, pos);
         inflateCharts(chartData);
     }
 
@@ -75,9 +103,11 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         data = new LineChartData(lines);
         data.setBaseValue(Float.NEGATIVE_INFINITY);
-        data.setAxisYLeft(new Axis().setHasLines(true));
+        //data.setAxisYLeft(new Axis().setHasLines(true).setHasSeparationLine(false));
+        //data.setAxisXBottom(new Axis().setHasLines(false).setHasSeparationLine(false));
 
         previewData = new LineChartData(data);
+        //previewData.setAxisYLeft(null);
 
         chart.setLineChartData(data);
         chart.setZoomEnabled(false);

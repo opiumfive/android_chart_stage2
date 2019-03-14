@@ -11,7 +11,7 @@ import com.opiumfive.telechart.chart.util.ChartUtils;
 
 public class Line {
 
-    private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
+    private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 1;
     private static final int DEFAULT_POINT_RADIUS_DP = 6;
     public static final int UNINITIALIZED = 0;
 
