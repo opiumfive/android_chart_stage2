@@ -23,9 +23,9 @@ import com.opiumfive.telechart.theming.ThemeHolder;
 
 public class ChangeThemeActivity extends AppCompatActivity {
 
-    private static final String KEY_EXTRA_CIRCULAR_REVEAL = "KEY_EXTRA_CIRCULAR_REVEAL";
-    private static final String KEY_EXTRA_CIRCULAR_REVEAL_X = "KEY_EXTRA_CIRCULAR_REVEAL_X";
-    private static final String KEY_EXTRA_CIRCULAR_REVEAL_Y = "KEY_EXTRA_CIRCULAR_REVEAL_Y ";
+    protected static final String KEY_EXTRA_CIRCULAR_REVEAL = "KEY_EXTRA_CIRCULAR_REVEAL";
+    protected static final String KEY_EXTRA_CIRCULAR_REVEAL_X = "KEY_EXTRA_CIRCULAR_REVEAL_X";
+    protected static final String KEY_EXTRA_CIRCULAR_REVEAL_Y = "KEY_EXTRA_CIRCULAR_REVEAL_Y ";
 
     private View mainView = null;
     private Drawable previousWindowBackground = null;

@@ -18,6 +18,8 @@ public class Line {
     private int color = ChartUtils.DEFAULT_COLOR;
     private int pointColor = UNINITIALIZED;
     private int darkenColor = ChartUtils.DEFAULT_DARKEN_COLOR;
+    private boolean isActive = true;
+    private String title;
 
     private int strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
@@ -155,5 +157,21 @@ public class Line {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

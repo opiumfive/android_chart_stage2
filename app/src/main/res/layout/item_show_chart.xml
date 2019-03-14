@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.AppCompatCheckBox
+    android:id="@+id/checkbox"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:checked="true"
+    android:layout_marginLeft="@dimen/margin"
+    android:layout_marginRight="@dimen/margin"
+    android:textColor="?attr/textColor"
+    android:layout_height="@dimen/checkbox_height" />

@@ -5,4 +5,5 @@
     <string name="followers">Followers</string>
     <string name="joined">Joined</string>
     <string name="left">Left</string>
+    <string name="chart_number">Chart number</string>
 </resources>

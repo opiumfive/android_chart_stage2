@@ -340,7 +340,7 @@ public class AxesRenderer {
             contentRectDimension = contentRect.width();
         }
 
-        int dim = labelDimensionForStepsTab[position] * 2;
+        int dim = labelDimensionForStepsTab[position] * 4;
         if (dim == 0) dim = 1;
         int steps = Math.abs(contentRectDimension) / dim;
 
@@ -442,11 +442,7 @@ public class AxesRenderer {
         float labelX, labelY;
         labelX = labelY = 0;
         boolean isAxisVertical = isAxisVertical(position);
-        if (LEFT == position) {
-            labelX = labelBaselineTab[position];
-        } else if (BOTTOM == position) {
-            labelY = labelBaselineTab[position];
-        }
+
 
         for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
             int charsNumber = 0;

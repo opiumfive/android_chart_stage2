@@ -33,7 +33,7 @@ public class LineChartRenderer {
     private static final int MODE_HIGHLIGHT = 1;
 
 
-    public int DEFAULT_LABEL_MARGIN_DP = 4;
+    public int DEFAULT_LABEL_MARGIN_DP = 0;
     protected ILineChart chart;
     protected ChartViewportHandler computator;
 
