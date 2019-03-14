@@ -21,7 +21,9 @@ import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class LineChartRenderer {
@@ -62,7 +64,6 @@ public class LineChartRenderer {
     private int touchToleranceMargin;
     private Paint linePaint = new Paint();
     private Paint pointPaint = new Paint();
-    private float[] preparedLinesForDraw;
 
     private Viewport tempMaximumViewport = new Viewport();
 
@@ -89,7 +90,9 @@ public class LineChartRenderer {
 
         linePaint.setAntiAlias(true);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeCap(Cap.ROUND);
+        linePaint.setStrokeCap(Cap.BUTT);
+        linePaint.setDither(true);
+        linePaint.setStrokeJoin(Paint.Join.BEVEL);
         linePaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP));
 
         pointPaint.setAntiAlias(true);
@@ -148,7 +151,6 @@ public class LineChartRenderer {
         for (Line line : data.getLines()) {
             drawPath(canvas, line);
         }
-
     }
 
     public void drawUnclipped(Canvas canvas) {
@@ -217,13 +219,7 @@ public class LineChartRenderer {
         return ChartUtils.dp2px(density, contentAreaMargin);
     }
 
-    private void prepareLinesForDraw() {
-
-    }
-
     private void drawPath(Canvas canvas, final Line line) {
-
-        long timeNano = System.nanoTime();
         prepareLinePaint(line);
         List<PointValue> optimizedList = computator.optimizeLine(line.getValues(), maxAngleVariation);
         float[] lines = new float[optimizedList.size() * 4];
@@ -233,6 +229,9 @@ public class LineChartRenderer {
 
             final float rawX = computator.computeRawX(pointValue.getX());
             final float rawY = computator.computeRawY(pointValue.getY());
+
+            //lines[valueIndex * 2] = rawX;
+            //lines[valueIndex * 2 + 1] = rawY;
 
             if (valueIndex == 0) {
                 lines[valueIndex * 4] = rawX;
@@ -247,7 +246,19 @@ public class LineChartRenderer {
 
             valueIndex++;
         }
-        Log.d("pather", "draw: " + (System.nanoTime() - timeNano));
+
+        //canvas.drawLines(lines, 0, lines.length, linePaint);
+        //canvas.drawLines(lines, 2, lines.length - 4, linePaint);
+
+        /*if (count >= 4) {
+            if ((count & 2) != 0) {
+                canvas.drawLines(pointlist, 0, count-2, linePaint);
+                canvas.drawLines(pointlist, 2, count-2, linePaint);
+            } else {
+                canvas.drawLines(pointlist, 0, count, linePaint);
+                canvas.drawLines(pointlist, 2, count - 4, linePaint);
+            }
+        }*/
 
         canvas.drawLines(lines, linePaint);
 
