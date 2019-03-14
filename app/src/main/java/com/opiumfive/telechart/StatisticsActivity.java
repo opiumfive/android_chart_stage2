@@ -35,6 +35,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private PreviewLineChartView previewChart;
     private LineChartData data;
     private LineChartData previewData;
+    private String[] chartNames = {"1", "2", "3", "4", "5"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +45,10 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
 
-        String[] charts = new String[5];
-        charts[0] = "1";
-        charts[1] = "2";
-        charts[2] = "3";
-        charts[3] = "4";
-        charts[4] = "5";
-
         new AlertDialog.Builder(this)
                 .setCancelable(true)
                 .setTitle("Chart number")
-                .setSingleChoiceItems(charts, -1, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(chartNames, -1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
