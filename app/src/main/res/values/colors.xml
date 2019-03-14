@@ -9,7 +9,7 @@
     <color name="labelColor">#96a2aa</color>
     <color name="joinedColor">#68bb68</color>
     <color name="leftColor">#ed685f</color>
-    <color name="previewBackColor">#f5f8f9</color>
+    <color name="previewBackColor">#99f0f0f0</color>
     <color name="previewFrameColor">#dbe7f0</color>
     <color name="itemBackground">#ffffff</color>
     <color name="dividerColor">#e7e7e7</color>
@@ -27,7 +27,7 @@
     <color name="labelColor_Dark">#506372</color>
     <color name="joinedColor_Dark">#68bb68</color>
     <color name="leftColor_Dark">#ed685f</color>
-    <color name="previewBackColor_Dark">#19232e</color>
+    <color name="previewBackColor_Dark">#99151e27</color>
     <color name="previewFrameColor_Dark">#2b4256</color>
     <color name="itemBackground_Dark">#1d2733</color>
     <color name="dividerColor_Dark">#0f1823</color>

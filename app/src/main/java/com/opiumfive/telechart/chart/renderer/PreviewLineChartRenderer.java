@@ -9,23 +9,24 @@ import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
-import com.opiumfive.telechart.chart.LineChartView;
 
 
 public class PreviewLineChartRenderer extends LineChartRenderer {
 
-    private static final int DEFAULT_PREVIEW_TRANSPARENCY = 64;
     private static final int FULL_ALPHA = 255;
-    private static final int DEFAULT_PREVIEW_STROKE_WIDTH_DP = 2;
+    private static final int DEFAULT_PREVIEW_STROKE_WIDTH_DP = 1;
+    private static final int DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP = 4;
     private static final float DEFAULT_MAX_ANGLE_VARIATION = 40f;
+
+    private int backrgroundColor;
+    private int previewColor;
 
     private Paint previewPaint = new Paint();
 
     public PreviewLineChartRenderer(Context context, ILineChart chart, LineChartDataProvider dataProvider) {
         super(context, chart, dataProvider);
         previewPaint.setAntiAlias(false);
-        previewPaint.setColor(Color.LTGRAY);
-        previewPaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP));
+
         setMaxAngleVariation(DEFAULT_MAX_ANGLE_VARIATION);
     }
 
@@ -33,23 +34,40 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     public void drawUnclipped(Canvas canvas) {
         super.drawUnclipped(canvas);
         final Viewport currentViewport = computator.getCurrentViewport();
+        final Viewport maxViewport = computator.getMaximumViewport();
         final float left = computator.computeRawX(currentViewport.left);
         final float top = computator.computeRawY(currentViewport.top);
         final float right = computator.computeRawX(currentViewport.right);
         final float bottom = computator.computeRawY(currentViewport.bottom);
-        previewPaint.setAlpha(DEFAULT_PREVIEW_TRANSPARENCY);
+        final float start = computator.computeRawX(maxViewport.left);
+        final float end = computator.computeRawX(maxViewport.right);
+        previewPaint.setColor(backrgroundColor);
         previewPaint.setStyle(Paint.Style.FILL);
-        canvas.drawRect(left, top, right, bottom, previewPaint);
+        canvas.drawRect(start, top, left - DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, bottom, previewPaint);
+        canvas.drawRect(right + DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, top, end, bottom, previewPaint);
+
+        previewPaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP));
+        previewPaint.setColor(previewColor);
         previewPaint.setStyle(Paint.Style.STROKE);
-        previewPaint.setAlpha(FULL_ALPHA);
         canvas.drawRect(left, top, right, bottom, previewPaint);
+        previewPaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP));
+        canvas.drawLine(left, top - 2, left, bottom + 1, previewPaint);
+        canvas.drawLine(right, top - 2, right, bottom + 1, previewPaint);
     }
 
     public int getPreviewColor() {
-        return previewPaint.getColor();
+        return previewColor;
     }
 
     public void setPreviewColor(int color) {
-        previewPaint.setColor(color);
+        previewColor = color;
+    }
+
+    public int getBackgroundColor() {
+        return backrgroundColor;
+    }
+
+    public void setBackgroundColor(int color) {
+        backrgroundColor = color;
     }
 }

@@ -42,6 +42,15 @@ public class PreviewLineChartView extends LineChartView {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
+    public int getPreviewBackgroundColor() {
+        return previewChartRenderer.getBackgroundColor();
+    }
+
+    public void setPreviewBackgroundColor(int color) {
+        previewChartRenderer.setBackgroundColor(color);
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
     @Override
     public boolean canScrollHorizontally(int direction) {
         final int offset = computeHorizontalScrollOffset();

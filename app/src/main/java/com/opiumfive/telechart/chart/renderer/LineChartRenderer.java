@@ -8,7 +8,6 @@ import android.graphics.Paint.Cap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.util.Log;
 
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Line;
@@ -21,9 +20,7 @@ import com.opiumfive.telechart.chart.model.Viewport;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class LineChartRenderer {
