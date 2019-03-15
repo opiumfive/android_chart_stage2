@@ -89,12 +89,9 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         axesRenderer.onChartSizeChanged();
     }
 
+    @Override
     protected void onDraw(Canvas canvas) {
-
         super.onDraw(canvas);
-
-        long time = System.currentTimeMillis();
-
         if (isEnabled()) {
             axesRenderer.drawInBackground(canvas);
             int clipRestoreCount = canvas.save();
@@ -108,6 +105,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         }
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
 
