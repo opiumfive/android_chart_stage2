@@ -3,33 +3,31 @@ package com.opiumfive.telechart.chart;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import com.opiumfive.telechart.chart.renderer.PreviewChartViewportHandler;
+import com.opiumfive.telechart.chart.render.PreviewChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
-import com.opiumfive.telechart.chart.renderer.PreviewLineChartRenderer;
-import com.opiumfive.telechart.fastdraw.FastSurfaceView;
-import com.opiumfive.telechart.fastdraw.FastTextureView;
+import com.opiumfive.telechart.chart.render.PreviewLineChartRenderer;
 
 
-public class PreviewLineChartView extends LineChartView {
+public class PreviewChartView extends ChartView {
 
     protected PreviewLineChartRenderer previewChartRenderer;
 
-    public PreviewLineChartView(Context context) {
+    public PreviewChartView(Context context) {
         this(context, null, 0);
     }
 
-    public PreviewLineChartView(Context context, AttributeSet attrs) {
+    public PreviewChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PreviewLineChartView(Context context, AttributeSet attrs, int defStyle) {
+    public PreviewChartView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         chartViewportHandler = new PreviewChartViewportHandler();
         previewChartRenderer = new PreviewLineChartRenderer(context, this, this);
         touchHandler = new PreviewChartTouchHandler(context, this);
         setChartRenderer(previewChartRenderer);
-        setLineChartData(LineChartData.generateDummyData());
+        setChartData(LineChartData.generateDummyData());
         //updateCanvasDrawer();
     }
 

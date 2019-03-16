@@ -14,15 +14,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 
-import com.opiumfive.telechart.chart.formatter.DateValueFormatter;
+import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
+import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.LineChartView;
-import com.opiumfive.telechart.chart.PreviewLineChartView;
+import com.opiumfive.telechart.chart.ChartView;
+import com.opiumfive.telechart.chart.PreviewChartView;
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.ChartDataParser;
 import com.opiumfive.telechart.data.ColumnData;
@@ -35,8 +36,8 @@ import static com.opiumfive.telechart.GlobalConst.INITIAL_PREVIEW_SCALE;
 
 public class StatisticsActivity extends ChangeThemeActivity {
 
-    private LineChartView chart;
-    private PreviewLineChartView previewChart;
+    private ChartView chart;
+    private PreviewChartView previewChart;
     private RecyclerView checkboxList;
     private LineChartData data;
     private LineChartData previewData;
@@ -161,14 +162,25 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewData.setAxisYLeft(null);
         previewData.setAxisXBottom(null);
 
-        chart.setLineChartData(data);
+        chart.setChartData(data);
         chart.setZoomEnabled(false);
         chart.setScrollEnabled(false);
         chart.setValueSelectionEnabled(true);
         chart.setValueTouchEnabled(true);
+        chart.setOnValueTouchListener(new LineChartOnValueSelectListener() {
+            @Override
+            public void onValueSelected(int lineIndex, int pointIndex, PointValue value) {
+
+            }
+
+            @Override
+            public void onValueDeselected() {
+
+            }
+        });
 
 
-        previewChart.setLineChartData(previewData);
+        previewChart.setChartData(previewData);
         previewChart.setViewportChangeListener(new ViewportListener());
         previewChart.setZoomEnabled(false);
         previewChart.setViewportCalculationEnabled(false);

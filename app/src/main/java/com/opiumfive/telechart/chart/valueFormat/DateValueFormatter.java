@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.formatter;
+package com.opiumfive.telechart.chart.valueFormat;
 
 public class DateValueFormatter implements AxisValueFormatter {
 

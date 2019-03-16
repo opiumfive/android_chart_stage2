@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.renderer;
+package com.opiumfive.telechart.chart.render;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -15,9 +15,8 @@ import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.model.SelectedValue.SelectedValueType;
-import com.opiumfive.telechart.chart.model.ValueShape;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.LineChartDataProvider;
+import com.opiumfive.telechart.chart.ChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
 import java.util.List;
@@ -28,10 +27,6 @@ public class LineChartRenderer {
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 4;
     private static final float DEFAULT_MAX_ANGLE_VARIATION = 5f;
-
-    private static final int MODE_DRAW = 0;
-    private static final int MODE_HIGHLIGHT = 1;
-
 
     public int DEFAULT_LABEL_MARGIN_DP = 0;
     protected ILineChart chart;
@@ -52,7 +47,7 @@ public class LineChartRenderer {
     protected boolean isValueLabelBackgroundAuto;
     protected float maxAngleVariation = DEFAULT_MAX_ANGLE_VARIATION;
 
-    private LineChartDataProvider dataProvider;
+    private ChartDataProvider dataProvider;
 
     private int checkPrecision;
 
@@ -64,7 +59,7 @@ public class LineChartRenderer {
 
     private Viewport tempMaximumViewport = new Viewport();
 
-    public LineChartRenderer(Context context, ILineChart chart, LineChartDataProvider dataProvider) {
+    public LineChartRenderer(Context context, ILineChart chart, ChartDataProvider dataProvider) {
         this.density = context.getResources().getDisplayMetrics().density;
         this.scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         this.chart = chart;
@@ -128,7 +123,7 @@ public class LineChartRenderer {
 
         final int internalMargin = calculateContentRectInternalMargin();
         computator.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
-        baseValue = dataProvider.getLineChartData().getBaseValue();
+        baseValue = dataProvider.getChartData().getBaseValue();
 
         onChartViewportChanged();
     }
@@ -142,7 +137,7 @@ public class LineChartRenderer {
     }
 
     public void draw(Canvas canvas) {
-        final LineChartData data = dataProvider.getLineChartData();
+        final LineChartData data = dataProvider.getChartData();
 
 
         for (Line line : data.getLines()) {
@@ -152,14 +147,29 @@ public class LineChartRenderer {
 
     public void drawUnclipped(Canvas canvas) {
         if (isTouched()) {
-            // TODO draw touched point to bring it to the front
-            //highlightPoint(canvas);
+            int lineIndex = selectedValue.getFirstIndex();
+            Line line = dataProvider.getChartData().getLines().get(lineIndex);
+            drawPoints(canvas, line, lineIndex);
+        }
+    }
+
+    private void drawPoints(Canvas canvas, Line line, int lineIndex) {
+        pointPaint.setColor(line.getPointColor());
+        int valueIndex = 0;
+        for (PointValue pointValue : line.getValues()) {
+
+            final float rawX = computator.computeRawX(pointValue.getX());
+            final float rawY = computator.computeRawY(pointValue.getY());
+
+            highlightPoint(canvas, line, pointValue, rawX, rawY, lineIndex, valueIndex);
+
+            ++valueIndex;
         }
     }
 
     public boolean checkTouch(float touchX, float touchY) {
         selectedValue.clear();
-        final LineChartData data = dataProvider.getLineChartData();
+        final LineChartData data = dataProvider.getChartData();
         int lineIndex = 0;
         for (Line line : data.getLines()) {
             if (!line.isActive()) continue;
@@ -180,12 +190,10 @@ public class LineChartRenderer {
 
     private void calculateMaxViewport() {
         tempMaximumViewport.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, Float.MAX_VALUE);
-        LineChartData data = dataProvider.getLineChartData();
-
+        LineChartData data = dataProvider.getChartData();
 
         for (Line line : data.getLines()) {
             if (!line.isActive()) continue;
-            // Calculate max and min for viewport.
             for (PointValue pointValue : line.getValues()) {
                 if (pointValue.getX() < tempMaximumViewport.left) {
                     tempMaximumViewport.left = pointValue.getX();
@@ -199,7 +207,6 @@ public class LineChartRenderer {
                 if (pointValue.getY() > tempMaximumViewport.top) {
                     tempMaximumViewport.top = pointValue.getY();
                 }
-
             }
         }
 
@@ -208,7 +215,7 @@ public class LineChartRenderer {
 
     private int calculateContentRectInternalMargin() {
         int contentAreaMargin = 0;
-        final LineChartData data = dataProvider.getLineChartData();
+        final LineChartData data = dataProvider.getChartData();
         for (Line line : data.getLines()) {
             if (!line.isActive()) continue;
             int margin = line.getPointRadius() + DEFAULT_TOUCH_TOLERANCE_MARGIN_DP;
@@ -230,9 +237,6 @@ public class LineChartRenderer {
             final float rawX = computator.computeRawX(pointValue.getX());
             final float rawY = computator.computeRawY(pointValue.getY());
 
-            //lines[valueIndex * 2] = rawX;
-            //lines[valueIndex * 2 + 1] = rawY;
-
             if (valueIndex == 0) {
                 lines[valueIndex * 4] = rawX;
                 lines[valueIndex * 4 + 1] = rawY;
@@ -247,21 +251,7 @@ public class LineChartRenderer {
             valueIndex++;
         }
 
-        //canvas.drawLines(lines, 0, lines.length, linePaint);
-        //canvas.drawLines(lines, 2, lines.length - 4, linePaint);
-
-        /*if (count >= 4) {
-            if ((count & 2) != 0) {
-                canvas.drawLines(pointlist, 0, count-2, linePaint);
-                canvas.drawLines(pointlist, 2, count-2, linePaint);
-            } else {
-                canvas.drawLines(pointlist, 0, count, linePaint);
-                canvas.drawLines(pointlist, 2, count - 4, linePaint);
-            }
-        }*/
-
         canvas.drawLines(lines, linePaint);
-
     }
 
     private void prepareLinePaint(final Line line) {
@@ -270,18 +260,7 @@ public class LineChartRenderer {
     }
 
     private void drawPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, float pointRadius) {
-        if (ValueShape.SQUARE.equals(line.getShape())) {
-            canvas.drawRect(rawX - pointRadius, rawY - pointRadius, rawX + pointRadius, rawY + pointRadius, pointPaint);
-        } else if (ValueShape.CIRCLE.equals(line.getShape())) {
-            canvas.drawCircle(rawX, rawY, pointRadius, pointPaint);
-        } else if (ValueShape.DIAMOND.equals(line.getShape())) {
-            canvas.save();
-            canvas.rotate(45, rawX, rawY);
-            canvas.drawRect(rawX - pointRadius, rawY - pointRadius, rawX + pointRadius, rawY + pointRadius, pointPaint);
-            canvas.restore();
-        } else {
-            throw new IllegalArgumentException("Invalid point shape: " + line.getShape());
-        }
+        canvas.drawCircle(rawX, rawY, pointRadius, pointPaint);
     }
 
     private void highlightPoint(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, int lineIndex, int valueIndex) {

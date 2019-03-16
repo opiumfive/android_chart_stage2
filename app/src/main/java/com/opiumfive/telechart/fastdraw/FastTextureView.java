@@ -9,10 +9,10 @@ import android.view.TextureView;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.LineChartDataProvider;
+import com.opiumfive.telechart.chart.ChartDataProvider;
 import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
 import com.opiumfive.telechart.chart.listener.ChartViewportAnimator;
-import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
@@ -20,11 +20,11 @@ import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.renderer.AxesRenderer;
-import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
+import com.opiumfive.telechart.chart.render.AxesRenderer;
+import com.opiumfive.telechart.chart.render.LineChartRenderer;
 
 
-public class FastTextureView extends TextureView implements ILineChart, TextureView.SurfaceTextureListener, LineChartDataProvider {
+public class FastTextureView extends TextureView implements ILineChart, TextureView.SurfaceTextureListener, ChartDataProvider {
 
     protected LineChartData data;
     protected LineChartOnValueSelectListener onValueTouchListener;
@@ -65,7 +65,7 @@ public class FastTextureView extends TextureView implements ILineChart, TextureV
         this.viewportAnimator = new ChartViewportAnimator(this);
 
         setChartRenderer(new LineChartRenderer(context, this, this));
-        setLineChartData(LineChartData.generateDummyData());
+        setChartData(LineChartData.generateDummyData());
 
         chartCanvasDrawer = new ChartCanvasDrawer(chartViewportHandler, axesRenderer, chartRenderer);
     }
@@ -109,12 +109,12 @@ public class FastTextureView extends TextureView implements ILineChart, TextureV
     }
 
     @Override
-    public LineChartData getLineChartData() {
+    public LineChartData getChartData() {
         return data;
     }
 
     @Override
-    public void setLineChartData(LineChartData data) {
+    public void setChartData(LineChartData data) {
 
         if (null == data) {
             this.data = LineChartData.generateDummyData();

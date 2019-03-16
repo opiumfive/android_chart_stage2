@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.renderer;
+package com.opiumfive.telechart.chart.render;
 
 import android.graphics.Point;
 import android.graphics.PointF;

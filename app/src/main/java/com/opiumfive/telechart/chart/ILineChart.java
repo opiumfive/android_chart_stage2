@@ -1,11 +1,11 @@
 package com.opiumfive.telechart.chart;
 
-import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.renderer.AxesRenderer;
-import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
+import com.opiumfive.telechart.chart.render.AxesRenderer;
+import com.opiumfive.telechart.chart.render.LineChartRenderer;
 
 public interface ILineChart {
 

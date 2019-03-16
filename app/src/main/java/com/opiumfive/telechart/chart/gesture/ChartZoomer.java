@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
-import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.model.Viewport;
 
 

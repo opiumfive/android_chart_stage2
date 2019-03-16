@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.renderer;
+package com.opiumfive.telechart.chart.render;
 
 import com.opiumfive.telechart.chart.model.PointValue;
 

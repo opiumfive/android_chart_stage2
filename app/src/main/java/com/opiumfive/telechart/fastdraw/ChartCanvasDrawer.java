@@ -3,11 +3,10 @@ package com.opiumfive.telechart.fastdraw;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
-import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
-import com.opiumfive.telechart.chart.renderer.AxesRenderer;
-import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
+import com.opiumfive.telechart.chart.render.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.AxesRenderer;
+import com.opiumfive.telechart.chart.render.LineChartRenderer;
 
 
 public class ChartCanvasDrawer {

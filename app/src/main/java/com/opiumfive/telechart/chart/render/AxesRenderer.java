@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.renderer;
+package com.opiumfive.telechart.chart.render;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -17,7 +17,7 @@ import com.opiumfive.telechart.chart.util.FloatUtils;
 
 public class AxesRenderer {
 
-    private static final int DEFAULT_AXIS_MARGIN_DP = 2;
+    private static final int DEFAULT_AXIS_MARGIN_DP = 0;
     private static final int LEFT = 1;
     private static final int BOTTOM = 3;
 
@@ -314,7 +314,7 @@ public class AxesRenderer {
             charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
 
             if (isAxisVertical) {
-                labelY = rawValuesTab[position][valueToDrawIndex];
+                labelY = rawValuesTab[position][valueToDrawIndex] - ChartUtils.dp2px(density, 4);
             } else {
                 labelX = rawValuesTab[position][valueToDrawIndex];
             }

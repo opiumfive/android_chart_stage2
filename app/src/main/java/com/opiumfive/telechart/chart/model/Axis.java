@@ -2,8 +2,8 @@ package com.opiumfive.telechart.chart.model;
 
 import android.graphics.Color;
 
-import com.opiumfive.telechart.chart.formatter.AxisValueFormatter;
-import com.opiumfive.telechart.chart.formatter.DefaultAxisValueFormatter;
+import com.opiumfive.telechart.chart.valueFormat.AxisValueFormatter;
+import com.opiumfive.telechart.chart.valueFormat.DefaultAxisValueFormatter;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
 public class Axis {

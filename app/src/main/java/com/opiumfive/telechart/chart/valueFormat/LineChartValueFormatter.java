@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.formatter;
+package com.opiumfive.telechart.chart.valueFormat;
 
 
 import com.opiumfive.telechart.chart.model.PointValue;

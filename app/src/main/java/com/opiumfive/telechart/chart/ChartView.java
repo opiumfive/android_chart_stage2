@@ -9,7 +9,7 @@ import android.view.View;
 
 import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
 import com.opiumfive.telechart.chart.listener.ChartViewportAnimator;
-import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
@@ -17,12 +17,12 @@ import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.SelectedValue;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.renderer.AxesRenderer;
-import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
+import com.opiumfive.telechart.chart.render.AxesRenderer;
+import com.opiumfive.telechart.chart.render.LineChartRenderer;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
 
-public class LineChartView extends View implements ILineChart, LineChartDataProvider {
+public class ChartView extends View implements ILineChart, ChartDataProvider {
 
     protected LineChartData data;
     protected LineChartOnValueSelectListener onValueTouchListener;
@@ -36,15 +36,15 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     protected boolean isInteractive = true;
     protected boolean isContainerScrollEnabled = false;
 
-    public LineChartView(Context context) {
+    public ChartView(Context context) {
         this(context, null, 0);
     }
 
-    public LineChartView(Context context, AttributeSet attrs) {
+    public ChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LineChartView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
         chartViewportHandler = new ChartViewportHandler();
@@ -53,16 +53,16 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         this.viewportAnimator = new ChartViewportAnimator(this);
 
         setChartRenderer(new LineChartRenderer(context, this, this));
-        setLineChartData(LineChartData.generateDummyData());
+        setChartData(LineChartData.generateDummyData());
     }
 
     @Override
-    public LineChartData getLineChartData() {
+    public LineChartData getChartData() {
         return data;
     }
 
     @Override
-    public void setLineChartData(LineChartData data) {
+    public void setChartData(LineChartData data) {
 
         if (null == data) {
             this.data = LineChartData.generateDummyData();

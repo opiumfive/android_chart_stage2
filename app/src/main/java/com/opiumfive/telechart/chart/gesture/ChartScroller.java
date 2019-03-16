@@ -5,7 +5,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.widget.Scroller;
 
-import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.model.Viewport;
 
 public class ChartScroller {

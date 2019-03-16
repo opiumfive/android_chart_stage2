@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.opiumfive.telechart.chart.formatter.LineChartValueFormatter;
-import com.opiumfive.telechart.chart.formatter.SimpleLineChartValueFormatter;
+import com.opiumfive.telechart.chart.valueFormat.LineChartValueFormatter;
+import com.opiumfive.telechart.chart.valueFormat.SimpleLineChartValueFormatter;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
 
@@ -26,8 +26,6 @@ public class Line {
 
     private boolean hasLines = true;
 
-    private ValueShape shape = ValueShape.CIRCLE;
-
     private LineChartValueFormatter formatter = new SimpleLineChartValueFormatter();
     private List<PointValue> values = new ArrayList<>();
     private String id = UUID.randomUUID().toString();
@@ -46,7 +44,6 @@ public class Line {
         this.strokeWidth = line.strokeWidth;
         this.pointRadius = line.pointRadius;
         this.hasLines = line.hasLines;
-        this.shape = line.shape;
         this.formatter = line.formatter;
 
         for (PointValue pointValue : line.values) {
@@ -131,15 +128,6 @@ public class Line {
 
     public Line setPointRadius(int pointRadius) {
         this.pointRadius = pointRadius;
-        return this;
-    }
-
-    public ValueShape getShape() {
-        return shape;
-    }
-
-    public Line setShape(ValueShape shape) {
-        this.shape = shape;
         return this;
     }
 

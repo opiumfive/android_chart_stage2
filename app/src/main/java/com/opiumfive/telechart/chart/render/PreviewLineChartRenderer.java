@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.renderer;
+package com.opiumfive.telechart.chart.render;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,7 +6,7 @@ import android.graphics.Paint;
 
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.LineChartDataProvider;
+import com.opiumfive.telechart.chart.ChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
 
@@ -21,7 +21,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
 
     private Paint previewPaint = new Paint();
 
-    public PreviewLineChartRenderer(Context context, ILineChart chart, LineChartDataProvider dataProvider) {
+    public PreviewLineChartRenderer(Context context, ILineChart chart, ChartDataProvider dataProvider) {
         super(context, chart, dataProvider);
         previewPaint.setAntiAlias(false);
 
