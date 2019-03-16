@@ -86,6 +86,10 @@ public class Viewport implements Parcelable {
         bottom += dy;
     }
 
+    public void setLeft(float left) {
+        this.left = left;
+    }
+
     public boolean contains(float x, float y) {
         return left < right && bottom < top && x >= left && x < right && y >= bottom && y < top;
     }

@@ -10,17 +10,14 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
-import android.view.View;
 
-import com.opiumfive.telechart.chart.formatter.AxisValueFormatter;
+import com.opiumfive.telechart.chart.formatter.SimpleAxisValueFormatter;
 import com.opiumfive.telechart.chart.listener.DummyLineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
-import com.opiumfive.telechart.chart.model.AxisValue;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
@@ -30,14 +27,14 @@ import com.opiumfive.telechart.chart.PreviewLineChartView;
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.ChartDataParser;
 import com.opiumfive.telechart.data.ColumnData;
-import com.opiumfive.telechart.fastdraw.FastSurfaceView;
-import com.opiumfive.telechart.fastdraw.FastTextureView;
 import com.opiumfive.telechart.theming.ChangeThemeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsActivity extends ChangeThemeActivity {
+
+    private static final float INITIAL_PREVIEW_SCALE = 0.3f;
 
     private LineChartView chart;
     private PreviewLineChartView previewChart;
@@ -104,17 +101,14 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private void inflateChart(@Nullable ChartData chartData) {
         if (chartData == null) return;
 
-        // TODO rm divider
-        int divider = 1;
-
         List<List<PointValue>> plotsValuesList = new ArrayList<>(chartData.getColumns().size() - 1);
 
         ColumnData xValuesData = chartData.getColumns().get(0);
         for (int columnIndex = 1; columnIndex < chartData.getColumns().size(); columnIndex++) {
             ColumnData yValuesData = chartData.getColumns().get(columnIndex);
-            List<PointValue> values = new ArrayList<>(yValuesData.getList().size() / divider);
+            List<PointValue> values = new ArrayList<>(yValuesData.getList().size());
 
-            for (int i = 0; i < chartData.getColumns().get(0).getList().size() / divider; i++) {
+            for (int i = 0; i < chartData.getColumns().get(0).getList().size(); i++) {
                 values.add(new PointValue(xValuesData.getList().get(i), yValuesData.getList().get(i)));
             }
 
@@ -134,7 +128,16 @@ public class StatisticsActivity extends ChangeThemeActivity {
             @Override
             public void onLineToggle(int position) {
                 Line line = lines.get(position);
-                //TODO logic
+                line.setActive(!line.isActive());
+
+                chart.onChartDataChange();
+                previewChart.onChartDataChange();
+
+                Viewport tempViewport = new Viewport(chart.getMaximumViewport());
+                float dx = tempViewport.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
+                tempViewport.inset(dx, 0);
+
+                previewChart.setCurrentViewportWithAnimation(tempViewport);
             }
         });
         checkboxList.setAdapter(showLineAdapter);
@@ -142,16 +145,22 @@ public class StatisticsActivity extends ChangeThemeActivity {
         data = new LineChartData(lines);
         data.setBaseValue(Float.NEGATIVE_INFINITY);
         data.setAxisYLeft(
-                new Axis()
-                    .setHasLines(true)
-                    .setHasSeparationLine(false)
-                    .setLineColor(getColorFromAttr(this, R.attr.dividerColor))
-                    .setTextColor(getColorFromAttr(this, R.attr.labelColor))
+            new Axis()
+                .setHasLines(true)
+                .setHasSeparationLine(false)
+                .setLineColor(getColorFromAttr(this, R.attr.dividerColor))
+                .setTextColor(getColorFromAttr(this, R.attr.labelColor))
         );
-        //data.setAxisXBottom(new Axis().setHasLines(false).setHasSeparationLine(false));
+        data.setAxisXBottom(
+            new Axis()
+                .setFormatter(new SimpleAxisValueFormatter().setAppendedText("km".toCharArray()))
+                .setInside(false)
+                .setTextColor(getColorFromAttr(this, R.attr.labelColor))
+        );
 
         previewData = new LineChartData(data);
         previewData.setAxisYLeft(null);
+        previewData.setAxisXBottom(null);
 
         chart.setLineChartData(data);
         chart.setZoomEnabled(false);
@@ -168,7 +177,11 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
         previewChart.setPreviewBackgroundColor(getColorFromAttr(this, R.attr.previewBackColor));
 
-        previewX(true);
+        Viewport tempViewport = new Viewport(chart.getMaximumViewport());
+        float dx = tempViewport.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
+        tempViewport.inset(dx, 0);
+
+        previewChart.setCurrentViewport(tempViewport);
     }
 
     private class ViewportListener implements ViewportChangeListener {
@@ -187,16 +200,5 @@ public class StatisticsActivity extends ChangeThemeActivity {
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(resId, typedValue, true);
         return typedValue.data;
-    }
-
-    private void previewX(boolean animate) {
-        Viewport tempViewport = new Viewport(chart.getMaximumViewport());
-        float dx = tempViewport.width() / 3;
-        tempViewport.inset(dx, 0);
-        if (animate) {
-            previewChart.setCurrentViewportWithAnimation(tempViewport);
-        } else {
-            previewChart.setCurrentViewport(tempViewport);
-        }
     }
 }

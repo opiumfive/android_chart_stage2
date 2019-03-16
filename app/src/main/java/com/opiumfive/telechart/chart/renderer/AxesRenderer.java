@@ -87,6 +87,7 @@ public class AxesRenderer {
 
     private void onChartDataOrSizeChanged() {
         initAxis(chart.getChartData().getAxisYLeft(), LEFT);
+        initAxis(chart.getChartData().getAxisXBottom(), BOTTOM);
     }
 
     public void resetRenderer() {
@@ -237,10 +238,11 @@ public class AxesRenderer {
             prepareAxisToDraw(axis, LEFT);
             drawAxisLines(canvas, axis, LEFT);
         }
-        Axis axisBot = chart.getChartData().getAxisXBottom();
-        if (null != axisBot) {
-            prepareAxisToDraw(axisBot, BOTTOM);
-            drawAxisLines(canvas, axisBot, BOTTOM);
+
+        axis = chart.getChartData().getAxisXBottom();
+        if (null != axis) {
+            prepareAxisToDraw(axis, BOTTOM);
+            drawAxisLines(canvas, axis, BOTTOM);
         }
     }
 
@@ -257,9 +259,10 @@ public class AxesRenderer {
         if (null != axis) {
             drawAxisLabels(canvas, axis, LEFT);
         }
-        Axis axisBot = chart.getChartData().getAxisXBottom();
-        if (null != axisBot) {
-            drawAxisLabels(canvas, axisBot, BOTTOM);
+
+        axis = chart.getChartData().getAxisXBottom();
+        if (null != axis) {
+            drawAxisLabels(canvas, axis, BOTTOM);
         }
     }
 
@@ -442,6 +445,11 @@ public class AxesRenderer {
         float labelX, labelY;
         labelX = labelY = 0;
         boolean isAxisVertical = isAxisVertical(position);
+        if (LEFT == position) {
+            labelX = labelBaselineTab[position];
+        } else if (BOTTOM == position) {
+            labelY = labelBaselineTab[position];
+        }
 
 
         for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {

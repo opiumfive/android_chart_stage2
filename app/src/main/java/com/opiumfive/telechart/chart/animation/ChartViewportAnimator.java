@@ -53,8 +53,7 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
         float diffTop = (targetViewport.top - startViewport.top) * scale;
         float diffRight = (targetViewport.right - startViewport.right) * scale;
         float diffBottom = (targetViewport.bottom - startViewport.bottom) * scale;
-        newViewport.set(startViewport.left + diffLeft, startViewport.top + diffTop, startViewport.right + diffRight,
-                startViewport.bottom + diffBottom);
+        newViewport.set(startViewport.left + diffLeft, startViewport.top + diffTop, startViewport.right + diffRight, startViewport.bottom + diffBottom);
         chart.setCurrentViewport(newViewport);
     }
 

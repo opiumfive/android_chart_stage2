@@ -11,7 +11,6 @@ import android.view.View;
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.LineChartDataProvider;
 import com.opiumfive.telechart.chart.animation.ChartAnimationListener;
-import com.opiumfive.telechart.chart.animation.ChartDataAnimator;
 import com.opiumfive.telechart.chart.animation.ChartViewportAnimator;
 import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
@@ -36,7 +35,6 @@ public class FastTextureView extends TextureView implements ILineChart, TextureV
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
-    protected ChartDataAnimator dataAnimator;
     protected ChartViewportAnimator viewportAnimator;
     protected boolean isInteractive = true;
     protected boolean isContainerScrollEnabled = false;
@@ -66,7 +64,6 @@ public class FastTextureView extends TextureView implements ILineChart, TextureV
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
         this.viewportAnimator = new ChartViewportAnimator(this);
-        this.dataAnimator = new ChartDataAnimator(this);
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setLineChartData(LineChartData.generateDummyData());
@@ -173,18 +170,6 @@ public class FastTextureView extends TextureView implements ILineChart, TextureV
         }
     }
 
-    public void startDataAnimation() {
-        dataAnimator.startAnimation(Long.MIN_VALUE);
-    }
-
-    public void startDataAnimation(long duration) {
-        dataAnimator.startAnimation(duration);
-    }
-
-    public void cancelDataAnimation() {
-        dataAnimator.cancelAnimation();
-    }
-
     public void animationDataUpdate(float scale) {
         getChartData().update(scale);
         chartRenderer.onChartViewportChanged();
@@ -195,10 +180,6 @@ public class FastTextureView extends TextureView implements ILineChart, TextureV
         getChartData().finish();
         chartRenderer.onChartViewportChanged();
         ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public void setDataAnimationListener(ChartAnimationListener animationListener) {
-        dataAnimator.setChartAnimationListener(animationListener);
     }
 
     public void setViewportAnimationListener(ChartAnimationListener animationListener) {

@@ -14,7 +14,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
 
     private static final int DEFAULT_PREVIEW_STROKE_WIDTH_DP = 1;
     private static final int DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP = 4;
-    private static final float DEFAULT_MAX_ANGLE_VARIATION = 40f;
+    private static final float DEFAULT_MAX_ANGLE_VARIATION = 10f;
 
     private int backrgroundColor;
     private int previewColor;

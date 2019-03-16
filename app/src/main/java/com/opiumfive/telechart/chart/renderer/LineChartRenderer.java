@@ -27,7 +27,7 @@ public class LineChartRenderer {
 
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 4;
-    private static final float DEFAULT_MAX_ANGLE_VARIATION = 20f;
+    private static final float DEFAULT_MAX_ANGLE_VARIATION = 5f;
 
     private static final int MODE_DRAW = 0;
     private static final int MODE_HIGHLIGHT = 1;
@@ -146,7 +146,7 @@ public class LineChartRenderer {
 
 
         for (Line line : data.getLines()) {
-            drawPath(canvas, line);
+            if (line.isActive()) drawPath(canvas, line);
         }
     }
 
@@ -162,6 +162,7 @@ public class LineChartRenderer {
         final LineChartData data = dataProvider.getLineChartData();
         int lineIndex = 0;
         for (Line line : data.getLines()) {
+            if (!line.isActive()) continue;
             int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
             int valueIndex = 0;
             for (PointValue pointValue : line.getValues()) {
@@ -183,6 +184,7 @@ public class LineChartRenderer {
 
 
         for (Line line : data.getLines()) {
+            if (!line.isActive()) continue;
             // Calculate max and min for viewport.
             for (PointValue pointValue : line.getValues()) {
                 if (pointValue.getX() < tempMaximumViewport.left) {
@@ -208,6 +210,7 @@ public class LineChartRenderer {
         int contentAreaMargin = 0;
         final LineChartData data = dataProvider.getLineChartData();
         for (Line line : data.getLines()) {
+            if (!line.isActive()) continue;
             int margin = line.getPointRadius() + DEFAULT_TOUCH_TOLERANCE_MARGIN_DP;
             if (margin > contentAreaMargin) {
                 contentAreaMargin = margin;

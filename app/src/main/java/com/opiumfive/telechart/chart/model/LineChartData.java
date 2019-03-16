@@ -48,10 +48,7 @@ public class LineChartData {
         this.valueLabelTextSize = data.valueLabelTextSize;
         this.valueLabelTypeface = data.valueLabelTypeface;
         this.baseValue = data.baseValue;
-
-        for (Line line : data.lines) {
-            this.lines.add(new Line(line));
-        }
+        this.lines = data.lines;
     }
 
     public static LineChartData generateDummyData() {

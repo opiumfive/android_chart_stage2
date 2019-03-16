@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.animation.ChartAnimationListener;
-import com.opiumfive.telechart.chart.animation.ChartDataAnimator;
 import com.opiumfive.telechart.chart.animation.ChartViewportAnimator;
 import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
@@ -35,7 +33,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
-    protected ChartDataAnimator dataAnimator;
     protected ChartViewportAnimator viewportAnimator;
     protected boolean isInteractive = true;
     protected boolean isContainerScrollEnabled = false;
@@ -55,7 +52,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
         this.viewportAnimator = new ChartViewportAnimator(this);
-        this.dataAnimator = new ChartDataAnimator(this);
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setLineChartData(LineChartData.generateDummyData());
@@ -138,18 +134,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         }
     }
 
-    public void startDataAnimation() {
-        dataAnimator.startAnimation(Long.MIN_VALUE);
-    }
-
-    public void startDataAnimation(long duration) {
-        dataAnimator.startAnimation(duration);
-    }
-
-    public void cancelDataAnimation() {
-        dataAnimator.cancelAnimation();
-    }
-
     public void animationDataUpdate(float scale) {
         getChartData().update(scale);
         chartRenderer.onChartViewportChanged();
@@ -160,10 +144,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         getChartData().finish();
         chartRenderer.onChartViewportChanged();
         ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public void setDataAnimationListener(ChartAnimationListener animationListener) {
-        dataAnimator.setChartAnimationListener(animationListener);
     }
 
     public void setViewportAnimationListener(ChartAnimationListener animationListener) {
@@ -401,7 +381,7 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
         this.isContainerScrollEnabled = isContainerScrollEnabled;
     }
 
-    protected void onChartDataChange() {
+    public void onChartDataChange() {
         chartViewportHandler.resetContentRect();
         chartRenderer.onChartDataChanged();
         axesRenderer.onChartDataChanged();
