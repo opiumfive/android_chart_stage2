@@ -1,21 +1,15 @@
 package com.opiumfive.telechart;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.AttrRes;
-import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
-import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.Line;
@@ -33,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.opiumfive.telechart.GlobalConst.INITIAL_PREVIEW_SCALE;
+import static com.opiumfive.telechart.Util.getColorFromAttr;
 
 public class StatisticsActivity extends ChangeThemeActivity {
 
@@ -167,18 +162,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setScrollEnabled(false);
         chart.setValueSelectionEnabled(true);
         chart.setValueTouchEnabled(true);
-        chart.setOnValueTouchListener(new LineChartOnValueSelectListener() {
-            @Override
-            public void onValueSelected(int lineIndex, int pointIndex, PointValue value) {
-
-            }
-
-            @Override
-            public void onValueDeselected() {
-
-            }
-        });
-
 
         previewChart.setChartData(previewData);
         previewChart.setViewportChangeListener(new ViewportListener());
@@ -201,14 +184,5 @@ public class StatisticsActivity extends ChangeThemeActivity {
             chart.setCurrentViewport(newViewport);
         }
 
-    }
-
-    //TODO to utils
-    @ColorInt
-    private static int getColorFromAttr(Context context, @AttrRes int resId) {
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(resId, typedValue, true);
-        return typedValue.data;
     }
 }

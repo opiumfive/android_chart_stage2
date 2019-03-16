@@ -28,7 +28,7 @@ public class AxesRenderer {
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'};
 
     private ILineChart chart;
-    private ChartViewportHandler computator;
+    private ChartViewportHandler chartViewportHandler;
     private int axisMargin;
     private float density;
     private float scaledDensity;
@@ -58,7 +58,7 @@ public class AxesRenderer {
 
     public AxesRenderer(Context context, ILineChart chart) {
         this.chart = chart;
-        computator = chart.getChartViewportHandler();
+        chartViewportHandler = chart.getChartViewportHandler();
         density = context.getResources().getDisplayMetrics().density;
         scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         axisMargin = ChartUtils.dp2px(density, DEFAULT_AXIS_MARGIN_DP);
@@ -85,7 +85,7 @@ public class AxesRenderer {
     }
 
     public void resetRenderer() {
-        this.computator = chart.getChartViewportHandler();
+        this.chartViewportHandler = chart.getChartViewportHandler();
     }
 
     private void initAxis(Axis axis, int position) {
@@ -156,22 +156,22 @@ public class AxesRenderer {
     private void initAxisMeasurements(Axis axis, int position) {
         if (LEFT == position) {
             if (axis.isInside()) {
-                labelBaselineTab[position] = computator.getContentRectMinusAllMargins().left + axisMargin;
-                nameBaselineTab[position] = computator.getContentRectMinusAxesMargins().left - axisMargin - labelTextDescentTab[position];
+                labelBaselineTab[position] = chartViewportHandler.getContentRectMinusAllMargins().left + axisMargin;
+                nameBaselineTab[position] = chartViewportHandler.getContentRectMinusAxesMargins().left - axisMargin - labelTextDescentTab[position];
             } else {
-                labelBaselineTab[position] = computator.getContentRectMinusAxesMargins().left - axisMargin;
+                labelBaselineTab[position] = chartViewportHandler.getContentRectMinusAxesMargins().left - axisMargin;
                 nameBaselineTab[position] = labelBaselineTab[position] - axisMargin - labelTextDescentTab[position] - labelDimensionForMarginsTab[position];
             }
-            separationLineTab[position] = computator.getContentRectMinusAllMargins().left;
+            separationLineTab[position] = chartViewportHandler.getContentRectMinusAllMargins().left;
         } else if (BOTTOM == position) {
             if (axis.isInside()) {
-                labelBaselineTab[position] = computator.getContentRectMinusAllMargins().bottom - axisMargin - labelTextDescentTab[position];
-                nameBaselineTab[position] = computator.getContentRectMinusAxesMargins().bottom + axisMargin + labelTextAscentTab[position];
+                labelBaselineTab[position] = chartViewportHandler.getContentRectMinusAllMargins().bottom - axisMargin - labelTextDescentTab[position];
+                nameBaselineTab[position] = chartViewportHandler.getContentRectMinusAxesMargins().bottom + axisMargin + labelTextAscentTab[position];
             } else {
-                labelBaselineTab[position] = computator.getContentRectMinusAxesMargins().bottom + axisMargin + labelTextAscentTab[position];
+                labelBaselineTab[position] = chartViewportHandler.getContentRectMinusAxesMargins().bottom + axisMargin + labelTextAscentTab[position];
                 nameBaselineTab[position] = labelBaselineTab[position] + axisMargin + labelDimensionForMarginsTab[position];
             }
-            separationLineTab[position] = computator.getContentRectMinusAllMargins().bottom;
+            separationLineTab[position] = chartViewportHandler.getContentRectMinusAllMargins().bottom;
         } else {
             throw new IllegalArgumentException("Invalid axis position: " + position);
         }
@@ -192,8 +192,8 @@ public class AxesRenderer {
     }
 
     private void prepareAxisToDraw(Axis axis, int position) {
-        final Viewport visibleViewport = computator.getVisibleViewport();
-        final Rect contentRect = computator.getContentRectMinusAllMargins();
+        final Viewport visibleViewport = chartViewportHandler.getVisibleViewport();
+        final Rect contentRect = chartViewportHandler.getContentRectMinusAllMargins();
         boolean isAxisVertical = isAxisVertical(position);
         float start, stop;
         int contentRectDimension;
@@ -228,9 +228,9 @@ public class AxesRenderer {
         int valueToDrawIndex = 0;
         for (int i = 0; i < autoValuesBufferTab[position].valuesNumber; ++i) {
             if (isAxisVertical) {
-                rawValue = computator.computeRawY(autoValuesBufferTab[position].values[i]);
+                rawValue = chartViewportHandler.computeRawY(autoValuesBufferTab[position].values[i]);
             } else {
-                rawValue = computator.computeRawX(autoValuesBufferTab[position].values[i]);
+                rawValue = chartViewportHandler.computeRawX(autoValuesBufferTab[position].values[i]);
             }
             if (checkRawValue(contentRect, rawValue, axis.isInside(), position, isAxisVertical)) {
                 rawValuesTab[position][valueToDrawIndex] = rawValue;
@@ -267,7 +267,7 @@ public class AxesRenderer {
     }
 
     private void drawAxisLines(Canvas canvas, Axis axis, int position) {
-        final Rect contentRectMargins = computator.getContentRectMinusAxesMargins();
+        final Rect contentRectMargins = chartViewportHandler.getContentRectMinusAxesMargins();
         float lineX1, lineY1, lineX2, lineY2;
         lineX1 = lineY1 = lineX2 = lineY2 = 0;
         boolean isAxisVertical = isAxisVertical(position);

@@ -13,7 +13,6 @@ import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
 import com.opiumfive.telechart.chart.listener.ChartViewportAnimator;
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
-import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
@@ -25,7 +24,7 @@ import com.opiumfive.telechart.chart.render.LineChartRenderer;
 public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceHolder.Callback, ChartDataProvider {
 
     protected LineChartData data;
-    protected LineChartOnValueSelectListener onValueTouchListener;
+
 
 
     protected ChartViewportHandler chartViewportHandler;
@@ -94,11 +93,6 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public LineChartData getChartData() {
-        return data;
     }
 
     @Override
@@ -383,7 +377,6 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
 
     public void selectValue(SelectedValue selectedValue) {
         chartRenderer.selectValue(selectedValue);
-        callTouchListener();
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
@@ -428,28 +421,5 @@ public class FastSurfaceView extends SurfaceView implements ILineChart, SurfaceH
 
     public LineChartData getChartData() {
         return data;
-    }
-
-    public void callTouchListener() {
-        SelectedValue selectedValue = chartRenderer.getSelectedValue();
-
-        if (onValueTouchListener != null) {
-            if (selectedValue.isSet()) {
-                PointValue point = data.getLines().get(selectedValue.getFirstIndex()).getValues().get(selectedValue.getSecondIndex());
-                onValueTouchListener.onValueSelected(selectedValue.getFirstIndex(), selectedValue.getSecondIndex(), point);
-            } else {
-                onValueTouchListener.onValueDeselected();
-            }
-        }
-    }
-
-    public LineChartOnValueSelectListener getOnValueTouchListener() {
-        return onValueTouchListener;
-    }
-
-    public void setOnValueTouchListener(LineChartOnValueSelectListener touchListener) {
-        if (null != touchListener) {
-            this.onValueTouchListener = touchListener;
-        }
     }
 }

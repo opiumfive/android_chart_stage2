@@ -24,10 +24,7 @@ public class ChartTouchHandler {
     protected boolean isValueTouchEnabled = true;
     protected boolean isValueSelectionEnabled = false;
 
-    protected SelectedValue selectionModeOldValue = new SelectedValue();
-
     protected SelectedValue selectedValue = new SelectedValue();
-    protected SelectedValue oldSelectedValue = new SelectedValue();
 
     protected ViewParent viewParent;
 
@@ -87,43 +84,21 @@ public class ChartTouchHandler {
         boolean needInvalidate = false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                boolean wasTouched = renderer.isTouched();
-                boolean isTouched = checkTouch(event.getX(), event.getY());
-                if (wasTouched != isTouched) {
+                boolean isTouched = checkTouch(event.getX());
+                if (isTouched) {
                     needInvalidate = true;
-
-                    if (isValueSelectionEnabled) {
-                        selectionModeOldValue.clear();
-                        if (wasTouched && !renderer.isTouched()) {
-                            chart.callTouchListener();
-                        }
-                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 if (renderer.isTouched()) {
-                    if (checkTouch(event.getX(), event.getY())) {
-                        if (isValueSelectionEnabled) {
-                            if (!selectionModeOldValue.equals(selectedValue)) {
-                                selectionModeOldValue.set(selectedValue);
-                                chart.callTouchListener();
-                            }
-                        } else {
-                            chart.callTouchListener();
-                            renderer.clearTouch();
-                        }
-                    } else {
-                        renderer.clearTouch();
-                    }
+                    renderer.clearTouch();
                     needInvalidate = true;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (renderer.isTouched()) {
-                    if (!checkTouch(event.getX(), event.getY())) {
-                        renderer.clearTouch();
-                        needInvalidate = true;
-                    }
+                isTouched = checkTouch(event.getX());
+                if (isTouched) {
+                    needInvalidate = true;
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -136,19 +111,14 @@ public class ChartTouchHandler {
         return needInvalidate;
     }
 
-    private boolean checkTouch(float touchX, float touchY) {
-        oldSelectedValue.set(selectedValue);
+    private boolean checkTouch(float touchX) {
         selectedValue.clear();
 
-        if (renderer.checkTouch(touchX, touchY)) {
+        if (renderer.checkTouch(touchX)) {
             selectedValue.set(renderer.getSelectedValue());
         }
 
-        if (oldSelectedValue.isSet() && selectedValue.isSet() && !oldSelectedValue.equals(selectedValue)) {
-            return false;
-        } else {
-            return renderer.isTouched();
-        }
+        return renderer.isTouched();
     }
 
     public boolean isZoomEnabled() {
