@@ -1,7 +1,5 @@
 package com.opiumfive.telechart.chart.renderer;
 
-import android.util.Log;
-
 import com.opiumfive.telechart.chart.model.PointValue;
 
 import java.util.ArrayList;
@@ -21,6 +19,7 @@ public class LinePathOptimizer {
         int xPos = 1;
         while (xPos < values.size() - 1) {
             float angle = angleBetween(values.get(xPos), values.get(xPos + 1), optimizedList.get(optimizedList.size() - 1));
+
             if (angle > maxAngleVariation) {
                 optimizedList.add(values.get(xPos));
             }
@@ -32,10 +31,6 @@ public class LinePathOptimizer {
             optimizedList.add(values.get(values.size() - 1));
         }
 
-        int pointsOverall = values.size();
-        int pointsOptimized = optimizedList.size();
-
-        Log.d("drawing_optimize", "points = " + pointsOverall + "; opimized = " + pointsOptimized);
         return optimizedList;
     }
 

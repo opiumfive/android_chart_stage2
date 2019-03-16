@@ -18,11 +18,11 @@ public abstract class ChartUtils {
     private static final float DARKEN_INTENSITY = 0.9f;
     private static int COLOR_INDEX = 0;
 
-    public static final int pickColor() {
+    public static int pickColor() {
         return COLORS[(int) Math.round(Math.random() * (COLORS.length - 1))];
     }
 
-    public static final int nextColor() {
+    public static int nextColor() {
         if (COLOR_INDEX >= COLORS.length) {
             COLOR_INDEX = 0;
         }

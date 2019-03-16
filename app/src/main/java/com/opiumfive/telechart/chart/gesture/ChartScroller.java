@@ -63,16 +63,16 @@ public class ChartScroller {
         return canScrollX;
     }
 
-    public boolean computeScrollOffset(ChartViewportHandler computator) {
+    public boolean computeScrollOffset(ChartViewportHandler chartViewportHandler) {
         if (scroller.computeScrollOffset()) {
-            final Viewport maxViewport = computator.getMaximumViewport();
+            final Viewport maxViewport = chartViewportHandler.getMaximumViewport();
 
-            computator.computeScrollSurfaceSize(surfaceSizeBuffer);
+            chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
 
             final float currXRange = maxViewport.left + maxViewport.width() * scroller.getCurrX() / surfaceSizeBuffer.x;
             final float currYRange = maxViewport.top - maxViewport.height() * scroller.getCurrY() / surfaceSizeBuffer.y;
 
-            computator.setViewportTopLeft(currXRange, currYRange);
+            chartViewportHandler.setViewportTopLeft(currXRange, currYRange);
 
             return true;
         }
@@ -80,17 +80,17 @@ public class ChartScroller {
         return false;
     }
 
-    public boolean fling(int velocityX, int velocityY, ChartViewportHandler computator) {
-        computator.computeScrollSurfaceSize(surfaceSizeBuffer);
-        scrollerStartViewport.set(computator.getCurrentViewport());
+    public boolean fling(int velocityX, int velocityY, ChartViewportHandler chartViewportHandler) {
+        chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
+        scrollerStartViewport.set(chartViewportHandler.getCurrentViewport());
 
-        int startX = (int) (surfaceSizeBuffer.x * (scrollerStartViewport.left - computator.getMaximumViewport().left) / computator.getMaximumViewport().width());
-        int startY = (int) (surfaceSizeBuffer.y * (computator.getMaximumViewport().top - scrollerStartViewport.top) / computator.getMaximumViewport().height());
+        int startX = (int) (surfaceSizeBuffer.x * (scrollerStartViewport.left - chartViewportHandler.getMaximumViewport().left) / chartViewportHandler.getMaximumViewport().width());
+        int startY = (int) (surfaceSizeBuffer.y * (chartViewportHandler.getMaximumViewport().top - scrollerStartViewport.top) / chartViewportHandler.getMaximumViewport().height());
 
         scroller.forceFinished(true);
 
-        final int width = computator.getContentRectMinusAllMargins().width();
-        final int height = computator.getContentRectMinusAllMargins().height();
+        final int width = chartViewportHandler.getContentRectMinusAllMargins().width();
+        final int height = chartViewportHandler.getContentRectMinusAllMargins().height();
         scroller.fling(startX, startY, velocityX, velocityY, 0, surfaceSizeBuffer.x - width + 1, 0, surfaceSizeBuffer.y - height + 1);
         return true;
     }

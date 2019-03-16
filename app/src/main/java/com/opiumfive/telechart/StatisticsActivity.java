@@ -14,7 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 
-import com.opiumfive.telechart.chart.formatter.SimpleAxisValueFormatter;
+import com.opiumfive.telechart.chart.formatter.DateValueFormatter;
 import com.opiumfive.telechart.chart.listener.DummyLineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
@@ -32,9 +32,9 @@ import com.opiumfive.telechart.theming.ChangeThemeActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatisticsActivity extends ChangeThemeActivity {
+import static com.opiumfive.telechart.GlobalConst.INITIAL_PREVIEW_SCALE;
 
-    private static final float INITIAL_PREVIEW_SCALE = 0.3f;
+public class StatisticsActivity extends ChangeThemeActivity {
 
     private LineChartView chart;
     private PreviewLineChartView previewChart;
@@ -147,13 +147,13 @@ public class StatisticsActivity extends ChangeThemeActivity {
         data.setAxisYLeft(
             new Axis()
                 .setHasLines(true)
-                .setHasSeparationLine(false)
                 .setLineColor(getColorFromAttr(this, R.attr.dividerColor))
                 .setTextColor(getColorFromAttr(this, R.attr.labelColor))
         );
         data.setAxisXBottom(
             new Axis()
-                .setFormatter(new SimpleAxisValueFormatter().setAppendedText("km".toCharArray()))
+                .setHasLines(false)
+                .setFormatter(new DateValueFormatter())
                 .setInside(false)
                 .setTextColor(getColorFromAttr(this, R.attr.labelColor))
         );
