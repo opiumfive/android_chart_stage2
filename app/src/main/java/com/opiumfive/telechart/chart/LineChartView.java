@@ -130,7 +130,6 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
 
     @Override
     public void computeScroll() {
-
         super.computeScroll();
         if (isInteractive) {
             if (touchHandler.computeScroll()) {

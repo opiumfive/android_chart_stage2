@@ -8,46 +8,113 @@ import android.view.ScaleGestureDetector;
 
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.LineChartView;
+import com.opiumfive.telechart.chart.model.Viewport;
 
 
 public class PreviewChartTouchHandler extends ChartTouchHandler {
 
+    private static final float SIDE_DRAG_ZONE = 0.05f; // percent from width
+
+    private GestureDetectorCompat gestureDetector;
+    private PreviewChartGestureListener gestureListener;
+
+    private float sideDragZone;
+
     public PreviewChartTouchHandler(Context context, ILineChart chart) {
         super(context, chart);
-        gestureDetector = new GestureDetectorCompat(context, new PreviewChartGestureListener());
-        scaleGestureDetector = new ScaleGestureDetector(context, new ChartScaleGestureListener());
+        gestureListener = new PreviewChartGestureListener();
+        gestureDetector = new GestureDetectorCompat(context, gestureListener);
 
         isValueTouchEnabled = false;
         isValueSelectionEnabled = false;
     }
 
-    protected class ChartScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+    @Override
+    public boolean handleTouchEvent(MotionEvent event) {
+        Viewport currentViewport = computator.getCurrentViewport();
+        final Viewport maxViewport = computator.getMaximumViewport();
+        final float left = computator.computeRawX(currentViewport.left);
+        final float right = computator.computeRawX(currentViewport.right);
+
+        float touchX = event.getRawX();
+
+        sideDragZone = computator.computeSideScrollTrigger(SIDE_DRAG_ZONE);
+
+        if (Math.abs(left - touchX) <= sideDragZone) {
+            if (currentViewport.left > maxViewport.left) {
+                gestureListener.setScrollMode(ScrollMode.LEFT_SIDE);
+                return gestureDetector.onTouchEvent(event);
+            }
+        } else if (Math.abs(right - touchX) <= sideDragZone) {
+            if (currentViewport.right < maxViewport.right) {
+                gestureListener.setScrollMode(ScrollMode.RIGHT_SIDE);
+                return gestureDetector.onTouchEvent(event);
+            }
+        } else if (touchX > left && touchX < right) {
+            gestureListener.setScrollMode(ScrollMode.FULL);
+            boolean needInvalidate = gestureDetector.onTouchEvent(event);
+
+            if (isZoomEnabled) {
+                disallowParentInterceptTouchEvent();
+            }
+
+            return needInvalidate;
+        } else {
+            return false;
+        }
+
+        return false;
+    }
+
+    protected class PreviewChartGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        protected ChartScroller.ScrollResult scrollResult = new ChartScroller.ScrollResult();
+        private ScrollMode scrollMode = ScrollMode.FULL;
 
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            if (isZoomEnabled) {
-                float scale = detector.getCurrentSpan() / detector.getPreviousSpan();
-                if (Float.isInfinite(scale)) {
-                    scale = 1;
-                }
-                return chartZoomer.scale(computator, detector.getFocusX(), detector.getFocusY(), scale);
+        public boolean onDown(MotionEvent e) {
+            if (isScrollEnabled) {
+                disallowParentInterceptTouchEvent();
+                return chartScroller.startScroll(computator, scrollMode);
             }
 
             return false;
         }
-    }
 
-    protected class PreviewChartGestureListener extends ChartGestureListener {
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return false;
+        }
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return super.onScroll(e1, e2, -distanceX, -distanceY);
+            if (isScrollEnabled) {
+                boolean canScroll = chartScroller.scroll(computator, -distanceX, -distanceY, scrollResult);
+                allowParentInterceptTouchEvent(scrollResult);
+                return canScroll;
+            }
+
+            return false;
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return super.onFling(e1, e2, -velocityX, -velocityY);
+            if (isScrollEnabled && scrollMode == ScrollMode.FULL) {
+                return chartScroller.fling((int) velocityX, (int) velocityY, computator);
+            }
+
+            return false;
+        }
+
+        public ScrollMode getScrollMode() {
+            return scrollMode;
+        }
+
+        public void setScrollMode(ScrollMode scrollMode) {
+            this.scrollMode = scrollMode;
         }
     }
+
+    public enum ScrollMode { FULL, LEFT_SIDE, RIGHT_SIDE }
 
 }

@@ -13,13 +13,15 @@ public class ChartScroller {
     private Viewport scrollerStartViewport = new Viewport();
     private Point surfaceSizeBuffer = new Point();
     private Scroller scroller;
+    private PreviewChartTouchHandler.ScrollMode currentScrollMode;
 
     public ChartScroller(Context context) {
         scroller = new Scroller(context);
     }
 
-    public boolean startScroll(ChartViewportHandler chartViewportHandler) {
+    public boolean startScroll(ChartViewportHandler chartViewportHandler, PreviewChartTouchHandler.ScrollMode scrollMode) {
         scroller.abortAnimation();
+        currentScrollMode = scrollMode;
         scrollerStartViewport.set(chartViewportHandler.getCurrentViewport());
         return true;
     }
@@ -33,29 +35,32 @@ public class ChartScroller {
 
         final boolean canScrollLeft = currentViewport.left > maxViewport.left;
         final boolean canScrollRight = currentViewport.right < maxViewport.right;
-        final boolean canScrollTop = currentViewport.top < maxViewport.top;
-        final boolean canScrollBottom = currentViewport.bottom > maxViewport.bottom;
 
-        boolean canScrollX = false;
-        boolean canScrollY = false;
 
-        canScrollX = canScrollLeft && distanceX <= 0 || canScrollRight && distanceX >= 0;
+        boolean canScrollX = canScrollLeft && distanceX <= 0 || canScrollRight && distanceX >= 0;
 
-        canScrollY = canScrollTop && distanceY <= 0 || canScrollBottom && distanceY >= 0;
-
-        if (canScrollX || canScrollY) {
-            chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
+        if (canScrollX) {
 
             float viewportOffsetX = distanceX * visibleViewport.width() / contentRect.width();
-            float viewportOffsetY = -distanceY * visibleViewport.height() / contentRect.height();
 
-            chartViewportHandler.setViewportTopLeft(currentViewport.left + viewportOffsetX, currentViewport.top + viewportOffsetY);
+            switch (currentScrollMode) {
+                case FULL:
+                    chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
+                    chartViewportHandler.setViewportTopLeft(currentViewport.left + viewportOffsetX, currentViewport.top);
+                    break;
+                case LEFT_SIDE:
+                    chartViewportHandler.setCurrentViewport(currentViewport.left + viewportOffsetX, currentViewport.top, currentViewport.right, currentViewport.bottom);
+                    break;
+                case RIGHT_SIDE:
+                    chartViewportHandler.setCurrentViewport(currentViewport.left, currentViewport.top, currentViewport.right + viewportOffsetX, currentViewport.bottom);
+                    break;
+            }
+
         }
 
         scrollResult.canScrollX = canScrollX;
-        scrollResult.canScrollY = canScrollY;
 
-        return canScrollX || canScrollY;
+        return canScrollX;
     }
 
     public boolean computeScrollOffset(ChartViewportHandler computator) {
@@ -92,7 +97,6 @@ public class ChartScroller {
 
     public static class ScrollResult {
         public boolean canScrollX;
-        public boolean canScrollY;
     }
 
 }

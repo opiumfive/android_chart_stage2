@@ -16,8 +16,7 @@ import com.opiumfive.telechart.chart.renderer.LineChartRenderer;
 
 public class ChartTouchHandler {
 
-    protected GestureDetectorCompat gestureDetector;
-    protected ScaleGestureDetector scaleGestureDetector;
+
     protected ChartScroller chartScroller;
     protected ChartZoomer chartZoomer;
     protected ILineChart chart;
@@ -40,8 +39,6 @@ public class ChartTouchHandler {
         this.chart = chart;
         this.computator = chart.getChartViewportHandler();
         this.renderer = chart.getChartRenderer();
-        gestureDetector = new GestureDetectorCompat(context, new ChartGestureListener());
-        scaleGestureDetector = new ScaleGestureDetector(context, new ChartScaleGestureListener());
         chartScroller = new ChartScroller(context);
         chartZoomer = new ChartZoomer(context);
     }
@@ -65,14 +62,8 @@ public class ChartTouchHandler {
     public boolean handleTouchEvent(MotionEvent event) {
         boolean needInvalidate = false;
 
-        needInvalidate = gestureDetector.onTouchEvent(event) | scaleGestureDetector.onTouchEvent(event);
-
-        if (isZoomEnabled && scaleGestureDetector.isInProgress()) {
-            disallowParentInterceptTouchEvent();
-        }
-
         if (isValueTouchEnabled) {
-            needInvalidate = computeTouch(event) || needInvalidate;
+            needInvalidate = computeTouch(event);
         }
 
         return needInvalidate;
@@ -84,19 +75,19 @@ public class ChartTouchHandler {
         return handleTouchEvent(event);
     }
 
-    private void disallowParentInterceptTouchEvent() {
+    protected void disallowParentInterceptTouchEvent() {
         if (null != viewParent) {
             viewParent.requestDisallowInterceptTouchEvent(true);
         }
     }
 
-    private void allowParentInterceptTouchEvent(ScrollResult scrollResult) {
-        if (null != viewParent && !scrollResult.canScrollX && !scaleGestureDetector.isInProgress()) {
+    protected void allowParentInterceptTouchEvent(ScrollResult scrollResult) {
+        if (null != viewParent && !scrollResult.canScrollX) {
             viewParent.requestDisallowInterceptTouchEvent(false);
         }
     }
 
-    private boolean computeTouch(MotionEvent event) {
+    protected boolean computeTouch(MotionEvent event) {
         boolean needInvalidate = false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -196,63 +187,4 @@ public class ChartTouchHandler {
     public void setValueSelectionEnabled(boolean isValueSelectionEnabled) {
         this.isValueSelectionEnabled = isValueSelectionEnabled;
     }
-
-    protected class ChartScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            if (isZoomEnabled) {
-                float scale = 2.0f - detector.getScaleFactor();
-                if (Float.isInfinite(scale)) {
-                    scale = 1;
-                }
-                return chartZoomer.scale(computator, detector.getFocusX(), detector.getFocusY(), scale);
-            }
-
-            return false;
-        }
-    }
-
-    protected class ChartGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        protected ScrollResult scrollResult = new ScrollResult();
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            if (isScrollEnabled) {
-                disallowParentInterceptTouchEvent();
-                return chartScroller.startScroll(computator);
-            }
-
-            return false;
-
-        }
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.d("scrollins", "elapsedTimeMs = " + System.currentTimeMillis());
-            if (isScrollEnabled) {
-                boolean canScroll = chartScroller.scroll(computator, distanceX, distanceY, scrollResult);
-                allowParentInterceptTouchEvent(scrollResult);
-                return canScroll;
-            }
-
-            return false;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (isScrollEnabled) {
-                return chartScroller.fling((int) -velocityX, (int) -velocityY, computator);
-            }
-
-            return false;
-        }
-    }
-
 }

@@ -112,6 +112,10 @@ public class ChartViewportHandler {
         return contentRectMinusAllMargins.left + pixelOffset;
     }
 
+    public float computeSideScrollTrigger(float factor) {
+        return contentRectMinusAllMargins.width() * factor;
+    }
+
     public float computeRawY(float valueY) {
         final float pixelOffset = (valueY - currentViewport.bottom) * (contentRectMinusAllMargins.height() / currentViewport.height());
         return contentRectMinusAllMargins.bottom - pixelOffset;
