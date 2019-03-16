@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.animation;
+package com.opiumfive.telechart.chart.listener;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -7,7 +7,6 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Viewport;
-import com.opiumfive.telechart.chart.LineChartView;
 
 public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateListener {
 
@@ -18,7 +17,7 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
     private Viewport startViewport = new Viewport();
     private Viewport targetViewport = new Viewport();
     private Viewport newViewport = new Viewport();
-    private ChartAnimationListener animationListener = new DefaultChartAnimationListener();
+    private ChartAnimationListener animationListener;
 
     public ChartViewportAnimator(ILineChart chart) {
         this.chart = chart;
@@ -64,7 +63,9 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
     @Override
     public void onAnimationEnd(Animator animation) {
         chart.setCurrentViewport(targetViewport);
-        animationListener.onAnimationFinished();
+        if (animationListener != null) {
+            animationListener.onAnimationFinished();
+        }
     }
 
     @Override
@@ -73,7 +74,9 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
 
     @Override
     public void onAnimationStart(Animator animation) {
-        animationListener.onAnimationStarted();
+        if (animationListener != null) {
+            animationListener.onAnimationStarted();
+        }
     }
 
     public boolean isAnimationStarted() {
@@ -81,11 +84,7 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
     }
 
     public void setChartAnimationListener(ChartAnimationListener animationListener) {
-        if (null == animationListener) {
-            this.animationListener = new DefaultChartAnimationListener();
-        } else {
-            this.animationListener = animationListener;
-        }
+        this.animationListener = animationListener;
     }
 
 }

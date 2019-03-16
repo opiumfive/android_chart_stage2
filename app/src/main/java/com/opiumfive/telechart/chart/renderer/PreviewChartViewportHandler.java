@@ -21,6 +21,8 @@ public class PreviewChartViewportHandler extends ChartViewportHandler {
 
     public void constrainViewport(float left, float top, float right, float bottom) {
         super.constrainViewport(left, top, right, bottom);
-        viewportChangeListener.onViewportChanged(currentViewport);
+        if (viewportChangeListener != null) {
+            viewportChangeListener.onViewportChanged(currentViewport);
+        }
     }
 }

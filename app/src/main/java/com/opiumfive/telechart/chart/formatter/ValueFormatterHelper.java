@@ -9,7 +9,6 @@ import static com.opiumfive.telechart.GlobalConst.BOTTOM_LABEL_DATE_FORMAT;
 
 public class ValueFormatterHelper {
 
-    private char decimalSeparator = '.';
     private SimpleDateFormat dateFormat = new SimpleDateFormat(BOTTOM_LABEL_DATE_FORMAT, Locale.ENGLISH);
 
     public int formatFloatValueWithPrependedAndAppendedText(char[] formattedValue, float value) {

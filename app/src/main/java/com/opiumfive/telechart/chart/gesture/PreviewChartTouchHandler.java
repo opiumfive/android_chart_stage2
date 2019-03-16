@@ -4,10 +4,8 @@ import android.content.Context;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.LineChartView;
 import com.opiumfive.telechart.chart.model.Viewport;
 
 
@@ -31,14 +29,14 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
 
     @Override
     public boolean handleTouchEvent(MotionEvent event) {
-        Viewport currentViewport = computator.getCurrentViewport();
-        final Viewport maxViewport = computator.getMaximumViewport();
-        final float left = computator.computeRawX(currentViewport.left);
-        final float right = computator.computeRawX(currentViewport.right);
+        Viewport currentViewport = chartViewportHandler.getCurrentViewport();
+        final Viewport maxViewport = chartViewportHandler.getMaximumViewport();
+        final float left = chartViewportHandler.computeRawX(currentViewport.left);
+        final float right = chartViewportHandler.computeRawX(currentViewport.right);
 
         float touchX = event.getRawX();
 
-        sideDragZone = computator.computeSideScrollTrigger(SIDE_DRAG_ZONE);
+        sideDragZone = chartViewportHandler.computeSideScrollTrigger(SIDE_DRAG_ZONE);
 
         if (Math.abs(left - touchX) <= sideDragZone) {
             if (currentViewport.left > maxViewport.left) {
@@ -75,7 +73,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         public boolean onDown(MotionEvent e) {
             if (isScrollEnabled) {
                 disallowParentInterceptTouchEvent();
-                return chartScroller.startScroll(computator, scrollMode);
+                return chartScroller.startScroll(chartViewportHandler, scrollMode);
             }
 
             return false;
@@ -89,7 +87,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (isScrollEnabled) {
-                boolean canScroll = chartScroller.scroll(computator, -distanceX, -distanceY, scrollResult);
+                boolean canScroll = chartScroller.scroll(chartViewportHandler, -distanceX, -distanceY, scrollResult);
                 allowParentInterceptTouchEvent(scrollResult);
                 return canScroll;
             }
@@ -100,7 +98,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (isScrollEnabled && scrollMode == ScrollMode.FULL) {
-                return chartScroller.fling((int) velocityX, (int) velocityY, computator);
+                return chartScroller.fling((int) velocityX, (int) velocityY, chartViewportHandler);
             }
 
             return false;

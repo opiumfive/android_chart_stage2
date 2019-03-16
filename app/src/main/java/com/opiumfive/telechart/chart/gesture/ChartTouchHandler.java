@@ -16,7 +16,7 @@ public class ChartTouchHandler {
     protected ChartScroller chartScroller;
     protected ChartZoomer chartZoomer;
     protected ILineChart chart;
-    protected ChartViewportHandler computator;
+    protected ChartViewportHandler chartViewportHandler;
     protected LineChartRenderer renderer;
 
     protected boolean isZoomEnabled = true;
@@ -33,23 +33,23 @@ public class ChartTouchHandler {
 
     public ChartTouchHandler(Context context, ILineChart chart) {
         this.chart = chart;
-        this.computator = chart.getChartViewportHandler();
+        this.chartViewportHandler = chart.getChartViewportHandler();
         this.renderer = chart.getChartRenderer();
         chartScroller = new ChartScroller(context);
         chartZoomer = new ChartZoomer(context);
     }
 
     public void resetTouchHandler() {
-        this.computator = chart.getChartViewportHandler();
+        this.chartViewportHandler = chart.getChartViewportHandler();
         this.renderer = chart.getChartRenderer();
     }
 
     public boolean computeScroll() {
         boolean needInvalidate = false;
-        if (isScrollEnabled && chartScroller.computeScrollOffset(computator)) {
+        if (isScrollEnabled && chartScroller.computeScrollOffset(chartViewportHandler)) {
             needInvalidate = true;
         }
-        if (isZoomEnabled && chartZoomer.computeZoom(computator)) {
+        if (isZoomEnabled && chartZoomer.computeZoom(chartViewportHandler)) {
             needInvalidate = true;
         }
         return needInvalidate;

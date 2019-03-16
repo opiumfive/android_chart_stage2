@@ -15,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 
 import com.opiumfive.telechart.chart.formatter.DateValueFormatter;
-import com.opiumfive.telechart.chart.listener.DummyLineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.Line;
@@ -167,7 +166,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setScrollEnabled(false);
         chart.setValueSelectionEnabled(true);
         chart.setValueTouchEnabled(true);
-        chart.setOnValueTouchListener(new DummyLineChartOnValueSelectListener());
 
 
         previewChart.setLineChartData(previewData);

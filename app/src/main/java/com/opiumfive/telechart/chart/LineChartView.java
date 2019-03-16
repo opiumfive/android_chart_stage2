@@ -7,11 +7,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.opiumfive.telechart.chart.animation.ChartAnimationListener;
-import com.opiumfive.telechart.chart.animation.ChartViewportAnimator;
+import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
+import com.opiumfive.telechart.chart.listener.ChartViewportAnimator;
 import com.opiumfive.telechart.chart.renderer.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
-import com.opiumfive.telechart.chart.listener.DummyLineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.LineChartOnValueSelectListener;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
@@ -26,7 +25,7 @@ import com.opiumfive.telechart.chart.util.ChartUtils;
 public class LineChartView extends View implements ILineChart, LineChartDataProvider {
 
     protected LineChartData data;
-    protected LineChartOnValueSelectListener onValueTouchListener = new DummyLineChartOnValueSelectListener();
+    protected LineChartOnValueSelectListener onValueTouchListener;
 
 
     protected ChartViewportHandler chartViewportHandler;
@@ -415,11 +414,13 @@ public class LineChartView extends View implements ILineChart, LineChartDataProv
     public void callTouchListener() {
         SelectedValue selectedValue = chartRenderer.getSelectedValue();
 
-        if (selectedValue.isSet()) {
-            PointValue point = data.getLines().get(selectedValue.getFirstIndex()).getValues().get(selectedValue.getSecondIndex());
-            onValueTouchListener.onValueSelected(selectedValue.getFirstIndex(), selectedValue.getSecondIndex(), point);
-        } else {
-            onValueTouchListener.onValueDeselected();
+        if (onValueTouchListener != null) {
+            if (selectedValue.isSet()) {
+                PointValue point = data.getLines().get(selectedValue.getFirstIndex()).getValues().get(selectedValue.getSecondIndex());
+                onValueTouchListener.onValueSelected(selectedValue.getFirstIndex(), selectedValue.getSecondIndex(), point);
+            } else {
+                onValueTouchListener.onValueDeselected();
+            }
         }
     }
 
