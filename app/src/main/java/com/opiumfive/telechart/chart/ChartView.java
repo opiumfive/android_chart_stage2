@@ -145,86 +145,12 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         touchHandler.setScrollEnabled(isScrollEnabled);
     }
 
-    private Viewrect computeScrollViewport(float x, float y) {
-        Viewrect maxViewrect = getMaximumViewport();
-        Viewrect currentViewrect = getCurrentViewrect();
-        Viewrect scrollViewrect = new Viewrect(currentViewrect);
-
-        if (maxViewrect.contains(x, y)) {
-            final float width = currentViewrect.width();
-            final float height = currentViewrect.height();
-
-            final float halfWidth = width / 2;
-            final float halfHeight = height / 2;
-
-            float left = x - halfWidth;
-            float top = y + halfHeight;
-
-            left = Math.max(maxViewrect.left, Math.min(left, maxViewrect.right - width));
-            top = Math.max(maxViewrect.bottom + height, Math.min(top, maxViewrect.top));
-
-            scrollViewrect.set(left, top, left + width, top - height);
-        }
-
-        return scrollViewrect;
-    }
-
     public boolean isValueTouchEnabled() {
         return touchHandler.isValueTouchEnabled();
     }
 
     public void setValueTouchEnabled(boolean isValueTouchEnabled) {
         touchHandler.setValueTouchEnabled(isValueTouchEnabled);
-    }
-
-    public float getMaxZoom() {
-        return chartViewrectHandler.getMaxZoom();
-    }
-
-    public void setMaxZoom(float maxZoom) {
-        chartViewrectHandler.setMaxZoom(maxZoom);
-        ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public float getZoomLevel() {
-        Viewrect maxViewrect = getMaximumViewport();
-        Viewrect currentViewrect = getCurrentViewrect();
-
-        return Math.max(maxViewrect.width() / currentViewrect.width(), maxViewrect.height() / currentViewrect.height());
-
-    }
-
-    private Viewrect computeZoomViewport(float x, float y, float zoomLevel) {
-
-        final Viewrect maxViewrect = getMaximumViewport();
-        Viewrect zoomViewrect = new Viewrect(getMaximumViewport());
-
-        if (maxViewrect.contains(x, y)) {
-
-            if (zoomLevel < 1) {
-                zoomLevel = 1;
-            } else if (zoomLevel > getMaxZoom()) {
-                zoomLevel = getMaxZoom();
-            }
-
-            final float newWidth = zoomViewrect.width() / zoomLevel;
-            final float halfWidth = newWidth / 2;
-
-            float left = x - halfWidth;
-            float right = x + halfWidth;
-
-            if (left < maxViewrect.left) {
-                left = maxViewrect.left;
-                right = left + newWidth;
-            } else if (right > maxViewrect.right) {
-                right = maxViewrect.right;
-                left = right - newWidth;
-            }
-
-            zoomViewrect.left = left;
-            zoomViewrect.right = right;
-        }
-        return zoomViewrect;
     }
 
     public Viewrect getMaximumViewport() {
@@ -249,7 +175,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         return getChartRenderer().getCurrentViewrect();
     }
 
-    public void setCurrentViewport(Viewrect targetViewrect) {
+    public void setCurrentViewrect(Viewrect targetViewrect) {
 
         if (null != targetViewrect) {
             chartRenderer.setCurrentViewrect(targetViewrect);
@@ -257,26 +183,8 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void resetViewports() {
-        chartRenderer.setMaximumViewrect(null);
-        chartRenderer.setCurrentViewrect(null);
-    }
-
-    public boolean isViewportCalculationEnabled() {
-        return chartRenderer.isViewrectCalculationEnabled();
-    }
-
     public void setViewportCalculationEnabled(boolean isEnabled) {
         chartRenderer.setViewrectCalculationEnabled(isEnabled);
-    }
-
-    public void selectValue(SelectedValues selectedValues) {
-        chartRenderer.selectValue(selectedValues);
-        ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public SelectedValues getSelectedValue() {
-        return chartRenderer.getSelectedValues();
     }
 
     public void onChartDataChange() {

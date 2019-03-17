@@ -13,9 +13,7 @@ import java.util.List;
 
 public class ChartViewrectHandler {
 
-
-    protected static final float DEFAULT_MAXIMUM_ZOOM = 20f;
-    protected float maxZoom = DEFAULT_MAXIMUM_ZOOM;
+    protected static final float MAXIMUM_ZOOM = 20f;
 
     protected int chartWidth;
     protected int chartHeight;
@@ -177,31 +175,9 @@ public class ChartViewrectHandler {
         this.viewrectChangeListener = viewrectChangeListener;
     }
 
-    public int getChartWidth() {
-        return chartWidth;
-    }
-
-    public int getChartHeight() {
-        return chartHeight;
-    }
-
-    public float getMaxZoom() {
-        return maxZoom;
-    }
-
-    public void setMaxZoom(float maxZoom) {
-        if (maxZoom < 1) {
-            maxZoom = 1;
-        }
-
-        this.maxZoom = maxZoom;
-        computeMinimumWidthAndHeight();
-        setCurrentViewrect(currentViewrect);
-    }
-
     private void computeMinimumWidthAndHeight() {
-        minViewportWidth = this.maxViewrect.width() / maxZoom;
-        minViewportHeight = this.maxViewrect.height() / maxZoom;
+        minViewportWidth = this.maxViewrect.width() / MAXIMUM_ZOOM;
+        minViewportHeight = this.maxViewrect.height() / MAXIMUM_ZOOM;
     }
 
     public List<PointValue> optimizeLine(List<PointValue> values, float maxAngleVariation) {

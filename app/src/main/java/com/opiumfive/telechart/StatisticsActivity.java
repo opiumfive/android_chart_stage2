@@ -58,6 +58,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
                 target.left = current.left;
                 target.right = current.right;
+                
                 previewChart.setCurrentViewrectAnimated(target);
             } else {
                 checkboxList.post(() -> showLineAdapter.recheck(position));
@@ -178,7 +179,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
         tempViewrect.inset(dx, 0);
 
-        previewChart.setCurrentViewport(tempViewrect);
+        previewChart.setCurrentViewrect(tempViewrect);
     }
 
     private class ViewrectListener implements ViewrectChangeListener {
@@ -188,7 +189,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
 
 
-            chart.setCurrentViewport(newViewrect);
+            chart.setCurrentViewrect(newViewrect);
         }
 
     }

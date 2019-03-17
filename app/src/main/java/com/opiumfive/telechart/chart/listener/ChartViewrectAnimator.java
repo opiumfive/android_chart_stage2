@@ -6,9 +6,7 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.util.Log;
 
-import com.opiumfive.telechart.chart.ChartView;
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.PreviewChartView;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateListener {
@@ -53,12 +51,15 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         float scale = animation.getAnimatedFraction();
         float dLeft = targetViewrect.left - startViewrect.left;
         float dRight = targetViewrect.right - startViewrect.right;
+        float dTop = targetViewrect.top - startViewrect.top;
+        float dBot = targetViewrect.bottom - startViewrect.bottom;
+        Log.d("onAnimUpd", "onAnimationUpdate: ");
         float diffLeft = dLeft != 0f ? dLeft * scale : 1f;
-        float diffTop = (targetViewrect.top - startViewrect.top) * scale;
+        float diffTop = dTop * scale;
         float diffRight = dRight != 0f ? dRight * scale : 1f;
-        float diffBottom = (targetViewrect.bottom - startViewrect.bottom) * scale;
+        float diffBottom = dBot * scale;
         newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
-        chart.setCurrentViewport(newViewrect);
+        chart.setCurrentViewrect(newViewrect);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        chart.setCurrentViewport(targetViewrect);
+        chart.setCurrentViewrect(targetViewrect);
         if (animationListener != null) {
             animationListener.onAnimationFinished();
         }
