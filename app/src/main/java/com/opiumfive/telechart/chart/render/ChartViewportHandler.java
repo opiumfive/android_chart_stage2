@@ -4,7 +4,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
-import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
+import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
@@ -30,7 +30,7 @@ public class ChartViewportHandler {
     protected float minViewportHeight;
     protected LinePathOptimizer linePathOptimizer;
 
-    protected ViewportChangeListener viewportChangeListener;
+    protected ViewrectChangeListener viewrectChangeListener;
 
     public ChartViewportHandler() {
         linePathOptimizer = new LinePathOptimizer(this);
@@ -94,8 +94,8 @@ public class ChartViewportHandler {
         currentViewrect.right = Math.min(maxViewrect.right, right);
         currentViewrect.bottom = Math.max(maxViewrect.bottom, bottom);
 
-        if (viewportChangeListener != null) {
-            viewportChangeListener.onViewportChanged(currentViewrect);
+        if (viewrectChangeListener != null) {
+            viewrectChangeListener.onViewportChanged(currentViewrect);
         }
     }
 
@@ -173,8 +173,8 @@ public class ChartViewportHandler {
         return currentViewrect;
     }
 
-    public void setViewportChangeListener(ViewportChangeListener viewportChangeListener) {
-        this.viewportChangeListener = viewportChangeListener;
+    public void setViewrectChangeListener(ViewrectChangeListener viewrectChangeListener) {
+        this.viewrectChangeListener = viewrectChangeListener;
     }
 
     public int getChartWidth() {

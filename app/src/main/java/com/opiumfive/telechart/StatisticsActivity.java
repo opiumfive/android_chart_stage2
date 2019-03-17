@@ -9,7 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
-import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
+import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
@@ -168,7 +168,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setValueTouchEnabled(true);
 
         previewChart.setChartData(previewData);
-        previewChart.setViewportChangeListener(new ViewportListener());
+        previewChart.setViewportChangeListener(new ViewrectListener());
         previewChart.setZoomEnabled(false);
         previewChart.setViewportCalculationEnabled(false);
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
@@ -181,7 +181,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewChart.setCurrentViewport(tempViewrect);
     }
 
-    private class ViewportListener implements ViewportChangeListener {
+    private class ViewrectListener implements ViewrectChangeListener {
 
         @Override
         public void onViewportChanged(Viewrect newViewrect) {

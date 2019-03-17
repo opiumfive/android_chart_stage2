@@ -8,10 +8,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
-import com.opiumfive.telechart.chart.listener.ChartViewportAnimator;
+import com.opiumfive.telechart.chart.listener.ChartViewrectAnimator;
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
-import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
+import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.model.Viewrect;
@@ -27,7 +27,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
-    protected ChartViewportAnimator viewportAnimator;
+    protected ChartViewrectAnimator viewportAnimator;
     protected boolean isInteractive = true;
     protected boolean isContainerScrollEnabled = false;
 
@@ -45,7 +45,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         chartViewportHandler = new ChartViewportHandler();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
-        this.viewportAnimator = new ChartViewportAnimator(this);
+        this.viewportAnimator = new ChartViewrectAnimator(this);
 
 
 
@@ -147,8 +147,8 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         viewportAnimator.setChartAnimationListener(animationListener);
     }
 
-    public void setViewportChangeListener(ViewportChangeListener viewportChangeListener) {
-        chartViewportHandler.setViewportChangeListener(viewportChangeListener);
+    public void setViewportChangeListener(ViewrectChangeListener viewrectChangeListener) {
+        chartViewportHandler.setViewrectChangeListener(viewrectChangeListener);
     }
 
     public LineChartRenderer getChartRenderer() {
