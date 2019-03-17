@@ -26,6 +26,10 @@ public class ShowLineAdapter extends RecyclerView.Adapter<ShowLineAdapter.ViewHo
         this.listener = listener;
     }
 
+    public void recheck(int pos) {
+        notifyItemChanged(pos);
+    }
+
     @Override
     public ViewHolderImpl onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolderImpl(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_show_chart, parent, false), listener);
@@ -33,7 +37,7 @@ public class ShowLineAdapter extends RecyclerView.Adapter<ShowLineAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final ViewHolderImpl holder, final int position) {
-        holder.bind(list.get(holder.getAdapterPosition()));
+        holder.bind(getItem(holder.getAdapterPosition()));
     }
 
     private Line getItem(int position) {
@@ -53,17 +57,15 @@ public class ShowLineAdapter extends RecyclerView.Adapter<ShowLineAdapter.ViewHo
             super(view);
             checkbox = view.findViewById(R.id.checkbox);
 
-            checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (listener != null) {
-                        listener.onLineToggle(getAdapterPosition());
-                    }
+            checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (listener != null) {
+                    listener.onLineToggle(getAdapterPosition());
                 }
             });
         }
 
         void bind(Line line) {
+            checkbox.setChecked(line.isActive());
             checkbox.setText(line.getTitle());
             CompoundButtonCompat.setButtonTintList(checkbox, ColorStateList.valueOf(line.getColor()));
         }

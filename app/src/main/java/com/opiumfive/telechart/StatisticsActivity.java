@@ -26,7 +26,7 @@ import com.opiumfive.telechart.theming.ChangeThemeActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.opiumfive.telechart.GlobalConst.INITIAL_PREVIEW_SCALE;
+import static com.opiumfive.telechart.Settings.INITIAL_PREVIEW_SCALE;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 public class StatisticsActivity extends ChangeThemeActivity {
@@ -37,6 +37,33 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private LineChartData data;
     private LineChartData previewData;
     private List<ChartData> chartDataList;
+    private ShowLineAdapter showLineAdapter;
+
+    private ShowLineAdapter.OnLineCheckListener onLineCheckListener = new ShowLineAdapter.OnLineCheckListener() {
+        @Override
+        public void onLineToggle(int position) {
+            Line line = data.getLines().get(position);
+
+            int activeLines = 0;
+            for (Line l : data.getLines()) if (l.isActive()) activeLines++;
+
+            // prevent unchecking all
+            if (!line.isActive() || line.isActive() && activeLines > 1) {
+                line.setActive(!line.isActive());
+
+                chart.onChartDataChange();
+                previewChart.onChartDataChange();
+
+                Viewrect tempViewrect = new Viewrect(chart.getMaximumViewport());
+                float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
+                tempViewrect.inset(dx, 0);
+
+                previewChart.setCurrentViewportWithAnimation(tempViewrect);
+            } else {
+                checkboxList.post(() -> showLineAdapter.recheck(position));
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,19 +100,11 @@ public class StatisticsActivity extends ChangeThemeActivity {
         new AlertDialog.Builder(this)
                 .setCancelable(true)
                 .setTitle(R.string.chart_number)
-                .setSingleChoiceItems(chartNames, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        chooseChart(which);
-                    }
+                .setSingleChoiceItems(chartNames, -1, (dialog, which) -> {
+                    dialog.dismiss();
+                    chooseChart(which);
                 })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        chooseChart(0);
-                    }
-                }).show();
+                .setOnCancelListener(d -> chooseChart(0));
     }
 
     private void chooseChart(int pos) {
@@ -119,22 +138,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
             lines.add(line);
         }
 
-        ShowLineAdapter showLineAdapter = new ShowLineAdapter(lines, new ShowLineAdapter.OnLineCheckListener() {
-            @Override
-            public void onLineToggle(int position) {
-                Line line = lines.get(position);
-                line.setActive(!line.isActive());
-
-                chart.onChartDataChange();
-                previewChart.onChartDataChange();
-
-                Viewrect tempViewrect = new Viewrect(chart.getMaximumViewport());
-                float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
-                tempViewrect.inset(dx, 0);
-
-                previewChart.setCurrentViewportWithAnimation(tempViewrect);
-            }
-        });
+        showLineAdapter = new ShowLineAdapter(lines, onLineCheckListener);
         checkboxList.setAdapter(showLineAdapter);
 
         data = new LineChartData(lines);

@@ -127,12 +127,9 @@ public class ChangeThemeActivity extends AppCompatActivity {
             startActivity(intent);
             int animDuration = getResources().getInteger(R.integer.change_theme_time);
             overridePendingTransition(android.R.anim.fade_in, R.anim.fade_out_long);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
+            new Handler().postDelayed(() -> {
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }, animDuration * 2);
         } else {
             recreate();

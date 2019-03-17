@@ -3,7 +3,7 @@ package com.opiumfive.telechart.chart.valueFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import static com.opiumfive.telechart.GlobalConst.BOTTOM_LABEL_DATE_FORMAT;
+import static com.opiumfive.telechart.Settings.BOTTOM_LABEL_DATE_FORMAT;
 
 public class DateValueFormatter implements AxisValueFormatter {
 

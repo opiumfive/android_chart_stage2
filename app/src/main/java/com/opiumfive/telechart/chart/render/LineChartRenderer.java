@@ -19,8 +19,12 @@ import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.ChartDataProvider;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import static com.opiumfive.telechart.Settings.SELECTED_VALUES_DATE_FORMAT;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 
@@ -33,6 +37,7 @@ public class LineChartRenderer {
     public int DEFAULT_LABEL_MARGIN_DP = 0;
     protected ILineChart chart;
     protected ChartViewportHandler chartViewportHandler;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat(SELECTED_VALUES_DATE_FORMAT, Locale.ENGLISH);
 
     protected Paint labelPaint = new Paint();
     protected Paint labelBackgroundPaint = new Paint();
@@ -43,18 +48,11 @@ public class LineChartRenderer {
     protected float density;
     protected float scaledDensity;
     protected SelectedValues selectedValues = new SelectedValues();
-    protected char[] labelBuffer = new char[64];
     protected int labelOffset;
     protected int labelMargin;
-    protected boolean isValueLabelBackgroundEnabled;
-    protected boolean isValueLabelBackgroundAuto;
     protected float maxAngleVariation = DEFAULT_MAX_ANGLE_VARIATION;
 
     private ChartDataProvider dataProvider;
-
-    private int checkPrecision;
-
-    private float baseValue;
 
     private int touchToleranceMargin;
     private Paint linePaint = new Paint();
@@ -80,7 +78,7 @@ public class LineChartRenderer {
 
         labelBackgroundPaint.setAntiAlias(true);
         labelBackgroundPaint.setStyle(Paint.Style.FILL);
-        labelBackgroundPaint.setColor(getColorFromAttr(context, R.attr.itemBackground));
+        labelBackgroundPaint.setColor(getColorFromAttr(context, R.attr.detailBackgroundColor));
         this.dataProvider = dataProvider;
 
         touchToleranceMargin = Util.dp2px(density, DEFAULT_TOUCH_TOLERANCE_MARGIN_DP);
@@ -103,8 +101,6 @@ public class LineChartRenderer {
         touchLinePaint.setStyle(Paint.Style.FILL);
         touchLinePaint.setColor(getColorFromAttr(context, R.attr.dividerColor));
         touchLinePaint.setStrokeWidth(Util.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP) / 2f);
-
-        checkPrecision = Util.dp2px(density, 2);
     }
 
     public void setMaxAngleVariation(float maxAngleVariation) {
@@ -128,15 +124,10 @@ public class LineChartRenderer {
         labelPaint.setTextSize(Util.sp2px(scaledDensity, data.getValueLabelTextSize()));
         labelPaint.getFontMetricsInt(fontMetrics);
 
-        this.isValueLabelBackgroundEnabled = data.isValueLabelBackgroundEnabled();
-        this.isValueLabelBackgroundAuto = data.isValueLabelBackgroundAuto();
-        this.labelBackgroundPaint.setColor(data.getValueLabelBackgroundColor());
-
         selectedValues.clear();
 
         final int internalMargin = calculateContentRectInternalMargin();
         chartViewportHandler.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
-        baseValue = dataProvider.getChartData().getBaseValue();
 
         onChartViewportChanged();
     }
@@ -171,7 +162,7 @@ public class LineChartRenderer {
                 highlightPoint(canvas, pointValue, rawX, rawY);
             }
 
-            drawLabel(canvas, selectedValues.getTouchX());
+            drawLabel(canvas);
         }
     }
 
@@ -292,23 +283,26 @@ public class LineChartRenderer {
         drawInnerPoint(canvas, rawX, rawY, touchToleranceMargin);
     }
 
-    private void drawLabel(Canvas canvas, float rawX) {
-        final Rect contentRect = chartViewportHandler.getContentRectMinusAllMargins();
+    private void drawLabel(Canvas canvas) {
+        float rawX = selectedValues.getTouchX();
+        Rect contentRect = chartViewportHandler.getContentRectMinusAllMargins();
 
-        final float labelWidth = labelPaint.measureText(labelBuffer, labelBuffer.length - 20, 20);
-        final int labelHeight = Math.abs(fontMetrics.ascent);
+        float labelWidth = labelPaint.measureText("00000000000".toCharArray(), 0, 11);
+
+        int oneLineHeight = Math.abs(fontMetrics.ascent);
+        int lines = 1;
         float left = rawX - labelWidth / 2 - labelMargin;
         float right = rawX + labelWidth / 2 + labelMargin;
 
-        labelBackgroundRect.set(left, 0, right, 100);
+        labelBackgroundRect.set(left, 0, right, oneLineHeight * lines);
 
         canvas.drawRect(labelBackgroundRect, labelBackgroundPaint);
 
         float textX = labelBackgroundRect.left + labelMargin;
-        float textY = labelBackgroundRect.bottom - labelMargin;
+        float textY = labelBackgroundRect.top + oneLineHeight + labelMargin;
 
-
-        canvas.drawText("some".toCharArray(), 0, 4, textX, textY, labelPaint);
+        String text = dateFormat.format(new Date((long) selectedValues.getPoints().get(0).getX()));
+        canvas.drawText(text.toCharArray(), 0, text.length(), textX, textY, labelPaint);
 
 
         //final int numChars = line.getFormatter().formatChartValue(labelBuffer, pointValue);

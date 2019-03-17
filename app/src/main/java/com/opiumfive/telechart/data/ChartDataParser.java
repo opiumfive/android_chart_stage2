@@ -11,18 +11,15 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.opiumfive.telechart.GlobalConst.CHART_DATA_NAME;
+import static com.opiumfive.telechart.Settings.CHART_DATA_NAME;
 
 public class ChartDataParser {
-
-
 
     @Nullable
     public static ChartData loadAndParseInput(@NonNull Context context, int pos) {

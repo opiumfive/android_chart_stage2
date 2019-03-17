@@ -10,11 +10,11 @@ import android.view.View;
 
 public class ListDividerDecorator extends RecyclerView.ItemDecoration {
 
-    private Drawable mDivider;
+    private Drawable divider;
     private int leftPadding;
 
     public ListDividerDecorator(Context context, int leftPadding) {
-        mDivider = ContextCompat.getDrawable(context, R.drawable.line_divider);
+        divider = ContextCompat.getDrawable(context, R.drawable.line_divider);
         this.leftPadding = leftPadding;
     }
 
@@ -27,9 +27,9 @@ public class ListDividerDecorator extends RecyclerView.ItemDecoration {
             View child = parent.getChildAt(i);
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
             int top = child.getBottom() + params.bottomMargin;
-            int bottom = top + mDivider.getIntrinsicHeight();
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
+            int bottom = top + divider.getIntrinsicHeight();
+            divider.setBounds(left, top, right, bottom);
+            divider.draw(c);
         }
     }
 }
