@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.opiumfive.telechart.chart.gesture;
+package com.opiumfive.telechart.chart.touchControl;
 
 import android.content.Context;
 import android.os.SystemClock;
@@ -33,7 +33,7 @@ public class ZoomerCompat {
     private long mStartRTC;
     private float mEndZoom;
 
-    public ZoomerCompat(Context context) {
+    public ZoomerCompat() {
         mInterpolator = new DecelerateInterpolator();
         mAnimationDurationMillis = DEFAULT_SHORT_ANIMATION_DURATION;
     }

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import com.opiumfive.telechart.chart.render.PreviewChartViewportHandler;
-import com.opiumfive.telechart.chart.gesture.PreviewChartTouchHandler;
+import com.opiumfive.telechart.chart.touchControl.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.render.PreviewLineChartRenderer;
 

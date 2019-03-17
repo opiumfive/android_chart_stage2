@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.gesture;
+package com.opiumfive.telechart.chart.touchControl;
 
 import android.content.Context;
 import android.support.v4.view.GestureDetectorCompat;

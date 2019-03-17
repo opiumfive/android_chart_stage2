@@ -37,10 +37,13 @@ public class LinePathOptimizer {
     }
 
     private float angleBetween(PointValue center, PointValue current, PointValue previous) {
-        return Math.abs(180f - (float) Math.toDegrees(Math.atan2(
+        return Math.abs(
+            180f - (float) Math.toDegrees(Math.atan2(
                 chartViewportHandler.computeRawX(current.getX()) - chartViewportHandler.computeRawX(center.getX()),
                 chartViewportHandler.computeRawY(current.getY()) - chartViewportHandler.computeRawY(center.getY()))
                     - Math.atan2(chartViewportHandler.computeRawX(previous.getX()) - chartViewportHandler.computeRawX(center.getX()),
-                chartViewportHandler.computeRawY(previous.getY()) - chartViewportHandler.computeRawY(center.getY()))));
+                chartViewportHandler.computeRawY(previous.getY()) - chartViewportHandler.computeRawY(center.getY())
+            ))
+        );
     }
 }

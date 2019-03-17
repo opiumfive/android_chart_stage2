@@ -1,7 +1,7 @@
 package com.opiumfive.telechart.chart;
 
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
-import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
+import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.render.AxesRenderer;

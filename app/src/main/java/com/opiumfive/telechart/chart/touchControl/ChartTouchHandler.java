@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.gesture;
+package com.opiumfive.telechart.chart.touchControl;
 
 import android.content.Context;
 import android.view.MotionEvent;
@@ -6,12 +6,11 @@ import android.view.ViewParent;
 
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
-import com.opiumfive.telechart.chart.gesture.ChartScroller.ScrollResult;
+import com.opiumfive.telechart.chart.touchControl.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.render.LineChartRenderer;
 
 public class ChartTouchHandler {
-
 
     protected ChartScroller chartScroller;
     protected ChartZoomer chartZoomer;

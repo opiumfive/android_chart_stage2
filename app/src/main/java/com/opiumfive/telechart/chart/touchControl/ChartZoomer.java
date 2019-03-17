@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.gesture;
+package com.opiumfive.telechart.chart.touchControl;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -18,7 +18,7 @@ public class ChartZoomer {
     private Viewrect scrollerStartViewrect = new Viewrect();
 
     public ChartZoomer(Context context) {
-        zoomer = new ZoomerCompat(context);
+        zoomer = new ZoomerCompat();
     }
 
     public boolean startZoom(MotionEvent e, ChartViewportHandler computator) {

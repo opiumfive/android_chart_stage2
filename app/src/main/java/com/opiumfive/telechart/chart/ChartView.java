@@ -10,7 +10,7 @@ import android.view.View;
 import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
 import com.opiumfive.telechart.chart.listener.ChartViewportAnimator;
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
-import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
+import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.SelectedValues;

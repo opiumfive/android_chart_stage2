@@ -80,7 +80,7 @@ public class LineChartRenderer {
 
         labelBackgroundPaint.setAntiAlias(true);
         labelBackgroundPaint.setStyle(Paint.Style.FILL);
-        labelBackgroundPaint.setColor(getColorFromAttr(context, R.attr.dividerColor));
+        labelBackgroundPaint.setColor(getColorFromAttr(context, R.attr.itemBackground));
         this.dataProvider = dataProvider;
 
         touchToleranceMargin = ChartUtils.dp2px(density, DEFAULT_TOUCH_TOLERANCE_MARGIN_DP);
@@ -163,8 +163,6 @@ public class LineChartRenderer {
             Rect content = chartViewportHandler.getContentRectMinusAllMargins();
             canvas.drawLine(selectedValues.getTouchX(), content.top, selectedValues.getTouchX(), content.bottom, touchLinePaint);
 
-            drawLabel(canvas, selectedValues.getTouchX());
-
             for (PointValue pointValue : selectedValues.getPoints()) {
 
                 final float rawX = chartViewportHandler.computeRawX(pointValue.getX());
@@ -172,6 +170,8 @@ public class LineChartRenderer {
 
                 highlightPoint(canvas, pointValue, rawX, rawY);
             }
+
+            drawLabel(canvas, selectedValues.getTouchX());
         }
     }
 
@@ -295,16 +295,20 @@ public class LineChartRenderer {
     private void drawLabel(Canvas canvas, float rawX) {
         final Rect contentRect = chartViewportHandler.getContentRectMinusAllMargins();
 
-
-
         final float labelWidth = labelPaint.measureText(labelBuffer, labelBuffer.length - 20, 20);
         final int labelHeight = Math.abs(fontMetrics.ascent);
         float left = rawX - labelWidth / 2 - labelMargin;
         float right = rawX + labelWidth / 2 + labelMargin;
 
-        labelBackgroundRect.set(left, 0, right, labelHeight);
+        labelBackgroundRect.set(left, 0, right, 100);
 
         canvas.drawRect(labelBackgroundRect, labelBackgroundPaint);
+
+        float textX = labelBackgroundRect.left + labelMargin;
+        float textY = labelBackgroundRect.bottom - labelMargin;
+
+
+        canvas.drawText("some".toCharArray(), 0, 4, textX, textY, labelPaint);
 
 
         //final int numChars = line.getFormatter().formatChartValue(labelBuffer, pointValue);
@@ -352,28 +356,6 @@ public class LineChartRenderer {
 
     public void resetRenderer() {
         this.chartViewportHandler = chart.getChartViewportHandler();
-    }
-
-    protected void drawLabelTextAndBackground(Canvas canvas, char[] labelBuffer, int startIndex, int numChars, int autoBackgroundColor) {
-        final float textX;
-        final float textY;
-
-        if (isValueLabelBackgroundEnabled) {
-
-            if (isValueLabelBackgroundAuto) {
-                labelBackgroundPaint.setColor(autoBackgroundColor);
-            }
-
-            canvas.drawRect(labelBackgroundRect, labelBackgroundPaint);
-
-            textX = labelBackgroundRect.left + labelMargin;
-            textY = labelBackgroundRect.bottom - labelMargin;
-        } else {
-            textX = labelBackgroundRect.left;
-            textY = labelBackgroundRect.bottom;
-        }
-
-        canvas.drawText(labelBuffer, startIndex, numChars, textX, textY, labelPaint);
     }
 
     public boolean isTouched() {
