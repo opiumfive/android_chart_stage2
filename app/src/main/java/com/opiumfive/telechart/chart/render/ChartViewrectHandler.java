@@ -88,8 +88,6 @@ public class ChartViewrectHandler {
             }
         }
 
-        Log.d("onAnimUpd1", currentViewrect.toString());
-
         currentViewrect.left = left;
         currentViewrect.top = top;
         currentViewrect.right = right;
@@ -99,8 +97,6 @@ public class ChartViewrectHandler {
         currentViewrect.top = Math.min(maxViewrect.top, top);
         currentViewrect.right = Math.min(maxViewrect.right, right);
         currentViewrect.bottom = Math.max(maxViewrect.bottom, bottom);*/
-
-        Log.d("onAnimUpd2", currentViewrect.toString());
 
         if (viewrectChangeListener != null) {
             viewrectChangeListener.onViewportChanged(currentViewrect);
