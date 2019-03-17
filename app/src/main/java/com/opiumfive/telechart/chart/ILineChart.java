@@ -12,6 +12,6 @@ public interface ILineChart {
     void setChartRenderer(LineChartRenderer renderer);
     ChartViewrectHandler getChartViewrectHandler();
     void setCurrentViewrect(Viewrect targetViewrect);
-    Viewrect getMaximumViewport();
+    Viewrect getMaximumViewrect();
     void setScrollEnabled(boolean isScrollEnabled);
 }

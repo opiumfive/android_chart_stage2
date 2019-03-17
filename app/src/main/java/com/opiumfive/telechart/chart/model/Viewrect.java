@@ -122,4 +122,12 @@ public class Viewrect implements Parcelable {
         right = in.readFloat();
         bottom = in.readFloat();
     }
+
+    @Override
+    public String toString() {
+        return "Viewrect{" +
+                "top=" + top +
+                ", bottom=" + bottom +
+                '}';
+    }
 }

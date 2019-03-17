@@ -11,7 +11,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateListener {
 
-    private final static int FAST_ANIMATION_DURATION = 500;
+    private final static int FAST_ANIMATION_DURATION = 300;
 
     private final ILineChart chart;
     private ValueAnimator animator;
@@ -53,12 +53,12 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         float dRight = targetViewrect.right - startViewrect.right;
         float dTop = targetViewrect.top - startViewrect.top;
         float dBot = targetViewrect.bottom - startViewrect.bottom;
-        Log.d("onAnimUpd", "onAnimationUpdate: ");
         float diffLeft = dLeft != 0f ? dLeft * scale : 1f;
         float diffTop = dTop * scale;
         float diffRight = dRight != 0f ? dRight * scale : 1f;
         float diffBottom = dBot * scale;
         newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
+        Log.d("onAnimUpd", newViewrect.toString());
         chart.setCurrentViewrect(newViewrect);
     }
 

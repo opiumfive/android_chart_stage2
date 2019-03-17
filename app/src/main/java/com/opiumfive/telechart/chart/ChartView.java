@@ -13,7 +13,6 @@ import com.opiumfive.telechart.chart.render.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
-import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.render.AxesRenderer;
 import com.opiumfive.telechart.chart.render.LineChartRenderer;
@@ -153,11 +152,11 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         touchHandler.setValueTouchEnabled(isValueTouchEnabled);
     }
 
-    public Viewrect getMaximumViewport() {
+    public Viewrect getMaximumViewrect() {
         return chartRenderer.getMaximumViewrect();
     }
 
-    public void setMaximumViewport(Viewrect maxViewrect) {
+    public void setMaximumViewrect(Viewrect maxViewrect) {
         chartRenderer.setMaximumViewrect(maxViewrect);
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -166,7 +165,8 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
 
         if (null != targetViewrect) {
             viewportAnimator.cancelAnimation();
-            viewportAnimator.startAnimation(getCurrentViewrect(), targetViewrect);
+            Viewrect current = getCurrentViewrect();
+            viewportAnimator.startAnimation(current, targetViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -187,6 +187,10 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         chartRenderer.setViewrectCalculationEnabled(isEnabled);
     }
 
+    public void recalculateMax() {
+        chartRenderer.recalculateMax();
+    }
+
     public void onChartDataChange() {
         chartViewrectHandler.resetContentRect();
         chartRenderer.onChartDataChanged();
@@ -203,7 +207,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     @Override
     public boolean canScrollHorizontally(int direction) {
         final Viewrect currentViewrect = getCurrentViewrect();
-        final Viewrect maximumViewrect = getMaximumViewport();
+        final Viewrect maximumViewrect = getMaximumViewrect();
         if (direction < 0) {
             return currentViewrect.left > maximumViewrect.left;
         } else {

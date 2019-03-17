@@ -144,7 +144,7 @@ public class LineChartRenderer {
 
     public void onChartViewportChanged() {
         if (isViewportCalculationEnabled) {
-            calculateMaxViewport();
+            calculateMaxViewrect();
             chartViewrectHandler.setMaxViewrect(tempMaximumViewrect);
             chartViewrectHandler.setCurrentViewrect(chartViewrectHandler.getMaximumViewport());
         }
@@ -152,7 +152,6 @@ public class LineChartRenderer {
 
     public void draw(Canvas canvas) {
         final LineChartData data = dataProvider.getChartData();
-
 
         for (Line line : data.getLines()) {
             if (line.isActive()) drawPath(canvas, line);
@@ -213,7 +212,12 @@ public class LineChartRenderer {
         return isTouched();
     }
 
-    private void calculateMaxViewport() {
+    public void recalculateMax() {
+        calculateMaxViewrect();
+        chartViewrectHandler.setMaxViewrect(tempMaximumViewrect);
+    }
+
+    public void calculateMaxViewrect() {
         tempMaximumViewrect.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, Float.MAX_VALUE);
         LineChartData data = dataProvider.getChartData();
 

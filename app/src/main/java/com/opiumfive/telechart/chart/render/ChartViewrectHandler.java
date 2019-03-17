@@ -3,6 +3,7 @@ package com.opiumfive.telechart.chart.render;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.PointValue;
@@ -87,10 +88,19 @@ public class ChartViewrectHandler {
             }
         }
 
-        currentViewrect.left = Math.max(maxViewrect.left, left);
+        Log.d("onAnimUpd1", currentViewrect.toString());
+
+        currentViewrect.left = left;
+        currentViewrect.top = top;
+        currentViewrect.right = right;
+        currentViewrect.bottom = bottom;
+
+        /*currentViewrect.left = Math.max(maxViewrect.left, left);
         currentViewrect.top = Math.min(maxViewrect.top, top);
         currentViewrect.right = Math.min(maxViewrect.right, right);
-        currentViewrect.bottom = Math.max(maxViewrect.bottom, bottom);
+        currentViewrect.bottom = Math.max(maxViewrect.bottom, bottom);*/
+
+        Log.d("onAnimUpd2", currentViewrect.toString());
 
         if (viewrectChangeListener != null) {
             viewrectChangeListener.onViewportChanged(currentViewrect);
