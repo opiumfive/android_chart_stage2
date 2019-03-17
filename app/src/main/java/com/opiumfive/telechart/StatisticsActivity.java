@@ -53,11 +53,12 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 chart.onChartDataChange();
                 previewChart.onChartDataChange();
 
-                Viewrect tempViewrect = new Viewrect(chart.getMaximumViewport());
-                float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
-                tempViewrect.inset(dx, 0);
+                Viewrect current = chart.getCurrentViewrect();
+                Viewrect target = new Viewrect(chart.getMaximumViewport());
 
-                previewChart.setCurrentViewportWithAnimation(tempViewrect);
+                target.left = current.left;
+                target.right = current.right;
+                previewChart.setCurrentViewrectAnimated(target);
             } else {
                 checkboxList.post(() -> showLineAdapter.recheck(position));
             }
@@ -162,14 +163,13 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewData.setAxisXBottom(null);
 
         chart.setChartData(data);
-        chart.setZoomEnabled(false);
         chart.setScrollEnabled(false);
-        chart.setValueSelectionEnabled(true);
+
+        chart.setViewportCalculationEnabled(false);
         chart.setValueTouchEnabled(true);
 
         previewChart.setChartData(previewData);
         previewChart.setViewportChangeListener(new ViewrectListener());
-        previewChart.setZoomEnabled(false);
         previewChart.setViewportCalculationEnabled(false);
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
         previewChart.setPreviewBackgroundColor(getColorFromAttr(this, R.attr.previewBackColor));
@@ -185,6 +185,9 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         @Override
         public void onViewportChanged(Viewrect newViewrect) {
+
+
+
             chart.setCurrentViewport(newViewrect);
         }
 

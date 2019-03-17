@@ -9,7 +9,7 @@ import android.view.View;
 
 import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
 import com.opiumfive.telechart.chart.listener.ChartViewrectAnimator;
-import com.opiumfive.telechart.chart.render.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
@@ -23,13 +23,11 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
 
     protected LineChartData data;
 
-    protected ChartViewportHandler chartViewportHandler;
+    protected ChartViewrectHandler chartViewrectHandler;
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewportAnimator;
-    protected boolean isInteractive = true;
-    protected boolean isContainerScrollEnabled = false;
 
     public ChartView(Context context) {
         this(context, null, 0);
@@ -42,12 +40,10 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     public ChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        chartViewportHandler = new ChartViewportHandler();
+        chartViewrectHandler = new ChartViewrectHandler();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
         this.viewportAnimator = new ChartViewrectAnimator(this);
-
-
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setChartData(LineChartData.generateDummyData());
@@ -76,7 +72,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
 
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
-        chartViewportHandler.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        chartViewrectHandler.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         chartRenderer.onChartSizeChanged();
         axesRenderer.onChartSizeChanged();
     }
@@ -87,7 +83,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         if (isEnabled()) {
             axesRenderer.drawInBackground(canvas);
             int clipRestoreCount = canvas.save();
-            canvas.clipRect(chartViewportHandler.getContentRectMinusAllMargins());
+            canvas.clipRect(chartViewrectHandler.getContentRectMinusAllMargins());
             chartRenderer.draw(canvas);
             canvas.restoreToCount(clipRestoreCount);
 
@@ -102,45 +98,21 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
 
-        if (isInteractive) {
-            boolean needInvalidate;
+        boolean needInvalidate = touchHandler.handleTouchEvent(event);
 
-            if (isContainerScrollEnabled) {
-                needInvalidate = touchHandler.handleTouchEvent(event, getParent());
-            } else {
-                needInvalidate = touchHandler.handleTouchEvent(event);
-            }
-
-            if (needInvalidate) {
-                ViewCompat.postInvalidateOnAnimation(this);
-            }
-
-            return true;
-        } else {
-            return false;
+        if (needInvalidate) {
+            ViewCompat.postInvalidateOnAnimation(this);
         }
+
+        return true;
     }
 
     @Override
     public void computeScroll() {
         super.computeScroll();
-        if (isInteractive) {
-            if (touchHandler.computeScroll()) {
-                ViewCompat.postInvalidateOnAnimation(this);
-            }
+        if (touchHandler.computeScroll()) {
+            ViewCompat.postInvalidateOnAnimation(this);
         }
-    }
-
-    public void animationDataUpdate(float scale) {
-        getChartData().update(scale);
-        chartRenderer.onChartViewportChanged();
-        ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public void animationDataFinished() {
-        getChartData().finish();
-        chartRenderer.onChartViewportChanged();
-        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public void setViewportAnimationListener(ChartAnimationListener animationListener) {
@@ -148,7 +120,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     }
 
     public void setViewportChangeListener(ViewrectChangeListener viewrectChangeListener) {
-        chartViewportHandler.setViewrectChangeListener(viewrectChangeListener);
+        chartViewrectHandler.setViewrectChangeListener(viewrectChangeListener);
     }
 
     public LineChartRenderer getChartRenderer() {
@@ -161,32 +133,8 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public AxesRenderer getAxesRenderer() {
-        return axesRenderer;
-    }
-
-    public ChartViewportHandler getChartViewportHandler() {
-        return chartViewportHandler;
-    }
-
-    public ChartTouchHandler getTouchHandler() {
-        return touchHandler;
-    }
-
-    public boolean isInteractive() {
-        return isInteractive;
-    }
-
-    public void setInteractive(boolean isInteractive) {
-        this.isInteractive = isInteractive;
-    }
-
-    public boolean isZoomEnabled() {
-        return touchHandler.isZoomEnabled();
-    }
-
-    public void setZoomEnabled(boolean isZoomEnabled) {
-        touchHandler.setZoomEnabled(isZoomEnabled);
+    public ChartViewrectHandler getChartViewrectHandler() {
+        return chartViewrectHandler;
     }
 
     public boolean isScrollEnabled() {
@@ -197,21 +145,9 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         touchHandler.setScrollEnabled(isScrollEnabled);
     }
 
-    public void moveTo(float x, float y) {
-        Viewrect scrollViewrect = computeScrollViewport(x, y);
-        setCurrentViewport(scrollViewrect);
-    }
-
-    public void moveToWithAnimation(float x, float y) {
-        Viewrect scrollViewrect = computeScrollViewport(x, y);
-        setCurrentViewportWithAnimation(scrollViewrect);
-    }
-
     private Viewrect computeScrollViewport(float x, float y) {
-
-
         Viewrect maxViewrect = getMaximumViewport();
-        Viewrect currentViewrect = getCurrentViewport();
+        Viewrect currentViewrect = getCurrentViewrect();
         Viewrect scrollViewrect = new Viewrect(currentViewrect);
 
         if (maxViewrect.contains(x, y)) {
@@ -242,30 +178,20 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     }
 
     public float getMaxZoom() {
-        return chartViewportHandler.getMaxZoom();
+        return chartViewrectHandler.getMaxZoom();
     }
 
     public void setMaxZoom(float maxZoom) {
-        chartViewportHandler.setMaxZoom(maxZoom);
+        chartViewrectHandler.setMaxZoom(maxZoom);
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public float getZoomLevel() {
         Viewrect maxViewrect = getMaximumViewport();
-        Viewrect currentViewrect = getCurrentViewport();
+        Viewrect currentViewrect = getCurrentViewrect();
 
         return Math.max(maxViewrect.width() / currentViewrect.width(), maxViewrect.height() / currentViewrect.height());
 
-    }
-
-    public void setZoomLevel(float x, float y, float zoomLevel) {
-        Viewrect zoomViewrect = computeZoomViewport(x, y, zoomLevel);
-        setCurrentViewport(zoomViewrect);
-    }
-
-    public void setZoomLevelWithAnimation(float x, float y, float zoomLevel) {
-        Viewrect zoomViewrect = computeZoomViewport(x, y, zoomLevel);
-        setCurrentViewportWithAnimation(zoomViewrect);
     }
 
     private Viewrect computeZoomViewport(float x, float y, float zoomLevel) {
@@ -302,62 +228,46 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     }
 
     public Viewrect getMaximumViewport() {
-        return chartRenderer.getMaximumViewport();
+        return chartRenderer.getMaximumViewrect();
     }
 
     public void setMaximumViewport(Viewrect maxViewrect) {
-        chartRenderer.setMaximumViewport(maxViewrect);
+        chartRenderer.setMaximumViewrect(maxViewrect);
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void setCurrentViewportWithAnimation(Viewrect targetViewrect) {
+    public void setCurrentViewrectAnimated(Viewrect targetViewrect) {
 
         if (null != targetViewrect) {
             viewportAnimator.cancelAnimation();
-            viewportAnimator.startAnimation(getCurrentViewport(), targetViewrect);
+            viewportAnimator.startAnimation(getCurrentViewrect(), targetViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void setCurrentViewportWithAnimation(Viewrect targetViewrect, long duration) {
-        if (null != targetViewrect) {
-            viewportAnimator.cancelAnimation();
-            viewportAnimator.startAnimation(getCurrentViewport(), targetViewrect, duration);
-        }
-        ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public Viewrect getCurrentViewport() {
-        return getChartRenderer().getCurrentViewport();
+    public Viewrect getCurrentViewrect() {
+        return getChartRenderer().getCurrentViewrect();
     }
 
     public void setCurrentViewport(Viewrect targetViewrect) {
 
         if (null != targetViewrect) {
-            chartRenderer.setCurrentViewport(targetViewrect);
+            chartRenderer.setCurrentViewrect(targetViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public void resetViewports() {
-        chartRenderer.setMaximumViewport(null);
-        chartRenderer.setCurrentViewport(null);
+        chartRenderer.setMaximumViewrect(null);
+        chartRenderer.setCurrentViewrect(null);
     }
 
     public boolean isViewportCalculationEnabled() {
-        return chartRenderer.isViewportCalculationEnabled();
+        return chartRenderer.isViewrectCalculationEnabled();
     }
 
     public void setViewportCalculationEnabled(boolean isEnabled) {
-        chartRenderer.setViewportCalculationEnabled(isEnabled);
-    }
-
-    public boolean isValueSelectionEnabled() {
-        return touchHandler.isValueSelectionEnabled();
-    }
-
-    public void setValueSelectionEnabled(boolean isValueSelectionEnabled) {
-        touchHandler.setValueSelectionEnabled(isValueSelectionEnabled);
+        chartRenderer.setViewrectCalculationEnabled(isEnabled);
     }
 
     public void selectValue(SelectedValues selectedValues) {
@@ -369,16 +279,8 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         return chartRenderer.getSelectedValues();
     }
 
-    public boolean isContainerScrollEnabled() {
-        return isContainerScrollEnabled;
-    }
-
-    public void setContainerScrollEnabled(boolean isContainerScrollEnabled) {
-        this.isContainerScrollEnabled = isContainerScrollEnabled;
-    }
-
     public void onChartDataChange() {
-        chartViewportHandler.resetContentRect();
+        chartViewrectHandler.resetContentRect();
         chartRenderer.onChartDataChanged();
         axesRenderer.onChartDataChanged();
         ViewCompat.postInvalidateOnAnimation(this);
@@ -392,10 +294,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
 
     @Override
     public boolean canScrollHorizontally(int direction) {
-        if (getZoomLevel() <= 1.0) {
-            return false;
-        }
-        final Viewrect currentViewrect = getCurrentViewport();
+        final Viewrect currentViewrect = getCurrentViewrect();
         final Viewrect maximumViewrect = getMaximumViewport();
         if (direction < 0) {
             return currentViewrect.left > maximumViewrect.left;

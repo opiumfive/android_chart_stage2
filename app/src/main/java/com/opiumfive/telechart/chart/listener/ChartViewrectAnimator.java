@@ -4,13 +4,16 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.util.Log;
 
+import com.opiumfive.telechart.chart.ChartView;
 import com.opiumfive.telechart.chart.ILineChart;
+import com.opiumfive.telechart.chart.PreviewChartView;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateListener {
 
-    private final static int FAST_ANIMATION_DURATION = 300;
+    private final static int FAST_ANIMATION_DURATION = 500;
 
     private final ILineChart chart;
     private ValueAnimator animator;
@@ -48,9 +51,11 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         float scale = animation.getAnimatedFraction();
-        float diffLeft = (targetViewrect.left - startViewrect.left) * scale;
+        float dLeft = targetViewrect.left - startViewrect.left;
+        float dRight = targetViewrect.right - startViewrect.right;
+        float diffLeft = dLeft != 0f ? dLeft * scale : 1f;
         float diffTop = (targetViewrect.top - startViewrect.top) * scale;
-        float diffRight = (targetViewrect.right - startViewrect.right) * scale;
+        float diffRight = dRight != 0f ? dRight * scale : 1f;
         float diffBottom = (targetViewrect.bottom - startViewrect.bottom) * scale;
         newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
         chart.setCurrentViewport(newViewrect);

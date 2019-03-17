@@ -24,19 +24,18 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         gestureDetector = new GestureDetectorCompat(context, gestureListener);
 
         isValueTouchEnabled = false;
-        isValueSelectionEnabled = false;
     }
 
     @Override
     public boolean handleTouchEvent(MotionEvent event) {
-        Viewrect currentViewrect = chartViewportHandler.getCurrentViewrect();
-        final Viewrect maxViewrect = chartViewportHandler.getMaximumViewport();
-        final float left = chartViewportHandler.computeRawX(currentViewrect.left);
-        final float right = chartViewportHandler.computeRawX(currentViewrect.right);
+        Viewrect currentViewrect = chartViewrectHandler.getCurrentViewrect();
+        final Viewrect maxViewrect = chartViewrectHandler.getMaximumViewport();
+        final float left = chartViewrectHandler.computeRawX(currentViewrect.left);
+        final float right = chartViewrectHandler.computeRawX(currentViewrect.right);
 
         float touchX = event.getRawX();
 
-        sideDragZone = chartViewportHandler.computeSideScrollTrigger(SIDE_DRAG_ZONE);
+        sideDragZone = chartViewrectHandler.computeSideScrollTrigger(SIDE_DRAG_ZONE);
 
         if (Math.abs(left - touchX) <= sideDragZone) {
             if (currentViewrect.left > maxViewrect.left) {
@@ -50,13 +49,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
             }
         } else if (touchX > left && touchX < right) {
             gestureListener.setScrollMode(ScrollMode.FULL);
-            boolean needInvalidate = gestureDetector.onTouchEvent(event);
-
-            if (isZoomEnabled) {
-                disallowParentInterceptTouchEvent();
-            }
-
-            return needInvalidate;
+            return gestureDetector.onTouchEvent(event);
         } else {
             return false;
         }
@@ -73,7 +66,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         public boolean onDown(MotionEvent e) {
             if (isScrollEnabled) {
                 disallowParentInterceptTouchEvent();
-                return chartScroller.startScroll(chartViewportHandler, scrollMode);
+                return chartScroller.startScroll(chartViewrectHandler, scrollMode);
             }
 
             return false;
@@ -87,7 +80,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (isScrollEnabled) {
-                boolean canScroll = chartScroller.scroll(chartViewportHandler, -distanceX, -distanceY, scrollResult);
+                boolean canScroll = chartScroller.scroll(chartViewrectHandler, -distanceX, -distanceY, scrollResult);
                 allowParentInterceptTouchEvent(scrollResult);
                 return canScroll;
             }
@@ -98,7 +91,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (isScrollEnabled && scrollMode == ScrollMode.FULL) {
-                return chartScroller.fling((int) velocityX, (int) velocityY, chartViewportHandler);
+                return chartScroller.fling((int) velocityX, (int) velocityY, chartViewrectHandler);
             }
 
             return false;

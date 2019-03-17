@@ -5,7 +5,7 @@ import android.view.MotionEvent;
 import android.view.ViewParent;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.render.ChartViewportHandler;
+import com.opiumfive.telechart.chart.render.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.render.LineChartRenderer;
@@ -13,15 +13,12 @@ import com.opiumfive.telechart.chart.render.LineChartRenderer;
 public class ChartTouchHandler {
 
     protected ChartScroller chartScroller;
-    protected ChartZoomer chartZoomer;
     protected ILineChart chart;
-    protected ChartViewportHandler chartViewportHandler;
+    protected ChartViewrectHandler chartViewrectHandler;
     protected LineChartRenderer renderer;
 
-    protected boolean isZoomEnabled = true;
     protected boolean isScrollEnabled = true;
     protected boolean isValueTouchEnabled = true;
-    protected boolean isValueSelectionEnabled = false;
 
     protected SelectedValues selectedValues = new SelectedValues();
 
@@ -29,23 +26,19 @@ public class ChartTouchHandler {
 
     public ChartTouchHandler(Context context, ILineChart chart) {
         this.chart = chart;
-        this.chartViewportHandler = chart.getChartViewportHandler();
+        this.chartViewrectHandler = chart.getChartViewrectHandler();
         this.renderer = chart.getChartRenderer();
         chartScroller = new ChartScroller(context);
-        chartZoomer = new ChartZoomer(context);
     }
 
     public void resetTouchHandler() {
-        this.chartViewportHandler = chart.getChartViewportHandler();
+        this.chartViewrectHandler = chart.getChartViewrectHandler();
         this.renderer = chart.getChartRenderer();
     }
 
     public boolean computeScroll() {
         boolean needInvalidate = false;
-        if (isScrollEnabled && chartScroller.computeScrollOffset(chartViewportHandler)) {
-            needInvalidate = true;
-        }
-        if (isZoomEnabled && chartZoomer.computeZoom(chartViewportHandler)) {
+        if (isScrollEnabled && chartScroller.computeScrollOffset(chartViewrectHandler)) {
             needInvalidate = true;
         }
         return needInvalidate;
@@ -59,12 +52,6 @@ public class ChartTouchHandler {
         }
 
         return needInvalidate;
-    }
-
-    public boolean handleTouchEvent(MotionEvent event, ViewParent viewParent) {
-        this.viewParent = viewParent;
-
-        return handleTouchEvent(event);
     }
 
     protected void disallowParentInterceptTouchEvent() {
@@ -120,15 +107,6 @@ public class ChartTouchHandler {
         return renderer.isTouched();
     }
 
-    public boolean isZoomEnabled() {
-        return isZoomEnabled;
-    }
-
-    public void setZoomEnabled(boolean isZoomEnabled) {
-        this.isZoomEnabled = isZoomEnabled;
-
-    }
-
     public boolean isScrollEnabled() {
         return isScrollEnabled;
     }
@@ -143,13 +121,5 @@ public class ChartTouchHandler {
 
     public void setValueTouchEnabled(boolean isValueTouchEnabled) {
         this.isValueTouchEnabled = isValueTouchEnabled;
-    }
-
-    public boolean isValueSelectionEnabled() {
-        return isValueSelectionEnabled;
-    }
-
-    public void setValueSelectionEnabled(boolean isValueSelectionEnabled) {
-        this.isValueSelectionEnabled = isValueSelectionEnabled;
     }
 }

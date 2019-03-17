@@ -2,7 +2,7 @@ package com.opiumfive.telechart.chart.render;
 
 import com.opiumfive.telechart.chart.model.Viewrect;
 
-public class PreviewChartViewportHandler extends ChartViewportHandler {
+public class PreviewChartViewrectHandler extends ChartViewrectHandler {
 
     public float computeRawX(float valueX) {
         final float pixelOffset = (valueX - maxViewrect.left) * (contentRectMinusAllMargins.width() / maxViewrect.width());

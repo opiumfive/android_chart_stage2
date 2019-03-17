@@ -31,14 +31,14 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     @Override
     public void drawUnclipped(Canvas canvas) {
         super.drawUnclipped(canvas);
-        final Viewrect currentViewrect = chartViewportHandler.getCurrentViewrect();
-        final Viewrect maxViewrect = chartViewportHandler.getMaximumViewport();
-        final float left = chartViewportHandler.computeRawX(currentViewrect.left);
-        final float top = chartViewportHandler.computeRawY(currentViewrect.top);
-        final float right = chartViewportHandler.computeRawX(currentViewrect.right);
-        final float bottom = chartViewportHandler.computeRawY(currentViewrect.bottom);
-        final float start = chartViewportHandler.computeRawX(maxViewrect.left);
-        final float end = chartViewportHandler.computeRawX(maxViewrect.right);
+        final Viewrect currentViewrect = chartViewrectHandler.getCurrentViewrect();
+        final Viewrect maxViewrect = chartViewrectHandler.getMaximumViewport();
+        final float left = chartViewrectHandler.computeRawX(currentViewrect.left);
+        final float top = chartViewrectHandler.computeRawY(currentViewrect.top);
+        final float right = chartViewrectHandler.computeRawX(currentViewrect.right);
+        final float bottom = chartViewrectHandler.computeRawY(currentViewrect.bottom);
+        final float start = chartViewrectHandler.computeRawX(maxViewrect.left);
+        final float end = chartViewrectHandler.computeRawX(maxViewrect.right);
         previewPaint.setColor(backrgroundColor);
         previewPaint.setStyle(Paint.Style.FILL);
         canvas.drawRect(start, top, left - DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, bottom, previewPaint);

@@ -11,7 +11,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 import java.util.List;
 
 
-public class ChartViewportHandler {
+public class ChartViewrectHandler {
 
 
     protected static final float DEFAULT_MAXIMUM_ZOOM = 20f;
@@ -32,7 +32,7 @@ public class ChartViewportHandler {
 
     protected ViewrectChangeListener viewrectChangeListener;
 
-    public ChartViewportHandler() {
+    public ChartViewrectHandler() {
         linePathOptimizer = new LinePathOptimizer(this);
     }
 

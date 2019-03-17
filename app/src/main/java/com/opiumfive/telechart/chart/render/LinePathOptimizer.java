@@ -7,10 +7,10 @@ import java.util.List;
 
 public class LinePathOptimizer {
 
-    private ChartViewportHandler chartViewportHandler;
+    private ChartViewrectHandler chartViewrectHandler;
 
-    public LinePathOptimizer(ChartViewportHandler chartViewportHandler) {
-        this.chartViewportHandler = chartViewportHandler;
+    public LinePathOptimizer(ChartViewrectHandler chartViewrectHandler) {
+        this.chartViewrectHandler = chartViewrectHandler;
     }
 
     // one point is (approx) on line between near points, no sense to draw 2+ lines instead of one
@@ -39,10 +39,10 @@ public class LinePathOptimizer {
     private float angleBetween(PointValue center, PointValue current, PointValue previous) {
         return Math.abs(
             180f - (float) Math.toDegrees(Math.atan2(
-                chartViewportHandler.computeRawX(current.getX()) - chartViewportHandler.computeRawX(center.getX()),
-                chartViewportHandler.computeRawY(current.getY()) - chartViewportHandler.computeRawY(center.getY()))
-                    - Math.atan2(chartViewportHandler.computeRawX(previous.getX()) - chartViewportHandler.computeRawX(center.getX()),
-                chartViewportHandler.computeRawY(previous.getY()) - chartViewportHandler.computeRawY(center.getY())
+                chartViewrectHandler.computeRawX(current.getX()) - chartViewrectHandler.computeRawX(center.getX()),
+                chartViewrectHandler.computeRawY(current.getY()) - chartViewrectHandler.computeRawY(center.getY()))
+                    - Math.atan2(chartViewrectHandler.computeRawX(previous.getX()) - chartViewrectHandler.computeRawX(center.getX()),
+                chartViewrectHandler.computeRawY(previous.getY()) - chartViewrectHandler.computeRawY(center.getY())
             ))
         );
     }
