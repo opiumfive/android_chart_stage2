@@ -28,20 +28,11 @@ public class PreviewChartView extends ChartView {
         touchHandler = new PreviewChartTouchHandler(context, this);
         setChartRenderer(previewChartRenderer);
         setChartData(LineChartData.generateDummyData());
-        //updateCanvasDrawer();
-    }
-
-    public int getPreviewColor() {
-        return previewChartRenderer.getPreviewColor();
     }
 
     public void setPreviewColor(int color) {
         previewChartRenderer.setPreviewColor(color);
         ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public int getPreviewBackgroundColor() {
-        return previewChartRenderer.getBackgroundColor();
     }
 
     public void setPreviewBackgroundColor(int color) {
