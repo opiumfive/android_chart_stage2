@@ -1,6 +1,5 @@
 package com.opiumfive.telechart;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -104,7 +103,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
                     dialog.dismiss();
                     chooseChart(which);
                 })
-                .setOnCancelListener(d -> chooseChart(0));
+                .setOnCancelListener(d -> chooseChart(0))
+                .show();
     }
 
     private void chooseChart(int pos) {

@@ -2,10 +2,15 @@ package com.opiumfive.telechart.chart;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
+
+import com.opiumfive.telechart.R;
 
 public class Util {
 
@@ -17,6 +22,12 @@ public class Util {
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(resId, typedValue, true);
         return typedValue.data;
+    }
+
+    public static Drawable getDrawableFromAttr(Context context, @AttrRes int resId) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(new int[] {R.attr.detailBackground});
+        int attributeResourceId = a.getResourceId(0, 0);
+        return ContextCompat.getDrawable(context, attributeResourceId);
     }
 
     public static int dp2px(float density, int dp) {

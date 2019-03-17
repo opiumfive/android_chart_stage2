@@ -7,16 +7,11 @@
     <color name="titleColor">#3896d4</color>
     <color name="textColor">#222222</color>
     <color name="labelColor">#96a2aa</color>
-    <color name="joinedColor">#68bb68</color>
-    <color name="leftColor">#ed685f</color>
     <color name="previewBackColor">#99f0f0f0</color>
     <color name="previewFrameColor">#ccdbe7f0</color>
     <color name="itemBackground">#ffffff</color>
     <color name="dividerColor">#e7e7e7</color>
-    <color name="detailJoinedColor">#20a423</color>
-    <color name="detailLeftColor">#d45d57</color>
     <color name="detailTitleColor">#222222</color>
-    <color name="detailBackgroundColor">#ffffff</color>
 
     <color name="colorPrimary_Dark">#212d3b</color>
     <color name="colorPrimaryDark_Dark">#1a242e</color>
@@ -25,14 +20,9 @@
     <color name="titleColor_Dark">#7bc4fb</color>
     <color name="textColor_Dark">#FFFFFF</color>
     <color name="labelColor_Dark">#506372</color>
-    <color name="joinedColor_Dark">#68bb68</color>
-    <color name="leftColor_Dark">#ed685f</color>
     <color name="previewBackColor_Dark">#99151e27</color>
     <color name="previewFrameColor_Dark">#cc2b4256</color>
     <color name="itemBackground_Dark">#1d2733</color>
     <color name="dividerColor_Dark">#0f1823</color>
-    <color name="detailJoinedColor_Dark">#5ba35e</color>
-    <color name="detailLeftColor_Dark">#bd5b59</color>
     <color name="detailTitleColor_Dark">#dbe5eb</color>
-    <color name="detailBackgroundColor_Dark">#202b38</color>
 </resources>

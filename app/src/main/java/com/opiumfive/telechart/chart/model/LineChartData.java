@@ -10,7 +10,7 @@ import java.util.List;
 public class LineChartData {
 
     public static final float DEFAULT_BASE_VALUE = 0.0f;
-    public static final int DEFAULT_TEXT_SIZE_SP = 12;
+    public static final int DEFAULT_TEXT_SIZE_SP = 14;
 
     protected Axis axisXBottom;
     protected Axis axisYLeft;

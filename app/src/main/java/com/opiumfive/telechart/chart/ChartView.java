@@ -90,8 +90,9 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
             canvas.clipRect(chartViewportHandler.getContentRectMinusAllMargins());
             chartRenderer.draw(canvas);
             canvas.restoreToCount(clipRestoreCount);
-            chartRenderer.drawUnclipped(canvas);
+
             axesRenderer.drawInForeground(canvas);
+            chartRenderer.drawUnclipped(canvas);
         } else {
             canvas.drawColor(Util.DEFAULT_COLOR);
         }

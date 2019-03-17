@@ -11,6 +11,7 @@ public class PointValue {
     private float diffY;
     private int color;
     private int pointRadius;
+    private String line;
 
     public PointValue() {
         set(0, 0);
@@ -72,6 +73,14 @@ public class PointValue {
 
     public void setPointRadius(int pointRadius) {
         this.pointRadius = pointRadius;
+    }
+
+    public String getLine() {
+        return line;
+    }
+
+    public void setLine(String line) {
+        this.line = line;
     }
 
     @Override

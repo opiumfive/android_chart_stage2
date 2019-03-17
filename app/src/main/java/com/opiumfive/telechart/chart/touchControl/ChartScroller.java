@@ -43,6 +43,8 @@ public class ChartScroller {
 
             float viewportOffsetX = distanceX * visibleViewrect.width() / contentRect.width();
 
+            if (currentScrollMode == null) return false;
+
             switch (currentScrollMode) {
                 case FULL:
                     chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
