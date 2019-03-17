@@ -1,7 +1,5 @@
 package com.opiumfive.telechart.chart.model;
 
-import java.util.Arrays;
-
 
 public class PointValue {
 
@@ -11,7 +9,8 @@ public class PointValue {
     private float originY;
     private float diffX;
     private float diffY;
-    private char[] label;
+    private int color;
+    private int pointRadius;
 
     public PointValue() {
         set(0, 0);
@@ -23,7 +22,6 @@ public class PointValue {
 
     public PointValue(PointValue pointValue) {
         set(pointValue.x, pointValue.y);
-        this.label = pointValue.label;
     }
 
     public void update(float scale) {
@@ -60,24 +58,20 @@ public class PointValue {
         return this.y;
     }
 
-    @Deprecated
-    public char[] getLabel() {
-        return label;
+    public int getColor() {
+        return color;
     }
 
-    public PointValue setLabel(String label) {
-        this.label = label.toCharArray();
-        return this;
+    public void setColor(int color) {
+        this.color = color;
     }
 
-    public char[] getLabelAsChars() {
-        return label;
+    public int getPointRadius() {
+        return pointRadius;
     }
 
-    @Deprecated
-    public PointValue setLabel(char[] label) {
-        this.label = label;
-        return this;
+    public void setPointRadius(int pointRadius) {
+        this.pointRadius = pointRadius;
     }
 
     @Override
@@ -98,7 +92,6 @@ public class PointValue {
         if (Float.compare(that.originY, originY) != 0) return false;
         if (Float.compare(that.x, x) != 0) return false;
         if (Float.compare(that.y, y) != 0) return false;
-        if (!Arrays.equals(label, that.label)) return false;
 
         return true;
     }
@@ -111,7 +104,6 @@ public class PointValue {
         result = 31 * result + (originY != +0.0f ? Float.floatToIntBits(originY) : 0);
         result = 31 * result + (diffX != +0.0f ? Float.floatToIntBits(diffX) : 0);
         result = 31 * result + (diffY != +0.0f ? Float.floatToIntBits(diffY) : 0);
-        result = 31 * result + (label != null ? Arrays.hashCode(label) : 0);
         return result;
     }
 }

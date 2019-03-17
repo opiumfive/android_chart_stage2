@@ -5,7 +5,7 @@ import android.graphics.PointF;
 import android.view.MotionEvent;
 
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 
 
 public class ChartZoomer {
@@ -15,7 +15,7 @@ public class ChartZoomer {
     private ZoomerCompat zoomer;
     private PointF zoomFocalPoint = new PointF();
     private PointF viewportFocus = new PointF();
-    private Viewport scrollerStartViewport = new Viewport();
+    private Viewrect scrollerStartViewrect = new Viewrect();
 
     public ChartZoomer(Context context) {
         zoomer = new ZoomerCompat(context);
@@ -23,7 +23,7 @@ public class ChartZoomer {
 
     public boolean startZoom(MotionEvent e, ChartViewportHandler computator) {
         zoomer.forceFinished(true);
-        scrollerStartViewport.set(computator.getCurrentViewport());
+        scrollerStartViewrect.set(computator.getCurrentViewrect());
         if (!computator.rawPixelsToDataPoint(e.getX(), e.getY(), zoomFocalPoint)) {
             return false;
         }
@@ -33,10 +33,10 @@ public class ChartZoomer {
 
     public boolean computeZoom(ChartViewportHandler computator) {
         if (zoomer.computeZoom()) {
-            final float newWidth = (1.0f - zoomer.getCurrZoom()) * scrollerStartViewport.width();
-            final float newHeight = (1.0f - zoomer.getCurrZoom()) * scrollerStartViewport.height();
-            final float pointWithinViewportX = (zoomFocalPoint.x - scrollerStartViewport.left) / scrollerStartViewport.width();
-            final float pointWithinViewportY = (zoomFocalPoint.y - scrollerStartViewport.bottom) / scrollerStartViewport.height();
+            final float newWidth = (1.0f - zoomer.getCurrZoom()) * scrollerStartViewrect.width();
+            final float newHeight = (1.0f - zoomer.getCurrZoom()) * scrollerStartViewrect.height();
+            final float pointWithinViewportX = (zoomFocalPoint.x - scrollerStartViewrect.left) / scrollerStartViewrect.width();
+            final float pointWithinViewportY = (zoomFocalPoint.y - scrollerStartViewrect.bottom) / scrollerStartViewrect.height();
 
             float left = zoomFocalPoint.x - newWidth * pointWithinViewportX;
             float top = zoomFocalPoint.y + newHeight * (1 - pointWithinViewportY);
@@ -50,8 +50,8 @@ public class ChartZoomer {
 
     public boolean scale(ChartViewportHandler computator, float focusX, float focusY, float scale) {
 
-        final float newWidth = scale * computator.getCurrentViewport().width();
-        final float newHeight = scale * computator.getCurrentViewport().height();
+        final float newWidth = scale * computator.getCurrentViewrect().width();
+        final float newHeight = scale * computator.getCurrentViewrect().height();
         if (!computator.rawPixelsToDataPoint(focusX, focusY, viewportFocus)) {
             return false;
         }
@@ -65,7 +65,7 @@ public class ChartZoomer {
     }
 
     private void setCurrentViewport(ChartViewportHandler computator, float left, float top, float right, float bottom) {
-        Viewport currentViewport = computator.getCurrentViewport();
-        computator.setCurrentViewport(left, currentViewport.top, right, currentViewport.bottom);
+        Viewrect currentViewrect = computator.getCurrentViewrect();
+        computator.setCurrentViewport(left, currentViewrect.top, right, currentViewrect.bottom);
     }
 }

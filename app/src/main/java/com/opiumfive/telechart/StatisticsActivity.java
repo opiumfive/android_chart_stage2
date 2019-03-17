@@ -15,7 +15,7 @@ import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.ChartView;
 import com.opiumfive.telechart.chart.PreviewChartView;
 import com.opiumfive.telechart.data.ChartData;
@@ -128,11 +128,11 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 chart.onChartDataChange();
                 previewChart.onChartDataChange();
 
-                Viewport tempViewport = new Viewport(chart.getMaximumViewport());
-                float dx = tempViewport.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
-                tempViewport.inset(dx, 0);
+                Viewrect tempViewrect = new Viewrect(chart.getMaximumViewport());
+                float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
+                tempViewrect.inset(dx, 0);
 
-                previewChart.setCurrentViewportWithAnimation(tempViewport);
+                previewChart.setCurrentViewportWithAnimation(tempViewrect);
             }
         });
         checkboxList.setAdapter(showLineAdapter);
@@ -170,18 +170,18 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
         previewChart.setPreviewBackgroundColor(getColorFromAttr(this, R.attr.previewBackColor));
 
-        Viewport tempViewport = new Viewport(chart.getMaximumViewport());
-        float dx = tempViewport.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
-        tempViewport.inset(dx, 0);
+        Viewrect tempViewrect = new Viewrect(chart.getMaximumViewport());
+        float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
+        tempViewrect.inset(dx, 0);
 
-        previewChart.setCurrentViewport(tempViewport);
+        previewChart.setCurrentViewport(tempViewrect);
     }
 
     private class ViewportListener implements ViewportChangeListener {
 
         @Override
-        public void onViewportChanged(Viewport newViewport) {
-            chart.setCurrentViewport(newViewport);
+        public void onViewportChanged(Viewrect newViewrect) {
+            chart.setCurrentViewport(newViewrect);
         }
 
     }

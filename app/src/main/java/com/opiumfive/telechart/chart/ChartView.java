@@ -13,9 +13,8 @@ import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
-import com.opiumfive.telechart.chart.model.PointValue;
-import com.opiumfive.telechart.chart.model.SelectedValue;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.SelectedValues;
+import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.render.AxesRenderer;
 import com.opiumfive.telechart.chart.render.LineChartRenderer;
 import com.opiumfive.telechart.chart.util.ChartUtils;
@@ -199,25 +198,25 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     }
 
     public void moveTo(float x, float y) {
-        Viewport scrollViewport = computeScrollViewport(x, y);
-        setCurrentViewport(scrollViewport);
+        Viewrect scrollViewrect = computeScrollViewport(x, y);
+        setCurrentViewport(scrollViewrect);
     }
 
     public void moveToWithAnimation(float x, float y) {
-        Viewport scrollViewport = computeScrollViewport(x, y);
-        setCurrentViewportWithAnimation(scrollViewport);
+        Viewrect scrollViewrect = computeScrollViewport(x, y);
+        setCurrentViewportWithAnimation(scrollViewrect);
     }
 
-    private Viewport computeScrollViewport(float x, float y) {
+    private Viewrect computeScrollViewport(float x, float y) {
 
 
-        Viewport maxViewport = getMaximumViewport();
-        Viewport currentViewport = getCurrentViewport();
-        Viewport scrollViewport = new Viewport(currentViewport);
+        Viewrect maxViewrect = getMaximumViewport();
+        Viewrect currentViewrect = getCurrentViewport();
+        Viewrect scrollViewrect = new Viewrect(currentViewrect);
 
-        if (maxViewport.contains(x, y)) {
-            final float width = currentViewport.width();
-            final float height = currentViewport.height();
+        if (maxViewrect.contains(x, y)) {
+            final float width = currentViewrect.width();
+            final float height = currentViewrect.height();
 
             final float halfWidth = width / 2;
             final float halfHeight = height / 2;
@@ -225,13 +224,13 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
             float left = x - halfWidth;
             float top = y + halfHeight;
 
-            left = Math.max(maxViewport.left, Math.min(left, maxViewport.right - width));
-            top = Math.max(maxViewport.bottom + height, Math.min(top, maxViewport.top));
+            left = Math.max(maxViewrect.left, Math.min(left, maxViewrect.right - width));
+            top = Math.max(maxViewrect.bottom + height, Math.min(top, maxViewrect.top));
 
-            scrollViewport.set(left, top, left + width, top - height);
+            scrollViewrect.set(left, top, left + width, top - height);
         }
 
-        return scrollViewport;
+        return scrollViewrect;
     }
 
     public boolean isValueTouchEnabled() {
@@ -252,29 +251,29 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     }
 
     public float getZoomLevel() {
-        Viewport maxViewport = getMaximumViewport();
-        Viewport currentViewport = getCurrentViewport();
+        Viewrect maxViewrect = getMaximumViewport();
+        Viewrect currentViewrect = getCurrentViewport();
 
-        return Math.max(maxViewport.width() / currentViewport.width(), maxViewport.height() / currentViewport.height());
+        return Math.max(maxViewrect.width() / currentViewrect.width(), maxViewrect.height() / currentViewrect.height());
 
     }
 
     public void setZoomLevel(float x, float y, float zoomLevel) {
-        Viewport zoomViewport = computeZoomViewport(x, y, zoomLevel);
-        setCurrentViewport(zoomViewport);
+        Viewrect zoomViewrect = computeZoomViewport(x, y, zoomLevel);
+        setCurrentViewport(zoomViewrect);
     }
 
     public void setZoomLevelWithAnimation(float x, float y, float zoomLevel) {
-        Viewport zoomViewport = computeZoomViewport(x, y, zoomLevel);
-        setCurrentViewportWithAnimation(zoomViewport);
+        Viewrect zoomViewrect = computeZoomViewport(x, y, zoomLevel);
+        setCurrentViewportWithAnimation(zoomViewrect);
     }
 
-    private Viewport computeZoomViewport(float x, float y, float zoomLevel) {
+    private Viewrect computeZoomViewport(float x, float y, float zoomLevel) {
 
-        final Viewport maxViewport = getMaximumViewport();
-        Viewport zoomViewport = new Viewport(getMaximumViewport());
+        final Viewrect maxViewrect = getMaximumViewport();
+        Viewrect zoomViewrect = new Viewrect(getMaximumViewport());
 
-        if (maxViewport.contains(x, y)) {
+        if (maxViewrect.contains(x, y)) {
 
             if (zoomLevel < 1) {
                 zoomLevel = 1;
@@ -282,60 +281,60 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
                 zoomLevel = getMaxZoom();
             }
 
-            final float newWidth = zoomViewport.width() / zoomLevel;
+            final float newWidth = zoomViewrect.width() / zoomLevel;
             final float halfWidth = newWidth / 2;
 
             float left = x - halfWidth;
             float right = x + halfWidth;
 
-            if (left < maxViewport.left) {
-                left = maxViewport.left;
+            if (left < maxViewrect.left) {
+                left = maxViewrect.left;
                 right = left + newWidth;
-            } else if (right > maxViewport.right) {
-                right = maxViewport.right;
+            } else if (right > maxViewrect.right) {
+                right = maxViewrect.right;
                 left = right - newWidth;
             }
 
-            zoomViewport.left = left;
-            zoomViewport.right = right;
+            zoomViewrect.left = left;
+            zoomViewrect.right = right;
         }
-        return zoomViewport;
+        return zoomViewrect;
     }
 
-    public Viewport getMaximumViewport() {
+    public Viewrect getMaximumViewport() {
         return chartRenderer.getMaximumViewport();
     }
 
-    public void setMaximumViewport(Viewport maxViewport) {
-        chartRenderer.setMaximumViewport(maxViewport);
+    public void setMaximumViewport(Viewrect maxViewrect) {
+        chartRenderer.setMaximumViewport(maxViewrect);
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void setCurrentViewportWithAnimation(Viewport targetViewport) {
+    public void setCurrentViewportWithAnimation(Viewrect targetViewrect) {
 
-        if (null != targetViewport) {
+        if (null != targetViewrect) {
             viewportAnimator.cancelAnimation();
-            viewportAnimator.startAnimation(getCurrentViewport(), targetViewport);
+            viewportAnimator.startAnimation(getCurrentViewport(), targetViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void setCurrentViewportWithAnimation(Viewport targetViewport, long duration) {
-        if (null != targetViewport) {
+    public void setCurrentViewportWithAnimation(Viewrect targetViewrect, long duration) {
+        if (null != targetViewrect) {
             viewportAnimator.cancelAnimation();
-            viewportAnimator.startAnimation(getCurrentViewport(), targetViewport, duration);
+            viewportAnimator.startAnimation(getCurrentViewport(), targetViewrect, duration);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public Viewport getCurrentViewport() {
+    public Viewrect getCurrentViewport() {
         return getChartRenderer().getCurrentViewport();
     }
 
-    public void setCurrentViewport(Viewport targetViewport) {
+    public void setCurrentViewport(Viewrect targetViewrect) {
 
-        if (null != targetViewport) {
-            chartRenderer.setCurrentViewport(targetViewport);
+        if (null != targetViewrect) {
+            chartRenderer.setCurrentViewport(targetViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -361,13 +360,13 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         touchHandler.setValueSelectionEnabled(isValueSelectionEnabled);
     }
 
-    public void selectValue(SelectedValue selectedValue) {
-        chartRenderer.selectValue(selectedValue);
+    public void selectValue(SelectedValues selectedValues) {
+        chartRenderer.selectValue(selectedValues);
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public SelectedValue getSelectedValue() {
-        return chartRenderer.getSelectedValue();
+    public SelectedValues getSelectedValue() {
+        return chartRenderer.getSelectedValues();
     }
 
     public boolean isContainerScrollEnabled() {
@@ -396,12 +395,12 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         if (getZoomLevel() <= 1.0) {
             return false;
         }
-        final Viewport currentViewport = getCurrentViewport();
-        final Viewport maximumViewport = getMaximumViewport();
+        final Viewrect currentViewrect = getCurrentViewport();
+        final Viewrect maximumViewrect = getMaximumViewport();
         if (direction < 0) {
-            return currentViewport.left > maximumViewport.left;
+            return currentViewrect.left > maximumViewrect.left;
         } else {
-            return currentViewport.right < maximumViewport.right;
+            return currentViewrect.right < maximumViewrect.right;
         }
     }
 }

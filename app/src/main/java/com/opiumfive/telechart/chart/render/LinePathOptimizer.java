@@ -13,6 +13,8 @@ public class LinePathOptimizer {
         this.chartViewportHandler = chartViewportHandler;
     }
 
+    // one point is (approx) on line between near points, no sense to draw 2+ lines instead of one
+    // especially on a preview chart, where maxAngleVariation can be more
     public List<PointValue> optimizeLine(List<PointValue> values, float maxAngleVariation) {
         List<PointValue> optimizedList = new ArrayList<>();
         optimizedList.add(values.get(0));

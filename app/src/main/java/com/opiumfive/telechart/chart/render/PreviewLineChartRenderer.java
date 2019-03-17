@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.ChartDataProvider;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 
@@ -31,14 +31,14 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     @Override
     public void drawUnclipped(Canvas canvas) {
         super.drawUnclipped(canvas);
-        final Viewport currentViewport = chartViewportHandler.getCurrentViewport();
-        final Viewport maxViewport = chartViewportHandler.getMaximumViewport();
-        final float left = chartViewportHandler.computeRawX(currentViewport.left);
-        final float top = chartViewportHandler.computeRawY(currentViewport.top);
-        final float right = chartViewportHandler.computeRawX(currentViewport.right);
-        final float bottom = chartViewportHandler.computeRawY(currentViewport.bottom);
-        final float start = chartViewportHandler.computeRawX(maxViewport.left);
-        final float end = chartViewportHandler.computeRawX(maxViewport.right);
+        final Viewrect currentViewrect = chartViewportHandler.getCurrentViewrect();
+        final Viewrect maxViewrect = chartViewportHandler.getMaximumViewport();
+        final float left = chartViewportHandler.computeRawX(currentViewrect.left);
+        final float top = chartViewportHandler.computeRawY(currentViewrect.top);
+        final float right = chartViewportHandler.computeRawX(currentViewrect.right);
+        final float bottom = chartViewportHandler.computeRawY(currentViewrect.bottom);
+        final float start = chartViewportHandler.computeRawX(maxViewrect.left);
+        final float end = chartViewportHandler.computeRawX(maxViewrect.right);
         previewPaint.setColor(backrgroundColor);
         previewPaint.setStyle(Paint.Style.FILL);
         canvas.drawRect(start, top, left - DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, bottom, previewPaint);

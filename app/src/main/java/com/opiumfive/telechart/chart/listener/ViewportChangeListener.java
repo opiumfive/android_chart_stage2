@@ -1,9 +1,9 @@
 package com.opiumfive.telechart.chart.listener;
 
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 
 public interface ViewportChangeListener {
 
-    public void onViewportChanged(Viewport viewport);
+    public void onViewportChanged(Viewrect viewrect);
 
 }

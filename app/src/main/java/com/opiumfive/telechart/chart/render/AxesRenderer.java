@@ -10,7 +10,7 @@ import android.graphics.Rect;
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Axis;
 
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.util.AxisAutoValues;
 import com.opiumfive.telechart.chart.util.ChartUtils;
 import com.opiumfive.telechart.chart.util.FloatUtils;
@@ -192,18 +192,18 @@ public class AxesRenderer {
     }
 
     private void prepareAxisToDraw(Axis axis, int position) {
-        final Viewport visibleViewport = chartViewportHandler.getVisibleViewport();
+        final Viewrect visibleViewrect = chartViewportHandler.getVisibleViewport();
         final Rect contentRect = chartViewportHandler.getContentRectMinusAllMargins();
         boolean isAxisVertical = isAxisVertical(position);
         float start, stop;
         int contentRectDimension;
         if (isAxisVertical) {
-            start = visibleViewport.bottom;
-            stop = visibleViewport.top;
+            start = visibleViewrect.bottom;
+            stop = visibleViewrect.top;
             contentRectDimension = contentRect.height();
         } else {
-            start = visibleViewport.left;
-            stop = visibleViewport.right;
+            start = visibleViewrect.left;
+            stop = visibleViewrect.right;
             contentRectDimension = contentRect.width();
         }
 

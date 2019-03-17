@@ -3,37 +3,37 @@ package com.opiumfive.telechart.chart.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Viewport implements Parcelable {
+public class Viewrect implements Parcelable {
 
     public float left;
     public float top;
     public float right;
     public float bottom;
 
-    public static final Parcelable.Creator<Viewport> CREATOR = new Parcelable.Creator<Viewport>() {
+    public static final Parcelable.Creator<Viewrect> CREATOR = new Parcelable.Creator<Viewrect>() {
 
-        public Viewport createFromParcel(Parcel in) {
-            Viewport v = new Viewport();
+        public Viewrect createFromParcel(Parcel in) {
+            Viewrect v = new Viewrect();
             v.readFromParcel(in);
             return v;
         }
 
-        public Viewport[] newArray(int size) {
-            return new Viewport[size];
+        public Viewrect[] newArray(int size) {
+            return new Viewrect[size];
         }
     };
 
-    public Viewport() {
+    public Viewrect() {
     }
 
-    public Viewport(float left, float top, float right, float bottom) {
+    public Viewrect(float left, float top, float right, float bottom) {
         this.left = left;
         this.top = top;
         this.right = right;
         this.bottom = bottom;
     }
 
-    public Viewport(Viewport v) {
+    public Viewrect(Viewrect v) {
         if (v == null) {
             left = top = right = bottom = 0.0f;
         } else {
@@ -49,7 +49,7 @@ public class Viewport implements Parcelable {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        Viewport other = (Viewport) obj;
+        Viewrect other = (Viewrect) obj;
         if (Float.floatToIntBits(bottom) != Float.floatToIntBits(other.bottom)) return false;
         if (Float.floatToIntBits(left) != Float.floatToIntBits(other.left)) return false;
         if (Float.floatToIntBits(right) != Float.floatToIntBits(other.right)) return false;
@@ -72,7 +72,7 @@ public class Viewport implements Parcelable {
         this.bottom = bottom;
     }
 
-    public void set(Viewport src) {
+    public void set(Viewrect src) {
         this.left = src.left;
         this.top = src.top;
         this.right = src.right;

@@ -4,22 +4,22 @@ package com.opiumfive.telechart.chart.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectedValue {
+public class SelectedValues {
 
     private List<PointValue> points = new ArrayList<>();
     private float touchX;
 
-    public SelectedValue() {
+    public SelectedValues() {
     }
 
     public void add(PointValue pointValue) {
         points.add(pointValue);
     }
 
-    public void set(SelectedValue selectedValue) {
+    public void set(SelectedValues selectedValues) {
         points.clear();
-        points.addAll(selectedValue.points);
-        touchX = selectedValue.touchX;
+        points.addAll(selectedValues.points);
+        touchX = selectedValues.touchX;
     }
 
     public void clear() {

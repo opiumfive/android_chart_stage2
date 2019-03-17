@@ -6,7 +6,7 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateListener {
 
@@ -14,9 +14,9 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
 
     private final ILineChart chart;
     private ValueAnimator animator;
-    private Viewport startViewport = new Viewport();
-    private Viewport targetViewport = new Viewport();
-    private Viewport newViewport = new Viewport();
+    private Viewrect startViewrect = new Viewrect();
+    private Viewrect targetViewrect = new Viewrect();
+    private Viewrect newViewrect = new Viewrect();
     private ChartAnimationListener animationListener;
 
     public ChartViewportAnimator(ILineChart chart) {
@@ -27,16 +27,16 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
         animator.setDuration(FAST_ANIMATION_DURATION);
     }
 
-    public void startAnimation(Viewport startViewport, Viewport targetViewport) {
-        this.startViewport.set(startViewport);
-        this.targetViewport.set(targetViewport);
+    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect) {
+        this.startViewrect.set(startViewrect);
+        this.targetViewrect.set(targetViewrect);
         animator.setDuration(FAST_ANIMATION_DURATION);
         animator.start();
     }
 
-    public void startAnimation(Viewport startViewport, Viewport targetViewport, long duration) {
-        this.startViewport.set(startViewport);
-        this.targetViewport.set(targetViewport);
+    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, long duration) {
+        this.startViewrect.set(startViewrect);
+        this.targetViewrect.set(targetViewrect);
         animator.setDuration(duration);
         animator.start();
     }
@@ -48,12 +48,12 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         float scale = animation.getAnimatedFraction();
-        float diffLeft = (targetViewport.left - startViewport.left) * scale;
-        float diffTop = (targetViewport.top - startViewport.top) * scale;
-        float diffRight = (targetViewport.right - startViewport.right) * scale;
-        float diffBottom = (targetViewport.bottom - startViewport.bottom) * scale;
-        newViewport.set(startViewport.left + diffLeft, startViewport.top + diffTop, startViewport.right + diffRight, startViewport.bottom + diffBottom);
-        chart.setCurrentViewport(newViewport);
+        float diffLeft = (targetViewrect.left - startViewrect.left) * scale;
+        float diffTop = (targetViewrect.top - startViewrect.top) * scale;
+        float diffRight = (targetViewrect.right - startViewrect.right) * scale;
+        float diffBottom = (targetViewrect.bottom - startViewrect.bottom) * scale;
+        newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
+        chart.setCurrentViewport(newViewrect);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ChartViewportAnimator implements AnimatorListener, AnimatorUpdateLi
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        chart.setCurrentViewport(targetViewport);
+        chart.setCurrentViewport(targetViewrect);
         if (animationListener != null) {
             animationListener.onAnimationFinished();
         }

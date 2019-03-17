@@ -6,11 +6,11 @@ import android.graphics.Rect;
 import android.widget.Scroller;
 
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartScroller {
 
-    private Viewport scrollerStartViewport = new Viewport();
+    private Viewrect scrollerStartViewrect = new Viewrect();
     private Point surfaceSizeBuffer = new Point();
     private Scroller scroller;
     private PreviewChartTouchHandler.ScrollMode currentScrollMode;
@@ -22,37 +22,37 @@ public class ChartScroller {
     public boolean startScroll(ChartViewportHandler chartViewportHandler, PreviewChartTouchHandler.ScrollMode scrollMode) {
         scroller.abortAnimation();
         currentScrollMode = scrollMode;
-        scrollerStartViewport.set(chartViewportHandler.getCurrentViewport());
+        scrollerStartViewrect.set(chartViewportHandler.getCurrentViewrect());
         return true;
     }
 
     public boolean scroll(ChartViewportHandler chartViewportHandler, float distanceX, float distanceY, ScrollResult scrollResult) {
 
-        final Viewport maxViewport = chartViewportHandler.getMaximumViewport();
-        final Viewport visibleViewport = chartViewportHandler.getVisibleViewport();
-        final Viewport currentViewport = chartViewportHandler.getCurrentViewport();
+        final Viewrect maxViewrect = chartViewportHandler.getMaximumViewport();
+        final Viewrect visibleViewrect = chartViewportHandler.getVisibleViewport();
+        final Viewrect currentViewrect = chartViewportHandler.getCurrentViewrect();
         final Rect contentRect = chartViewportHandler.getContentRectMinusAllMargins();
 
-        final boolean canScrollLeft = currentViewport.left > maxViewport.left;
-        final boolean canScrollRight = currentViewport.right < maxViewport.right;
+        final boolean canScrollLeft = currentViewrect.left > maxViewrect.left;
+        final boolean canScrollRight = currentViewrect.right < maxViewrect.right;
 
 
         boolean canScrollX = canScrollLeft && distanceX <= 0 || canScrollRight && distanceX >= 0;
 
         if (canScrollX) {
 
-            float viewportOffsetX = distanceX * visibleViewport.width() / contentRect.width();
+            float viewportOffsetX = distanceX * visibleViewrect.width() / contentRect.width();
 
             switch (currentScrollMode) {
                 case FULL:
                     chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
-                    chartViewportHandler.setViewportTopLeft(currentViewport.left + viewportOffsetX, currentViewport.top);
+                    chartViewportHandler.setViewportTopLeft(currentViewrect.left + viewportOffsetX, currentViewrect.top);
                     break;
                 case LEFT_SIDE:
-                    chartViewportHandler.setCurrentViewport(currentViewport.left + viewportOffsetX, currentViewport.top, currentViewport.right, currentViewport.bottom);
+                    chartViewportHandler.setCurrentViewport(currentViewrect.left + viewportOffsetX, currentViewrect.top, currentViewrect.right, currentViewrect.bottom);
                     break;
                 case RIGHT_SIDE:
-                    chartViewportHandler.setCurrentViewport(currentViewport.left, currentViewport.top, currentViewport.right + viewportOffsetX, currentViewport.bottom);
+                    chartViewportHandler.setCurrentViewport(currentViewrect.left, currentViewrect.top, currentViewrect.right + viewportOffsetX, currentViewrect.bottom);
                     break;
             }
 
@@ -65,12 +65,12 @@ public class ChartScroller {
 
     public boolean computeScrollOffset(ChartViewportHandler chartViewportHandler) {
         if (scroller.computeScrollOffset()) {
-            final Viewport maxViewport = chartViewportHandler.getMaximumViewport();
+            final Viewrect maxViewrect = chartViewportHandler.getMaximumViewport();
 
             chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
 
-            final float currXRange = maxViewport.left + maxViewport.width() * scroller.getCurrX() / surfaceSizeBuffer.x;
-            final float currYRange = maxViewport.top - maxViewport.height() * scroller.getCurrY() / surfaceSizeBuffer.y;
+            final float currXRange = maxViewrect.left + maxViewrect.width() * scroller.getCurrX() / surfaceSizeBuffer.x;
+            final float currYRange = maxViewrect.top - maxViewrect.height() * scroller.getCurrY() / surfaceSizeBuffer.y;
 
             chartViewportHandler.setViewportTopLeft(currXRange, currYRange);
 
@@ -82,10 +82,10 @@ public class ChartScroller {
 
     public boolean fling(int velocityX, int velocityY, ChartViewportHandler chartViewportHandler) {
         chartViewportHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
-        scrollerStartViewport.set(chartViewportHandler.getCurrentViewport());
+        scrollerStartViewrect.set(chartViewportHandler.getCurrentViewrect());
 
-        int startX = (int) (surfaceSizeBuffer.x * (scrollerStartViewport.left - chartViewportHandler.getMaximumViewport().left) / chartViewportHandler.getMaximumViewport().width());
-        int startY = (int) (surfaceSizeBuffer.y * (chartViewportHandler.getMaximumViewport().top - scrollerStartViewport.top) / chartViewportHandler.getMaximumViewport().height());
+        int startX = (int) (surfaceSizeBuffer.x * (scrollerStartViewrect.left - chartViewportHandler.getMaximumViewport().left) / chartViewportHandler.getMaximumViewport().width());
+        int startY = (int) (surfaceSizeBuffer.y * (chartViewportHandler.getMaximumViewport().top - scrollerStartViewrect.top) / chartViewportHandler.getMaximumViewport().height());
 
         scroller.forceFinished(true);
 

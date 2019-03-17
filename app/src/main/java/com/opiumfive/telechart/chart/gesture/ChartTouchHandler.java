@@ -7,7 +7,7 @@ import android.view.ViewParent;
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.render.ChartViewportHandler;
 import com.opiumfive.telechart.chart.gesture.ChartScroller.ScrollResult;
-import com.opiumfive.telechart.chart.model.SelectedValue;
+import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.render.LineChartRenderer;
 
 public class ChartTouchHandler {
@@ -24,7 +24,7 @@ public class ChartTouchHandler {
     protected boolean isValueTouchEnabled = true;
     protected boolean isValueSelectionEnabled = false;
 
-    protected SelectedValue selectedValue = new SelectedValue();
+    protected SelectedValues selectedValues = new SelectedValues();
 
     protected ViewParent viewParent;
 
@@ -112,10 +112,10 @@ public class ChartTouchHandler {
     }
 
     private boolean checkTouch(float touchX) {
-        selectedValue.clear();
+        selectedValues.clear();
 
         if (renderer.checkTouch(touchX)) {
-            selectedValue.set(renderer.getSelectedValue());
+            selectedValues.set(renderer.getSelectedValues());
         }
 
         return renderer.isTouched();

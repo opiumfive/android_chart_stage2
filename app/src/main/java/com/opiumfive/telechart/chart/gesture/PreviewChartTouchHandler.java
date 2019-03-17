@@ -6,7 +6,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 
 
 public class PreviewChartTouchHandler extends ChartTouchHandler {
@@ -29,22 +29,22 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
 
     @Override
     public boolean handleTouchEvent(MotionEvent event) {
-        Viewport currentViewport = chartViewportHandler.getCurrentViewport();
-        final Viewport maxViewport = chartViewportHandler.getMaximumViewport();
-        final float left = chartViewportHandler.computeRawX(currentViewport.left);
-        final float right = chartViewportHandler.computeRawX(currentViewport.right);
+        Viewrect currentViewrect = chartViewportHandler.getCurrentViewrect();
+        final Viewrect maxViewrect = chartViewportHandler.getMaximumViewport();
+        final float left = chartViewportHandler.computeRawX(currentViewrect.left);
+        final float right = chartViewportHandler.computeRawX(currentViewrect.right);
 
         float touchX = event.getRawX();
 
         sideDragZone = chartViewportHandler.computeSideScrollTrigger(SIDE_DRAG_ZONE);
 
         if (Math.abs(left - touchX) <= sideDragZone) {
-            if (currentViewport.left > maxViewport.left) {
+            if (currentViewrect.left > maxViewrect.left) {
                 gestureListener.setScrollMode(ScrollMode.LEFT_SIDE);
                 return gestureDetector.onTouchEvent(event);
             }
         } else if (Math.abs(right - touchX) <= sideDragZone) {
-            if (currentViewport.right < maxViewport.right) {
+            if (currentViewrect.right < maxViewrect.right) {
                 gestureListener.setScrollMode(ScrollMode.RIGHT_SIDE);
                 return gestureDetector.onTouchEvent(event);
             }

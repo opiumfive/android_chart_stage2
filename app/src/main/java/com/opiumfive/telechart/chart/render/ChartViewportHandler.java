@@ -6,7 +6,7 @@ import android.graphics.Rect;
 
 import com.opiumfive.telechart.chart.listener.ViewportChangeListener;
 import com.opiumfive.telechart.chart.model.PointValue;
-import com.opiumfive.telechart.chart.model.Viewport;
+import com.opiumfive.telechart.chart.model.Viewrect;
 
 import java.util.List;
 
@@ -24,8 +24,8 @@ public class ChartViewportHandler {
     protected Rect contentRectMinusAxesMargins = new Rect();
     protected Rect maxContentRect = new Rect();
 
-    protected Viewport currentViewport = new Viewport();
-    protected Viewport maxViewport = new Viewport();
+    protected Viewrect currentViewrect = new Viewrect();
+    protected Viewrect maxViewrect = new Viewrect();
     protected float minViewportWidth;
     protected float minViewportHeight;
     protected LinePathOptimizer linePathOptimizer;
@@ -69,47 +69,47 @@ public class ChartViewportHandler {
     public void constrainViewport(float left, float top, float right, float bottom) {
         if (right - left < minViewportWidth) {
             right = left + minViewportWidth;
-            if (left < maxViewport.left) {
-                left = maxViewport.left;
+            if (left < maxViewrect.left) {
+                left = maxViewrect.left;
                 right = left + minViewportWidth;
-            } else if (right > maxViewport.right) {
-                right = maxViewport.right;
+            } else if (right > maxViewrect.right) {
+                right = maxViewrect.right;
                 left = right - minViewportWidth;
             }
         }
 
         if (top - bottom < minViewportHeight) {
             bottom = top - minViewportHeight;
-            if (top > maxViewport.top) {
-                top = maxViewport.top;
+            if (top > maxViewrect.top) {
+                top = maxViewrect.top;
                 bottom = top - minViewportHeight;
-            } else if (bottom < maxViewport.bottom) {
-                bottom = maxViewport.bottom;
+            } else if (bottom < maxViewrect.bottom) {
+                bottom = maxViewrect.bottom;
                 top = bottom + minViewportHeight;
             }
         }
 
-        currentViewport.left = Math.max(maxViewport.left, left);
-        currentViewport.top = Math.min(maxViewport.top, top);
-        currentViewport.right = Math.min(maxViewport.right, right);
-        currentViewport.bottom = Math.max(maxViewport.bottom, bottom);
+        currentViewrect.left = Math.max(maxViewrect.left, left);
+        currentViewrect.top = Math.min(maxViewrect.top, top);
+        currentViewrect.right = Math.min(maxViewrect.right, right);
+        currentViewrect.bottom = Math.max(maxViewrect.bottom, bottom);
 
         if (viewportChangeListener != null) {
-            viewportChangeListener.onViewportChanged(currentViewport);
+            viewportChangeListener.onViewportChanged(currentViewrect);
         }
     }
 
     public void setViewportTopLeft(float left, float top) {
-        final float curWidth = currentViewport.width();
-        final float curHeight = currentViewport.height();
+        final float curWidth = currentViewrect.width();
+        final float curHeight = currentViewrect.height();
 
-        left = Math.max(maxViewport.left, Math.min(left, maxViewport.right - curWidth));
-        top = Math.max(maxViewport.bottom + curHeight, Math.min(top, maxViewport.top));
+        left = Math.max(maxViewrect.left, Math.min(left, maxViewrect.right - curWidth));
+        top = Math.max(maxViewrect.bottom + curHeight, Math.min(top, maxViewrect.top));
         constrainViewport(left, top, left + curWidth, top - curHeight);
     }
 
     public float computeRawX(float valueX) {
-        final float pixelOffset = (valueX - currentViewport.left) * (contentRectMinusAllMargins.width() / currentViewport.width());
+        final float pixelOffset = (valueX - currentViewrect.left) * (contentRectMinusAllMargins.width() / currentViewrect.width());
         return contentRectMinusAllMargins.left + pixelOffset;
     }
 
@@ -118,7 +118,7 @@ public class ChartViewportHandler {
     }
 
     public float computeRawY(float valueY) {
-        final float pixelOffset = (valueY - currentViewport.bottom) * (contentRectMinusAllMargins.height() / currentViewport.height());
+        final float pixelOffset = (valueY - currentViewrect.bottom) * (contentRectMinusAllMargins.height() / currentViewrect.height());
         return contentRectMinusAllMargins.bottom - pixelOffset;
     }
 
@@ -126,14 +126,14 @@ public class ChartViewportHandler {
         if (!contentRectMinusAllMargins.contains((int) x, (int) y)) {
             return false;
         }
-        dest.set(currentViewport.left + (x - contentRectMinusAllMargins.left) * currentViewport.width() / contentRectMinusAllMargins.width(),
-                currentViewport.bottom + (y - contentRectMinusAllMargins.bottom) * currentViewport.height() / -contentRectMinusAllMargins.height());
+        dest.set(currentViewrect.left + (x - contentRectMinusAllMargins.left) * currentViewrect.width() / contentRectMinusAllMargins.width(),
+                currentViewrect.bottom + (y - contentRectMinusAllMargins.bottom) * currentViewrect.height() / -contentRectMinusAllMargins.height());
         return true;
     }
 
     public void computeScrollSurfaceSize(Point out) {
-        out.set((int) (maxViewport.width() * contentRectMinusAllMargins.width() / currentViewport.width()),
-                (int) (maxViewport.height() * contentRectMinusAllMargins.height() / currentViewport.height()));
+        out.set((int) (maxViewrect.width() * contentRectMinusAllMargins.width() / currentViewrect.width()),
+                (int) (maxViewrect.height() * contentRectMinusAllMargins.height() / currentViewrect.height()));
     }
 
     public Rect getContentRectMinusAllMargins() {
@@ -144,33 +144,33 @@ public class ChartViewportHandler {
         return contentRectMinusAxesMargins;
     }
 
-    public Viewport getCurrentViewport() {
-        return currentViewport;
+    public Viewrect getCurrentViewrect() {
+        return currentViewrect;
     }
 
-    public void setCurrentViewport(Viewport viewport) {
-        constrainViewport(viewport.left, viewport.top, viewport.right, viewport.bottom);
+    public void setCurrentViewrect(Viewrect viewrect) {
+        constrainViewport(viewrect.left, viewrect.top, viewrect.right, viewrect.bottom);
     }
 
     public void setCurrentViewport(float left, float top, float right, float bottom) {
         constrainViewport(left, top, right, bottom);
     }
 
-    public Viewport getMaximumViewport() {
-        return maxViewport;
+    public Viewrect getMaximumViewport() {
+        return maxViewrect;
     }
 
-    public void setMaxViewport(Viewport maxViewport) {
-        setMaxViewport(maxViewport.left, maxViewport.top, maxViewport.right, maxViewport.bottom);
+    public void setMaxViewrect(Viewrect maxViewrect) {
+        setMaxViewport(maxViewrect.left, maxViewrect.top, maxViewrect.right, maxViewrect.bottom);
     }
 
     public void setMaxViewport(float left, float top, float right, float bottom) {
-        this.maxViewport.set(left, top, right, bottom);
+        this.maxViewrect.set(left, top, right, bottom);
         computeMinimumWidthAndHeight();
     }
 
-    public Viewport getVisibleViewport() {
-        return currentViewport;
+    public Viewrect getVisibleViewport() {
+        return currentViewrect;
     }
 
     public void setViewportChangeListener(ViewportChangeListener viewportChangeListener) {
@@ -196,12 +196,12 @@ public class ChartViewportHandler {
 
         this.maxZoom = maxZoom;
         computeMinimumWidthAndHeight();
-        setCurrentViewport(currentViewport);
+        setCurrentViewrect(currentViewrect);
     }
 
     private void computeMinimumWidthAndHeight() {
-        minViewportWidth = this.maxViewport.width() / maxZoom;
-        minViewportHeight = this.maxViewport.height() / maxZoom;
+        minViewportWidth = this.maxViewrect.width() / maxZoom;
+        minViewportHeight = this.maxViewrect.height() / maxZoom;
     }
 
     public List<PointValue> optimizeLine(List<PointValue> values, float maxAngleVariation) {
