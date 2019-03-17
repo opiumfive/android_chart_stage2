@@ -1,11 +1,12 @@
 package com.opiumfive.telechart.chart.valueFormat;
 
-import com.opiumfive.telechart.chart.util.FloatUtils;
+
+import com.opiumfive.telechart.chart.Util;
 
 public class DefaultAxisValueFormatter implements AxisValueFormatter {
 
     @Override
     public int formatValue(char[] formattedValue, float value) {
-        return FloatUtils.formatFloat(formattedValue, value, formattedValue.length);
+        return Util.formatFloat(formattedValue, value, formattedValue.length);
     }
 }

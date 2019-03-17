@@ -3,8 +3,6 @@ package com.opiumfive.telechart.chart.model;
 import android.graphics.Color;
 import android.graphics.Typeface;
 
-import com.opiumfive.telechart.chart.util.ChartUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class LineChartData {
 
     protected boolean isValueLabelBackgroundEnabled = true;
     protected boolean isValueLabelBackgrountAuto = true;
-    protected int valueLabelBackgroundColor = ChartUtils.darkenColor(ChartUtils.DEFAULT_DARKEN_COLOR);
+    protected int valueLabelBackgroundColor;
 
     private List<Line> lines = new ArrayList<Line>();
     private float baseValue = DEFAULT_BASE_VALUE;

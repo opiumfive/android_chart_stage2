@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 
 import com.opiumfive.telechart.R;
+import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
@@ -17,11 +18,10 @@ import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.ChartDataProvider;
-import com.opiumfive.telechart.chart.util.ChartUtils;
 
 import java.util.List;
 
-import static com.opiumfive.telechart.Util.getColorFromAttr;
+import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 
 public class LineChartRenderer {
@@ -69,7 +69,7 @@ public class LineChartRenderer {
         this.chart = chart;
         this.chartViewportHandler = chart.getChartViewportHandler();
 
-        labelMargin = ChartUtils.dp2px(density, DEFAULT_LABEL_MARGIN_DP);
+        labelMargin = Util.dp2px(density, DEFAULT_LABEL_MARGIN_DP);
         labelOffset = labelMargin;
 
         labelPaint.setAntiAlias(true);
@@ -83,14 +83,14 @@ public class LineChartRenderer {
         labelBackgroundPaint.setColor(getColorFromAttr(context, R.attr.itemBackground));
         this.dataProvider = dataProvider;
 
-        touchToleranceMargin = ChartUtils.dp2px(density, DEFAULT_TOUCH_TOLERANCE_MARGIN_DP);
+        touchToleranceMargin = Util.dp2px(density, DEFAULT_TOUCH_TOLERANCE_MARGIN_DP);
 
         linePaint.setAntiAlias(true);
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setStrokeCap(Cap.BUTT);
         linePaint.setDither(true);
         linePaint.setStrokeJoin(Paint.Join.BEVEL);
-        linePaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP));
+        linePaint.setStrokeWidth(Util.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP));
 
         pointPaint.setAntiAlias(true);
         pointPaint.setStyle(Paint.Style.FILL);
@@ -102,9 +102,9 @@ public class LineChartRenderer {
         touchLinePaint.setAntiAlias(true);
         touchLinePaint.setStyle(Paint.Style.FILL);
         touchLinePaint.setColor(getColorFromAttr(context, R.attr.dividerColor));
-        touchLinePaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP) / 2f);
+        touchLinePaint.setStrokeWidth(Util.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP) / 2f);
 
-        checkPrecision = ChartUtils.dp2px(density, 2);
+        checkPrecision = Util.dp2px(density, 2);
     }
 
     public void setMaxAngleVariation(float maxAngleVariation) {
@@ -125,7 +125,7 @@ public class LineChartRenderer {
         }
 
         labelPaint.setColor(data.getValueLabelTextColor());
-        labelPaint.setTextSize(ChartUtils.sp2px(scaledDensity, data.getValueLabelTextSize()));
+        labelPaint.setTextSize(Util.sp2px(scaledDensity, data.getValueLabelTextSize()));
         labelPaint.getFontMetricsInt(fontMetrics);
 
         this.isValueLabelBackgroundEnabled = data.isValueLabelBackgroundEnabled();
@@ -241,7 +241,7 @@ public class LineChartRenderer {
                 contentAreaMargin = margin;
             }
         }
-        return ChartUtils.dp2px(density, contentAreaMargin);
+        return Util.dp2px(density, contentAreaMargin);
     }
 
     private void drawPath(Canvas canvas, final Line line) {
@@ -273,7 +273,7 @@ public class LineChartRenderer {
     }
 
     private void prepareLinePaint(final Line line) {
-        linePaint.setStrokeWidth(ChartUtils.dp2px(density, line.getStrokeWidth()));
+        linePaint.setStrokeWidth(Util.dp2px(density, line.getStrokeWidth()));
         linePaint.setColor(line.getColor());
     }
 
@@ -286,7 +286,7 @@ public class LineChartRenderer {
     }
 
     private void highlightPoint(Canvas canvas, PointValue pointValue, float rawX, float rawY) {
-        int pointRadius = ChartUtils.dp2px(density, pointValue.getPointRadius());
+        int pointRadius = Util.dp2px(density, pointValue.getPointRadius());
         pointPaint.setColor(pointValue.getColor());
         drawPoint(canvas, rawX, rawY, pointRadius + touchToleranceMargin);
         drawInnerPoint(canvas, rawX, rawY, touchToleranceMargin);

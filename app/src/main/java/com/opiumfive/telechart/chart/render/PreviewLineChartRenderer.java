@@ -4,10 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.ChartDataProvider;
-import com.opiumfive.telechart.chart.util.ChartUtils;
 
 
 public class PreviewLineChartRenderer extends LineChartRenderer {
@@ -44,14 +44,14 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
         canvas.drawRect(start, top, left - DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, bottom, previewPaint);
         canvas.drawRect(right + DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, top, end, bottom, previewPaint);
 
-        previewPaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP));
+        previewPaint.setStrokeWidth(Util.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP));
         previewPaint.setColor(previewColor);
         previewPaint.setStyle(Paint.Style.STROKE);
-        int halfStrokeWidth = ChartUtils.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP) / 2;
-        int halfStrokeHeight = ChartUtils.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP) / 2;
+        int halfStrokeWidth = Util.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP) / 2;
+        int halfStrokeHeight = Util.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP) / 2;
         canvas.drawLine(left + halfStrokeWidth, top, right - halfStrokeWidth, top, previewPaint);
         canvas.drawLine(left + halfStrokeWidth, bottom, right - halfStrokeWidth, bottom, previewPaint);
-        previewPaint.setStrokeWidth(ChartUtils.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP));
+        previewPaint.setStrokeWidth(Util.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP));
         canvas.drawLine(left, top - halfStrokeHeight, left, bottom + halfStrokeHeight, previewPaint);
         canvas.drawLine(right, top - halfStrokeHeight, right, bottom + halfStrokeHeight, previewPaint);
     }

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.opiumfive.telechart.GlobalConst.INITIAL_PREVIEW_SCALE;
-import static com.opiumfive.telechart.Util.getColorFromAttr;
+import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 public class StatisticsActivity extends ChangeThemeActivity {
 

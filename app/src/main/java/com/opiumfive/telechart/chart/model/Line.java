@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.valueFormat.LineChartValueFormatter;
 import com.opiumfive.telechart.chart.valueFormat.SimpleLineChartValueFormatter;
-import com.opiumfive.telechart.chart.util.ChartUtils;
 
 
 public class Line {
@@ -15,9 +15,8 @@ public class Line {
     private static final int DEFAULT_POINT_RADIUS_DP = 1;
     public static final int UNINITIALIZED = 0;
 
-    private int color = ChartUtils.DEFAULT_COLOR;
+    private int color = Util.DEFAULT_COLOR;
     private int pointColor = UNINITIALIZED;
-    private int darkenColor = ChartUtils.DEFAULT_DARKEN_COLOR;
     private boolean isActive = true;
     private String title;
 
@@ -40,7 +39,6 @@ public class Line {
     public Line(Line line) {
         this.color = line.color;
         this.pointColor = line.pointColor;
-        //this.darkenColor = line.darkenColor;
         this.strokeWidth = line.strokeWidth;
         this.pointRadius = line.pointRadius;
         this.hasLines = line.hasLines;
@@ -81,9 +79,6 @@ public class Line {
 
     public Line setColor(int color) {
         this.color = color;
-        if (pointColor == UNINITIALIZED) {
-            this.darkenColor = ChartUtils.darkenColor(color);
-        }
         return this;
     }
 
@@ -98,10 +93,6 @@ public class Line {
     public Line setPointColor(int pointColor) {
         this.pointColor = pointColor;
         return this;
-    }
-
-    public int getDarkenColor() {
-        return darkenColor;
     }
 
     public int getStrokeWidth() {

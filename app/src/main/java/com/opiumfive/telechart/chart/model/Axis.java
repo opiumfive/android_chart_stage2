@@ -4,7 +4,6 @@ import android.graphics.Color;
 
 import com.opiumfive.telechart.chart.valueFormat.AxisValueFormatter;
 import com.opiumfive.telechart.chart.valueFormat.DefaultAxisValueFormatter;
-import com.opiumfive.telechart.chart.util.ChartUtils;
 
 public class Axis {
 
@@ -17,7 +16,7 @@ public class Axis {
     private boolean hasLines = false;
     private boolean isInside = true;
     private int textColor = Color.LTGRAY;
-    private int lineColor = ChartUtils.DEFAULT_DARKEN_COLOR;
+    private int lineColor;
     private AxisValueFormatter formatter = new DefaultAxisValueFormatter();
 
     public Axis() {

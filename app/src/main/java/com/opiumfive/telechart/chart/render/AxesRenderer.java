@@ -7,13 +7,12 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
 
+import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.ILineChart;
 import com.opiumfive.telechart.chart.model.Axis;
 
 import com.opiumfive.telechart.chart.model.Viewrect;
-import com.opiumfive.telechart.chart.util.AxisAutoValues;
-import com.opiumfive.telechart.chart.util.ChartUtils;
-import com.opiumfive.telechart.chart.util.FloatUtils;
+import com.opiumfive.telechart.chart.AxisAutoValues;
 
 public class AxesRenderer {
 
@@ -61,7 +60,7 @@ public class AxesRenderer {
         chartViewportHandler = chart.getChartViewportHandler();
         density = context.getResources().getDisplayMetrics().density;
         scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
-        axisMargin = ChartUtils.dp2px(density, DEFAULT_AXIS_MARGIN_DP);
+        axisMargin = Util.dp2px(density, DEFAULT_AXIS_MARGIN_DP);
 
         for (int position = 0; position < 4; ++position) {
             labelPaintTab[position].setStyle(Paint.Style.FILL);
@@ -105,7 +104,7 @@ public class AxesRenderer {
 
     private void initAxisPaints(Axis axis, int position) {
         labelPaintTab[position].setColor(axis.getTextColor());
-        labelPaintTab[position].setTextSize(ChartUtils.sp2px(scaledDensity, axis.getTextSize()));
+        labelPaintTab[position].setTextSize(Util.sp2px(scaledDensity, axis.getTextSize()));
         labelPaintTab[position].getFontMetricsInt(fontMetricsTab[position]);
 
         linePaintTab[position].setColor(axis.getLineColor());
@@ -211,7 +210,7 @@ public class AxesRenderer {
         if (dim == 0) dim = 1;
         int steps = Math.abs(contentRectDimension) / dim;
 
-        FloatUtils.generatedAxisValues(start, stop, steps, autoValuesBufferTab[position]);
+        Util.generatedAxisValues(start, stop, steps, autoValuesBufferTab[position]);
 
         if (axis.hasLines() && (linesDrawBufferTab[position].length < autoValuesBufferTab[position].valuesNumber * 4)) {
             linesDrawBufferTab[position] = new float[autoValuesBufferTab[position].valuesNumber * 4];
@@ -314,7 +313,7 @@ public class AxesRenderer {
             charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
 
             if (isAxisVertical) {
-                labelY = rawValuesTab[position][valueToDrawIndex] - ChartUtils.dp2px(density, 4);
+                labelY = rawValuesTab[position][valueToDrawIndex] - Util.dp2px(density, 4);
             } else {
                 labelX = rawValuesTab[position][valueToDrawIndex];
             }

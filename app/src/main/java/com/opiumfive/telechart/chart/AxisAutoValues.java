@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.util;
+package com.opiumfive.telechart.chart;
 
 
 public class AxisAutoValues {

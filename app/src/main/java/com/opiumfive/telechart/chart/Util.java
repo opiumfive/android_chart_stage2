@@ -1,8 +1,38 @@
-package com.opiumfive.telechart.chart.util;
+package com.opiumfive.telechart.chart;
 
-public class FloatUtils {
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.support.annotation.AttrRes;
+import android.support.annotation.ColorInt;
+import android.util.TypedValue;
 
-    public static final int POW10[] = {1, 10, 100, 1000, 10000, 100000, 1000000};
+public class Util {
+
+    public static final int DEFAULT_COLOR = Color.parseColor("#DFDFDF");
+
+    @ColorInt
+    public static int getColorFromAttr(Context context, @AttrRes int resId) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(resId, typedValue, true);
+        return typedValue.data;
+    }
+
+    public static int dp2px(float density, int dp) {
+        if (dp == 0) {
+            return 0;
+        }
+        return (int) (dp * density + 0.5f);
+
+    }
+
+    public static int sp2px(float scaledDensity, int sp) {
+        if (sp == 0) {
+            return 0;
+        }
+        return (int) (sp * scaledDensity + 0.5f);
+    }
 
     public static double nextUp(double d) {
         if (Double.isNaN(d) || d == Double.POSITIVE_INFINITY) {

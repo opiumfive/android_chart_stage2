@@ -17,7 +17,6 @@ import com.opiumfive.telechart.chart.model.SelectedValues;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.render.AxesRenderer;
 import com.opiumfive.telechart.chart.render.LineChartRenderer;
-import com.opiumfive.telechart.chart.util.ChartUtils;
 
 
 public class ChartView extends View implements ILineChart, ChartDataProvider {
@@ -94,7 +93,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
             chartRenderer.drawUnclipped(canvas);
             axesRenderer.drawInForeground(canvas);
         } else {
-            canvas.drawColor(ChartUtils.DEFAULT_COLOR);
+            canvas.drawColor(Util.DEFAULT_COLOR);
         }
     }
 
