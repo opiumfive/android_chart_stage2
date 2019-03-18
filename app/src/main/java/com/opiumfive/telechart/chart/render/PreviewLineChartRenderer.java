@@ -29,8 +29,8 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     }
 
     @Override
-    public void drawUnclipped(Canvas canvas) {
-        super.drawUnclipped(canvas);
+    public void drawSelectedValues(Canvas canvas) {
+        super.drawSelectedValues(canvas);
         final Viewrect currentViewrect = chartViewrectHandler.getCurrentViewrect();
         final Viewrect maxViewrect = chartViewrectHandler.getMaximumViewport();
         final float left = chartViewrectHandler.computeRawX(currentViewrect.left);

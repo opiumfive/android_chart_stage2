@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 
 import com.opiumfive.telechart.chart.ILineChart;
+import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateListener {
@@ -18,6 +19,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     private Viewrect targetViewrect = new Viewrect();
     private Viewrect newViewrect = new Viewrect();
     private ChartAnimationListener animationListener;
+    private Line animatingLine;
 
     public ChartViewrectAnimator(ILineChart chart) {
         this.chart = chart;
@@ -28,14 +30,20 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     }
 
     public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect) {
+        startAnimationWithToggleLine(startViewrect, targetViewrect, null);
+    }
+
+    public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, Line line) {
         this.startViewrect.set(startViewrect);
         this.targetViewrect.set(targetViewrect);
+        animatingLine = line;
         animator.setDuration(FAST_ANIMATION_DURATION);
         animator.start();
     }
 
     public void cancelAnimation() {
         animator.cancel();
+        animatingLine = null;
     }
 
     @Override
@@ -49,7 +57,18 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         float diffTop = dTop * scale;
         float diffRight = dRight != 0f ? dRight * scale : 1f;
         float diffBottom = dBot * scale;
+
         newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
+        if (animatingLine != null) {
+            float alpha = 0f;
+            if (animatingLine.isActive()) {
+                alpha = scale;
+            } else {
+                alpha = 1f - scale;
+            }
+
+            animatingLine.setAlpha(alpha);
+        }
         chart.setCurrentViewrect(newViewrect);
     }
 

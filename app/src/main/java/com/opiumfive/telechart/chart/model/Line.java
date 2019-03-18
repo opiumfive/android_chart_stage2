@@ -19,11 +19,10 @@ public class Line {
     private int pointColor = UNINITIALIZED;
     private boolean isActive = true;
     private String title;
+    private float alpha = 1f;
 
     private int strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
-
-    private boolean hasLines = true;
 
     private LineChartValueFormatter formatter = new SimpleLineChartValueFormatter();
     private List<PointValue> values = new ArrayList<>();
@@ -41,7 +40,6 @@ public class Line {
         this.pointColor = line.pointColor;
         this.strokeWidth = line.strokeWidth;
         this.pointRadius = line.pointRadius;
-        this.hasLines = line.hasLines;
         this.formatter = line.formatter;
 
         for (PointValue pointValue : line.values) {
@@ -104,15 +102,6 @@ public class Line {
         return this;
     }
 
-    public boolean hasLines() {
-        return hasLines;
-    }
-
-    public Line setHasLines(boolean hasLines) {
-        this.hasLines = hasLines;
-        return this;
-    }
-
     public int getPointRadius() {
         return pointRadius;
     }
@@ -151,5 +140,13 @@ public class Line {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public float getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
     }
 }

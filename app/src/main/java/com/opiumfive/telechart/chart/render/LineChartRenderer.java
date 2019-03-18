@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.NinePatchDrawable;
+import android.util.Log;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.Util;
@@ -154,11 +155,11 @@ public class LineChartRenderer {
         final LineChartData data = dataProvider.getChartData();
 
         for (Line line : data.getLines()) {
-            if (line.isActive()) drawPath(canvas, line);
+            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line);
         }
     }
 
-    public void drawUnclipped(Canvas canvas) {
+    public void drawSelectedValues(Canvas canvas) {
         if (isTouched()) {
             Rect content = chartViewrectHandler.getContentRectMinusAllMargins();
             canvas.drawLine(selectedValues.getTouchX(), content.top, selectedValues.getTouchX(), content.bottom, touchLinePaint);
@@ -284,6 +285,8 @@ public class LineChartRenderer {
     private void prepareLinePaint(final Line line) {
         linePaint.setStrokeWidth(Util.dp2px(density, line.getStrokeWidth()));
         linePaint.setColor(line.getColor());
+        int alpha = (int)(255 * line.getAlpha());
+        linePaint.setAlpha(alpha);
     }
 
     private void drawPoint(Canvas canvas, float rawX, float rawY, float pointRadius) {

@@ -62,7 +62,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
                 //chart.setMaximumViewrect(target);
 
-                chart.setCurrentViewrectAnimated(target);
+                previewChart.setCurrentViewrectAnimated(target, line);
             } else {
                 checkboxList.post(() -> showLineAdapter.recheck(position));
             }

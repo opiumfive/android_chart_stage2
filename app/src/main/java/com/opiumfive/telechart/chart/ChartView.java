@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
 import com.opiumfive.telechart.chart.listener.ChartViewrectAnimator;
+import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.render.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
@@ -87,7 +88,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
             canvas.restoreToCount(clipRestoreCount);
 
             axesRenderer.drawInForeground(canvas);
-            chartRenderer.drawUnclipped(canvas);
+            chartRenderer.drawSelectedValues(canvas);
         } else {
             canvas.drawColor(Util.DEFAULT_COLOR);
         }
@@ -167,6 +168,16 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
             viewportAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
             viewportAnimator.startAnimation(current, targetViewrect);
+        }
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
+    public void setCurrentViewrectAnimated(Viewrect targetViewrect, Line line) {
+
+        if (null != targetViewrect) {
+            viewportAnimator.cancelAnimation();
+            Viewrect current = getCurrentViewrect();
+            viewportAnimator.startAnimationWithToggleLine(current, targetViewrect, line);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
