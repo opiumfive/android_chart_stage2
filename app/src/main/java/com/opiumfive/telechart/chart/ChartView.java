@@ -194,6 +194,22 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
+    public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect) {
+
+        /*if (null != targetViewrect) {
+            chartRenderer.setCurrentViewrect(chartRenderer.calculateAdjustedViewrect(targetViewrect));
+        }
+        ViewCompat.postInvalidateOnAnimation(this);*/
+        Viewrect current = getCurrentViewrect();
+        if (!viewportAnimator.isAnimationStarted()) {
+            viewportAnimator.cancelAnimation();
+            viewportAnimator.startAnimation(current, chartRenderer.calculateAdjustedViewrect(targetViewrect));
+            //ViewCompat.postInvalidateOnAnimation(this);
+        } else {
+            viewportAnimator.updateAnimation(current, chartRenderer.calculateAdjustedViewrect(targetViewrect));
+        }
+    }
+
     public void setViewportCalculationEnabled(boolean isEnabled) {
         chartRenderer.setViewrectCalculationEnabled(isEnabled);
     }

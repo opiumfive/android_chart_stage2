@@ -241,6 +241,27 @@ public class LineChartRenderer {
         }
     }
 
+    public Viewrect calculateAdjustedViewrect(Viewrect target) {
+        Viewrect adjustedViewrect = new Viewrect(target.left, Float.MIN_VALUE, target.right, Float.MAX_VALUE);
+        LineChartData data = dataProvider.getChartData();
+
+        for (Line line : data.getLines()) {
+            if (!line.isActive()) continue;
+            for (PointValue pointValue : line.getValues()) {
+                if (pointValue.getX() >= target.left && pointValue.getX() <= target.right) {
+                    if (pointValue.getY() < adjustedViewrect.bottom) {
+                        adjustedViewrect.bottom = pointValue.getY();
+                    }
+                    if (pointValue.getY() > adjustedViewrect.top) {
+                        adjustedViewrect.top = pointValue.getY();
+                    }
+                }
+            }
+        }
+
+        return adjustedViewrect;
+    }
+
     private int calculateContentRectInternalMargin() {
         int contentAreaMargin = 0;
         final LineChartData data = dataProvider.getChartData();

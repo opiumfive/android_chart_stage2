@@ -62,7 +62,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
                 //chart.setMaximumViewrect(target);
 
-                previewChart.setCurrentViewrectAnimated(target, line);
+                chart.setCurrentViewrectAnimated(target, line);
             } else {
                 checkboxList.post(() -> showLineAdapter.recheck(position));
             }
@@ -92,7 +92,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
             //TODO from save state
             chooseChart(0);
         } else {
-            showShowChartDialog();
+            //showShowChartDialog();
+            chooseChart(2);
         }
     }
 
@@ -189,10 +190,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         @Override
         public void onViewportChanged(Viewrect newViewrect) {
-
-
-
-            chart.setCurrentViewrect(newViewrect);
+            chart.setCurrentViewrectAdjustingRect(newViewrect);
         }
 
     }
