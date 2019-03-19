@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -92,13 +92,13 @@ public class StatisticsActivity extends ChangeThemeActivity {
             //TODO from save state
             chooseChart(0);
         } else {
-            showShowChartDialog();
-            //chooseChart(2);
+            //showShowChartDialog();
+            chooseChart(2);
         }
     }
 
     private void showShowChartDialog() {
-        String[] chartNames = new String[chartDataList.size()];
+        /*String[] chartNames = new String[chartDataList.size()];
         for (int i = 0; i < chartNames.length; i++) {
             chartNames[i] = String.valueOf(i);
         }
@@ -110,7 +110,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
                     chooseChart(which);
                 })
                 .setOnCancelListener(d -> chooseChart(0))
-                .show();
+                .show();*/
     }
 
     private void chooseChart(int pos) {

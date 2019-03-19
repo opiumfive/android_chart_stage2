@@ -2,11 +2,12 @@ package com.opiumfive.telechart;
 
 import android.content.res.ColorStateList;
 import android.support.v4.widget.CompoundButtonCompat;
-import android.support.v7.widget.AppCompatCheckBox;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import com.opiumfive.telechart.chart.model.Line;
@@ -51,7 +52,7 @@ public class ShowLineAdapter extends RecyclerView.Adapter<ShowLineAdapter.ViewHo
 
     static class ViewHolderImpl extends RecyclerView.ViewHolder {
 
-        AppCompatCheckBox checkbox;
+        CheckBox checkbox;
 
         ViewHolderImpl(View view, final OnLineCheckListener listener) {
             super(view);

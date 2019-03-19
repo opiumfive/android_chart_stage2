@@ -1,6 +1,7 @@
 package com.opiumfive.telechart.theming;
 
 import android.animation.Animator;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +20,7 @@ import android.view.animation.AccelerateInterpolator;
 
 import com.opiumfive.telechart.R;
 
-public class ChangeThemeActivity extends AppCompatActivity {
+public class ChangeThemeActivity extends Activity {
 
     protected static final String KEY_EXTRA_CIRCULAR_REVEAL = "KEY_EXTRA_CIRCULAR_REVEAL";
     protected static final String KEY_EXTRA_CIRCULAR_REVEAL_X = "KEY_EXTRA_CIRCULAR_REVEAL_X";

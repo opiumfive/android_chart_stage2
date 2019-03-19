@@ -1,9 +1,7 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+
     </style>
 
     <style name="LightTheme" parent="AppTheme">
@@ -20,9 +18,7 @@
     </style>
 
     <style name="DarkTheme" parent="AppTheme">
-        <item name="colorPrimary">@color/colorPrimary_Dark</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark_Dark</item>
-        <item name="colorAccent">@color/colorAccent_Dark</item>
+
         <item name="windowBackground">@color/windowBackground_Dark</item>
         <item name="titleColor">@color/titleColor_Dark</item>
         <item name="textColor">@color/textColor_Dark</item>
