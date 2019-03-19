@@ -31,6 +31,7 @@ android {
         release {
             minifyEnabled false
             debuggable false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signing
         }
@@ -38,6 +39,5 @@ android {
 }
 
 dependencies {
-    //implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 }
