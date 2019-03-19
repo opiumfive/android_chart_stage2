@@ -33,9 +33,7 @@ public class AxesRenderer {
     private float scaledDensity;
     private Paint[] labelPaintTab = new Paint[]{new Paint(), new Paint(), new Paint(), new Paint()};
     private Paint[] linePaintTab = new Paint[]{new Paint(), new Paint(), new Paint(), new Paint()};
-    private float[] nameBaselineTab = new float[4];
     private float[] labelBaselineTab = new float[4];
-    private float[] separationLineTab = new float[4];
     private int[] labelWidthTab = new int[4];
     private int[] labelTextAscentTab = new int[4];
     private int[] labelTextDescentTab = new int[4];
@@ -156,23 +154,15 @@ public class AxesRenderer {
         if (LEFT == position) {
             if (axis.isInside()) {
                 labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAllMargins().left + axisMargin;
-                nameBaselineTab[position] = chartViewrectHandler.getContentRectMinusAxesMargins().left - axisMargin - labelTextDescentTab[position];
             } else {
                 labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAxesMargins().left - axisMargin;
-                nameBaselineTab[position] = labelBaselineTab[position] - axisMargin - labelTextDescentTab[position] - labelDimensionForMarginsTab[position];
             }
-            separationLineTab[position] = chartViewrectHandler.getContentRectMinusAllMargins().left;
         } else if (BOTTOM == position) {
             if (axis.isInside()) {
                 labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAllMargins().bottom - axisMargin - labelTextDescentTab[position];
-                nameBaselineTab[position] = chartViewrectHandler.getContentRectMinusAxesMargins().bottom + axisMargin + labelTextAscentTab[position];
             } else {
                 labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAxesMargins().bottom + axisMargin + labelTextAscentTab[position];
-                nameBaselineTab[position] = labelBaselineTab[position] + axisMargin + labelDimensionForMarginsTab[position];
             }
-            separationLineTab[position] = chartViewrectHandler.getContentRectMinusAllMargins().bottom;
-        } else {
-            throw new IllegalArgumentException("Invalid axis position: " + position);
         }
     }
 
