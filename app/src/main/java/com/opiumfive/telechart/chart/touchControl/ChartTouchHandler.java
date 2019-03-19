@@ -5,10 +5,10 @@ import android.view.MotionEvent;
 import android.view.ViewParent;
 
 import com.opiumfive.telechart.chart.ILineChart;
-import com.opiumfive.telechart.chart.render.ChartViewrectHandler;
+import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValues;
-import com.opiumfive.telechart.chart.render.LineChartRenderer;
+import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 
 public class ChartTouchHandler {
 

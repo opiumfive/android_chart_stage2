@@ -3,10 +3,10 @@ package com.opiumfive.telechart.chart;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import com.opiumfive.telechart.chart.render.PreviewChartViewrectHandler;
+import com.opiumfive.telechart.chart.draw.PreviewChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
-import com.opiumfive.telechart.chart.render.PreviewLineChartRenderer;
+import com.opiumfive.telechart.chart.draw.PreviewLineChartRenderer;
 
 
 public class PreviewChartView extends ChartView {

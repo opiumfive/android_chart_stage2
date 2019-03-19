@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.render;
+package com.opiumfive.telechart.chart.draw;
 
 import com.opiumfive.telechart.chart.model.Viewrect;
 

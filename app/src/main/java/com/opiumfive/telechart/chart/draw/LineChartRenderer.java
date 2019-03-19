@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.render;
+package com.opiumfive.telechart.chart.draw;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.NinePatchDrawable;
-import android.util.Log;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.Util;

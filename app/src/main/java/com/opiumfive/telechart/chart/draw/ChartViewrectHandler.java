@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.render;
+package com.opiumfive.telechart.chart.draw;
 
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -69,7 +69,6 @@ public class ChartViewrectHandler {
         contentRectMinusAllMargins.right = contentRectMinusAllMargins.right - deltaRight;
         contentRectMinusAllMargins.bottom = contentRectMinusAllMargins.bottom - deltaBottom;
     }
-
 
     public void constrainViewport(float left, float top, float right, float bottom) {
         if (right - left < minViewportWidth) {

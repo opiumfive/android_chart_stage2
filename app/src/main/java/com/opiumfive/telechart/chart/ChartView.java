@@ -10,13 +10,13 @@ import android.view.View;
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
 import com.opiumfive.telechart.chart.model.Line;
-import com.opiumfive.telechart.chart.render.ChartViewrectHandler;
+import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewrect;
-import com.opiumfive.telechart.chart.render.AxesRenderer;
-import com.opiumfive.telechart.chart.render.LineChartRenderer;
+import com.opiumfive.telechart.chart.draw.AxesRenderer;
+import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 
 
 public class ChartView extends View implements ILineChart, ChartDataProvider {
