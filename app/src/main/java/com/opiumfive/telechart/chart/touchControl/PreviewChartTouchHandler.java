@@ -38,12 +38,12 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         sideDragZone = chartViewrectHandler.computeSideScrollTrigger(SIDE_DRAG_ZONE);
 
         if (Math.abs(left - touchX) <= sideDragZone) {
-            if (currentViewrect.left > maxViewrect.left) {
+            if (currentViewrect.left >= maxViewrect.left) {
                 gestureListener.setScrollMode(ScrollMode.LEFT_SIDE);
                 return gestureDetector.onTouchEvent(event);
             }
         } else if (Math.abs(right - touchX) <= sideDragZone) {
-            if (currentViewrect.right < maxViewrect.right) {
+            if (currentViewrect.right <= maxViewrect.right) {
                 gestureListener.setScrollMode(ScrollMode.RIGHT_SIDE);
                 return gestureDetector.onTouchEvent(event);
             }

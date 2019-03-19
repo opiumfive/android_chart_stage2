@@ -36,28 +36,27 @@ public class ChartScroller {
         final boolean canScrollLeft = currentViewrect.left > maxViewrect.left;
         final boolean canScrollRight = currentViewrect.right < maxViewrect.right;
 
-
         boolean canScrollX = canScrollLeft && distanceX <= 0 || canScrollRight && distanceX >= 0;
 
-        if (canScrollX) {
+        float viewportOffsetX = distanceX * visibleViewrect.width() / contentRect.width();
 
-            float viewportOffsetX = distanceX * visibleViewrect.width() / contentRect.width();
+        if (currentScrollMode == null) return false;
 
-            if (currentScrollMode == null) return false;
-
-            switch (currentScrollMode) {
-                case FULL:
+        switch (currentScrollMode) {
+            case FULL:
+                if (canScrollX) {
                     chartViewrectHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
                     chartViewrectHandler.setViewportTopLeft(currentViewrect.left + viewportOffsetX, currentViewrect.top);
-                    break;
-                case LEFT_SIDE:
-                    chartViewrectHandler.setCurrentViewport(currentViewrect.left + viewportOffsetX, currentViewrect.top, currentViewrect.right, currentViewrect.bottom);
-                    break;
-                case RIGHT_SIDE:
-                    chartViewrectHandler.setCurrentViewport(currentViewrect.left, currentViewrect.top, currentViewrect.right + viewportOffsetX, currentViewrect.bottom);
-                    break;
-            }
-
+                }
+                break;
+            case LEFT_SIDE:
+                chartViewrectHandler.setCurrentViewport(currentViewrect.left + viewportOffsetX, currentViewrect.top, currentViewrect.right, currentViewrect.bottom);
+                canScrollX = true;
+                break;
+            case RIGHT_SIDE:
+                chartViewrectHandler.setCurrentViewport(currentViewrect.left, currentViewrect.top, currentViewrect.right + viewportOffsetX, currentViewrect.bottom);
+                canScrollX = true;
+                break;
         }
 
         scrollResult.canScrollX = canScrollX;
