@@ -92,8 +92,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
             //TODO from save state
             chooseChart(0);
         } else {
-            //showShowChartDialog();
-            chooseChart(2);
+            showShowChartDialog();
+            //chooseChart(2);
         }
     }
 

@@ -31,7 +31,7 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
 
     private float yMaxFilterBuff = 1f;
     private float yMinFilterBuff = 1f;
-    private float filterFactor = 5f;
+    private float filterFactor = 0.1f;
     private float filterNoise = 25f;
 
     public ChartView(Context context) {

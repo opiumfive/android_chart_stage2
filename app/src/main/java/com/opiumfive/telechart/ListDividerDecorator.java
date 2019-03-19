@@ -3,10 +3,13 @@ package com.opiumfive.telechart;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 public class ListDividerDecorator extends RecyclerView.ItemDecoration {
 
@@ -15,6 +18,7 @@ public class ListDividerDecorator extends RecyclerView.ItemDecoration {
 
     public ListDividerDecorator(Context context, int leftPadding) {
         divider = ContextCompat.getDrawable(context, R.drawable.line_divider);
+        divider.setColorFilter(getColorFromAttr(context, R.attr.dividerColor), PorterDuff.Mode.SRC_ATOP);
         this.leftPadding = leftPadding;
     }
 
