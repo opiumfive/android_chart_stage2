@@ -7,12 +7,12 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.opiumfive.telechart.chart.listener.ChartAnimationListener;
-import com.opiumfive.telechart.chart.listener.ChartViewrectAnimator;
+import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
+import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.render.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
-import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
+import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.render.AxesRenderer;
@@ -202,27 +202,10 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect) {
 
         if (null != targetViewrect) {
-
+            // Kalman filter to provide smooth min-max adjusting with time
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
             Viewrect current = getCurrentViewrect();
-            float targetYMax = targetAdjustedViewrect.top;
-            float targetYMin = targetAdjustedViewrect.bottom;
-            float currentYMax = current.top;
-            float currentYMin = current.bottom;
-
-            float yMaxFilterPrediction = yMaxFilterBuff + filterFactor;
-            float factor = yMaxFilterPrediction / (yMaxFilterPrediction + filterNoise);
-            targetYMax = currentYMax + factor * (targetYMax - currentYMax);
-            yMaxFilterBuff = (1f - factor) * yMaxFilterPrediction;
-
-            float yMinFilterPrediction = yMinFilterBuff + filterFactor;
-            factor = yMinFilterPrediction / (yMinFilterPrediction + filterNoise);
-            targetYMin = currentYMin + factor * (targetYMin - currentYMin);
-            yMinFilterBuff = (1f - factor) * yMinFilterPrediction;
-
-            targetAdjustedViewrect.top = targetYMax;
-            targetAdjustedViewrect.bottom = targetYMin;
-
+            chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect);
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);

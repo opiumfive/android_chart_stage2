@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.listener;
+package com.opiumfive.telechart.chart.animator;
 
 import java.util.EventListener;
 

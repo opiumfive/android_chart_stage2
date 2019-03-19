@@ -3,9 +3,8 @@ package com.opiumfive.telechart.chart.render;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 
-import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
+import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
@@ -15,6 +14,8 @@ import java.util.List;
 public class ChartViewrectHandler {
 
     protected static final float MAXIMUM_ZOOM = 20f;
+    private static final float KALMAN_FILTER_FACTOR = 0.1f;
+    private static final float KALMAN_FILTER_NOISE_FACTOR = 25f;
 
     protected int chartWidth;
     protected int chartHeight;
@@ -30,6 +31,11 @@ public class ChartViewrectHandler {
     protected LinePathOptimizer linePathOptimizer;
 
     protected ViewrectChangeListener viewrectChangeListener;
+
+    private float yMaxFilterBuff = 1f;
+    private float yMinFilterBuff = 1f;
+    private float filterFactor = KALMAN_FILTER_FACTOR;
+    private float filterNoise = KALMAN_FILTER_NOISE_FACTOR;
 
     public ChartViewrectHandler() {
         linePathOptimizer = new LinePathOptimizer(this);
@@ -166,6 +172,27 @@ public class ChartViewrectHandler {
 
     public void setMaxViewrect(Viewrect maxViewrect) {
         setMaxViewport(maxViewrect.left, maxViewrect.top, maxViewrect.right, maxViewrect.bottom);
+    }
+
+    // Kalman filter for smooth min-max morphling
+    public void filterSmooth(Viewrect current, Viewrect targetAdjustedViewrect) {
+        float targetYMax = targetAdjustedViewrect.top;
+        float targetYMin = targetAdjustedViewrect.bottom;
+        float currentYMax = current.top;
+        float currentYMin = current.bottom;
+
+        float yMaxFilterPrediction = yMaxFilterBuff + filterFactor;
+        float factor = yMaxFilterPrediction / (yMaxFilterPrediction + filterNoise);
+        targetYMax = currentYMax + factor * (targetYMax - currentYMax);
+        yMaxFilterBuff = (1f - factor) * yMaxFilterPrediction;
+
+        float yMinFilterPrediction = yMinFilterBuff + filterFactor;
+        factor = yMinFilterPrediction / (yMinFilterPrediction + filterNoise);
+        targetYMin = currentYMin + factor * (targetYMin - currentYMin);
+        yMinFilterBuff = (1f - factor) * yMinFilterPrediction;
+
+        targetAdjustedViewrect.top = targetYMax;
+        targetAdjustedViewrect.bottom = targetYMin;
     }
 
     public void setMaxViewport(float left, float top, float right, float bottom) {

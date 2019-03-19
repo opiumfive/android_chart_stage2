@@ -9,7 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
-import com.opiumfive.telechart.chart.listener.ViewrectChangeListener;
+import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;

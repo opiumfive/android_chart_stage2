@@ -1,4 +1,4 @@
-package com.opiumfive.telechart.chart.listener;
+package com.opiumfive.telechart.chart.animator;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
