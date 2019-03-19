@@ -29,6 +29,11 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewportAnimator;
 
+    private float yMaxFilterBuff = 1f;
+    private float yMinFilterBuff = 1f;
+    private float filterFactor = 5f;
+    private float filterNoise = 25f;
+
     public ChartView(Context context) {
         this(context, null, 0);
     }
@@ -196,18 +201,31 @@ public class ChartView extends View implements ILineChart, ChartDataProvider {
 
     public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect) {
 
-        /*if (null != targetViewrect) {
-            chartRenderer.setCurrentViewrect(chartRenderer.calculateAdjustedViewrect(targetViewrect));
+        if (null != targetViewrect) {
+
+            Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
+            Viewrect current = getCurrentViewrect();
+            float targetYMax = targetAdjustedViewrect.top;
+            float targetYMin = targetAdjustedViewrect.bottom;
+            float currentYMax = current.top;
+            float currentYMin = current.bottom;
+
+            float yMaxFilterPrediction = yMaxFilterBuff + filterFactor;
+            float factor = yMaxFilterPrediction / (yMaxFilterPrediction + filterNoise);
+            targetYMax = currentYMax + factor * (targetYMax - currentYMax);
+            yMaxFilterBuff = (1f - factor) * yMaxFilterPrediction;
+
+            float yMinFilterPrediction = yMinFilterBuff + filterFactor;
+            factor = yMinFilterPrediction / (yMinFilterPrediction + filterNoise);
+            targetYMin = currentYMin + factor * (targetYMin - currentYMin);
+            yMinFilterBuff = (1f - factor) * yMinFilterPrediction;
+
+            targetAdjustedViewrect.top = targetYMax;
+            targetAdjustedViewrect.bottom = targetYMin;
+
+            chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
         }
-        ViewCompat.postInvalidateOnAnimation(this);*/
-        Viewrect current = getCurrentViewrect();
-        if (!viewportAnimator.isAnimationStarted()) {
-            viewportAnimator.cancelAnimation();
-            viewportAnimator.startAnimation(current, chartRenderer.calculateAdjustedViewrect(targetViewrect));
-            //ViewCompat.postInvalidateOnAnimation(this);
-        } else {
-            viewportAnimator.updateAnimation(current, chartRenderer.calculateAdjustedViewrect(targetViewrect));
-        }
+        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public void setViewportCalculationEnabled(boolean isEnabled) {
