@@ -19,6 +19,7 @@ public class AxesRenderer {
     private static final int DEFAULT_AXIS_MARGIN_DP = 16;
     private static final int LEFT = 1;
     private static final int BOTTOM = 3;
+    private static final char[] nillLabel = "0".toCharArray();
 
     private static final char[] labelWidthChars = new char[]{
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -271,6 +272,7 @@ public class AxesRenderer {
 
         if (axis.hasLines()) {
             int valueToDrawIndex = 0;
+            canvas.drawLine(lineX1, contentRectMargins.bottom, lineX2, contentRectMargins.bottom, linePaintTab[position]);
             for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                 if (isAxisVertical) {
                     lineY1 = lineY2 = rawValuesTab[position][valueToDrawIndex];
@@ -292,6 +294,8 @@ public class AxesRenderer {
         boolean isAxisVertical = isAxisVertical(position);
         if (LEFT == position) {
             labelX = labelBaselineTab[position];
+
+            canvas.drawText(nillLabel, 0, nillLabel.length, labelX, chartViewrectHandler.getContentRectMinusAllMargins().bottom - Util.dp2px(density, 2), labelPaintTab[position]);
         } else if (BOTTOM == position) {
             labelY = labelBaselineTab[position];
         }

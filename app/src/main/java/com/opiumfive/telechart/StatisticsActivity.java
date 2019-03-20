@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
+import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
@@ -35,7 +36,9 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private LineChartData previewData;
     private ShowLineAdapter showLineAdapter;
     private ChartData chartData;
-    private boolean initialSettingFlag = false;
+    private boolean animatedRect = false;
+    private boolean shouldPreviewAffectMain = true;
+
 
     private ShowLineAdapter.OnLineCheckListener onLineCheckListener = new ShowLineAdapter.OnLineCheckListener() {
         @Override
@@ -60,6 +63,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 target.right = current.right;
 
                 chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
+                previewChart.recalculateMax();
+                previewChart.setCurrentViewrectAnimated(target);
             } else {
                 checkboxList.post(() -> showLineAdapter.recheck(position));
             }
@@ -69,8 +74,22 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private ViewrectChangeListener previewRectListener = new ViewrectChangeListener() {
         @Override
         public void onViewportChanged(Viewrect newViewrect) {
-            chart.setCurrentViewrectAdjustingRect(newViewrect, initialSettingFlag);
-            initialSettingFlag = true;
+            if (shouldPreviewAffectMain) {
+                chart.setCurrentViewrectAdjustingRect(newViewrect, animatedRect);
+                animatedRect = true;
+            }
+        }
+    };
+
+    private ChartAnimationListener previewAnimListener = new ChartAnimationListener() {
+        @Override
+        public void onAnimationStarted() {
+            shouldPreviewAffectMain = false;
+        }
+
+        @Override
+        public void onAnimationFinished() {
+            shouldPreviewAffectMain = true;
         }
     };
 
@@ -131,6 +150,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         previewChart.setChartData(previewData);
         previewChart.setViewportChangeListener(previewRectListener);
+        previewChart.setViewportAnimationListener(previewAnimListener);
         previewChart.setViewportCalculationEnabled(false);
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
         previewChart.setPreviewBackgroundColor(getColorFromAttr(this, R.attr.previewBackColor));

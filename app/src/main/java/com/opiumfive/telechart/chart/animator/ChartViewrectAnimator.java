@@ -41,11 +41,6 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         animator.start();
     }
 
-    public void updateAnimation(Viewrect startViewrect, Viewrect targetViewrect) {
-        //this.startViewrect.set(startViewrect);
-        //this.targetViewrect.set(targetViewrect.left, this.targetViewrect.top, targetViewrect.right, this.targetViewrect.bottom);
-    }
-
     public void cancelAnimation() {
         animator.cancel();
         animatingLine = null;
