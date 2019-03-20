@@ -27,12 +27,13 @@ public class ChooseActivity extends Activity {
         chartDataList = ChartDataParser.loadAndParseInput(this);
 
         RecyclerView list = findViewById(R.id.list);
-        list.addItemDecoration(new ListDividerDecorator(this, getResources().getDimensionPixelSize(R.dimen.divider_margin)));
+        list.addItemDecoration(new ListDividerDecorator(this, 0));
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setHasFixedSize(true);
         ChartAdapter chartAdapter = new ChartAdapter(chartDataList.size(),
                 (pos) -> {
                        startActivity(new Intent(ChooseActivity.this, StatisticsActivity.class).putExtra("chart", chartDataList.get(pos)));
+                       finish();
                 }
         );
         list.setAdapter(chartAdapter);

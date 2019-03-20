@@ -88,10 +88,7 @@ public class LineChartRenderer {
         touchToleranceMargin = Util.dp2px(density, DEFAULT_TOUCH_TOLERANCE_MARGIN_DP);
 
         linePaint.setAntiAlias(true);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeCap(Cap.BUTT);
-        linePaint.setDither(true);
-        linePaint.setStrokeJoin(Paint.Join.BEVEL);
+        linePaint.setStyle(Paint.Style.FILL);
         linePaint.setStrokeWidth(Util.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP));
 
         detailCornerRadius = Util.dp2px(density, 5);
@@ -159,9 +156,10 @@ public class LineChartRenderer {
     }
 
     public void drawSelectedValues(Canvas canvas) {
-        if (isTouched()) {
+        if (isTouched() && !selectedValues.getPoints().isEmpty()) {
             Rect content = chartViewrectHandler.getContentRectMinusAllMargins();
-            canvas.drawLine(selectedValues.getTouchX(), content.top, selectedValues.getTouchX(), content.bottom, touchLinePaint);
+            float lineX = chartViewrectHandler.computeRawX(selectedValues.getPoints().get(0).getX());
+            canvas.drawLine(lineX, content.top, lineX, content.bottom, touchLinePaint);
 
             for (PointValue pointValue : selectedValues.getPoints()) {
 

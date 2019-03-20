@@ -182,9 +182,16 @@ public class StatisticsActivity extends ChangeThemeActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
+            startActivity(new Intent(this, ChooseActivity.class));
             finish();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, ChooseActivity.class));
+        finish();
     }
 }
