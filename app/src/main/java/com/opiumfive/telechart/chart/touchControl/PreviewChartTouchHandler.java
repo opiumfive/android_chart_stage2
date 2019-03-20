@@ -33,7 +33,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         final float left = chartViewrectHandler.computeRawX(currentViewrect.left);
         final float right = chartViewrectHandler.computeRawX(currentViewrect.right);
 
-        float touchX = event.getRawX();
+        float touchX = event.getX();
 
         sideDragZone = chartViewrectHandler.computeSideScrollTrigger(SIDE_DRAG_ZONE);
 
