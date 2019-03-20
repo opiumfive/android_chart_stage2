@@ -16,7 +16,7 @@ import com.opiumfive.telechart.chart.AxisAutoValues;
 
 public class AxesRenderer {
 
-    private static final int DEFAULT_AXIS_MARGIN_DP = 0;
+    private static final int DEFAULT_AXIS_MARGIN_DP = 16;
     private static final int LEFT = 1;
     private static final int BOTTOM = 3;
 
@@ -262,7 +262,7 @@ public class AxesRenderer {
         boolean isAxisVertical = isAxisVertical(position);
 
         if (LEFT == position) {
-            lineX1 = contentRectMargins.left;
+            lineX1 = axisMargin + contentRectMargins.left;
             lineX2 = contentRectMargins.right;
         } else if (BOTTOM == position) {
             lineY1 = contentRectMargins.top;

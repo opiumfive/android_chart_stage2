@@ -36,9 +36,10 @@ public class LineChartRenderer {
 
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
+    private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.05f;
 
 
-    public int DEFAULT_LABEL_MARGIN_DP = 8;
+    public int DEFAULT_LABEL_MARGIN_DP = 2;
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
     private SimpleDateFormat dateFormat = new SimpleDateFormat(SELECTED_VALUES_DATE_FORMAT, Locale.ENGLISH);
@@ -257,6 +258,11 @@ public class LineChartRenderer {
                 }
             }
         }
+
+        //additional offset 5%
+        float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
+        adjustedViewrect.bottom = adjustedViewrect.bottom - diff;
+        adjustedViewrect.top = adjustedViewrect.top + diff;
 
         return adjustedViewrect;
     }

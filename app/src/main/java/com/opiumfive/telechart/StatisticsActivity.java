@@ -35,6 +35,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private LineChartData previewData;
     private ShowLineAdapter showLineAdapter;
     private ChartData chartData;
+    private boolean initialSettingFlag = false;
 
     private ShowLineAdapter.OnLineCheckListener onLineCheckListener = new ShowLineAdapter.OnLineCheckListener() {
         @Override
@@ -58,9 +59,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 target.left = current.left;
                 target.right = current.right;
 
-                //chart.setMaximumViewrect(target);
-
-                chart.setCurrentViewrectAnimated(target, line);
+                chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
             } else {
                 checkboxList.post(() -> showLineAdapter.recheck(position));
             }
@@ -70,7 +69,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private ViewrectChangeListener previewRectListener = new ViewrectChangeListener() {
         @Override
         public void onViewportChanged(Viewrect newViewrect) {
-            chart.setCurrentViewrectAdjustingRect(newViewrect);
+            chart.setCurrentViewrectAdjustingRect(newViewrect, initialSettingFlag);
+            initialSettingFlag = true;
         }
     };
 

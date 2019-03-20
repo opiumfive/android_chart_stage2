@@ -187,6 +187,17 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
+    public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, Line line) {
+
+        if (null != targetViewrect) {
+            viewportAnimator.cancelAnimation();
+            Viewrect current = getCurrentViewrect();
+            Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
+            viewportAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, line);
+        }
+        ViewCompat.postInvalidateOnAnimation(this);
+    }
+
     public Viewrect getCurrentViewrect() {
         return getChartRenderer().getCurrentViewrect();
     }
@@ -199,13 +210,15 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect) {
+    public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect, boolean useFilter) {
 
         if (null != targetViewrect) {
-            // Kalman filter to provide smooth min-max adjusting with time
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
             Viewrect current = getCurrentViewrect();
-            chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect);
+            if (useFilter) {
+                // Kalman filter to provide smooth min-max adjusting with time
+                chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect);
+            }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);
