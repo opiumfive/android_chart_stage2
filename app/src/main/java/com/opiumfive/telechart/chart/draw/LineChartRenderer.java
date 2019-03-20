@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Cap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -22,8 +21,9 @@ import com.opiumfive.telechart.chart.ChartDataProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.opiumfive.telechart.Settings.SELECTED_VALUES_DATE_FORMAT;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
@@ -36,7 +36,7 @@ public class LineChartRenderer {
 
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
-    private static final float DEFAULT_MAX_ANGLE_VARIATION = 2f;
+
 
     public int DEFAULT_LABEL_MARGIN_DP = 2;
     protected IChart chart;
@@ -54,7 +54,6 @@ public class LineChartRenderer {
     protected SelectedValues selectedValues = new SelectedValues();
     protected int labelOffset;
     protected int labelMargin;
-    protected float maxAngleVariation = DEFAULT_MAX_ANGLE_VARIATION;
     private int detailsTitleColor;
     private NinePatchDrawable shadowDrawable;
 
@@ -65,6 +64,7 @@ public class LineChartRenderer {
     private Paint linePaint = new Paint();
     private Paint pointPaint = new Paint();
     private Paint innerPointPaint = new Paint();
+    private Map<String, float[]> linesMap = new HashMap<>();
 
     private Viewrect tempMaximumViewrect = new Viewrect();
 
@@ -110,10 +110,6 @@ public class LineChartRenderer {
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
     }
 
-    public void setMaxAngleVariation(float maxAngleVariation) {
-        this.maxAngleVariation = maxAngleVariation;
-    }
-
     public void onChartSizeChanged() {
         final int internalMargin = calculateContentRectInternalMargin();
         chartViewrectHandler.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
@@ -125,6 +121,12 @@ public class LineChartRenderer {
         Typeface typeface = chart.getChartData().getValueLabelTypeface();
         if (null != typeface) {
             labelPaint.setTypeface(typeface);
+        }
+
+        linesMap.clear();
+
+        for (Line line: data.getLines()) {
+            linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
         }
 
         labelPaint.setColor(data.getValueLabelTextColor());
@@ -274,11 +276,10 @@ public class LineChartRenderer {
 
     private void drawPath(Canvas canvas, final Line line) {
         prepareLinePaint(line);
-        List<PointValue> optimizedList = chartViewrectHandler.optimizeLine(line.getValues(), maxAngleVariation);
-        float[] lines = new float[optimizedList.size() * 4];
+        float[] lines = linesMap.get(line.getId());
 
         int valueIndex = 0;
-        for (PointValue pointValue : optimizedList) {
+        for (PointValue pointValue : line.getValues()) {
 
             final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
             final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());

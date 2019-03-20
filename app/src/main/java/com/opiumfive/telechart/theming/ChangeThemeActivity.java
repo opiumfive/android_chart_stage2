@@ -20,7 +20,7 @@ import android.view.animation.AccelerateInterpolator;
 
 import com.opiumfive.telechart.R;
 
-public class ChangeThemeActivity extends Activity {
+public abstract class ChangeThemeActivity extends Activity {
 
     protected static final String KEY_EXTRA_CIRCULAR_REVEAL = "KEY_EXTRA_CIRCULAR_REVEAL";
     protected static final String KEY_EXTRA_CIRCULAR_REVEAL_X = "KEY_EXTRA_CIRCULAR_REVEAL_X";
@@ -122,6 +122,7 @@ public class ChangeThemeActivity extends Activity {
             intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL, true);
             intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL_X, centerX);
             intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL_Y, centerY);
+            intent.putExtras(getDataForSaveState());
 
             startActivity(intent);
             int animDuration = getResources().getInteger(R.integer.change_theme_time);
@@ -155,4 +156,6 @@ public class ChangeThemeActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public abstract Bundle getDataForSaveState();
 }

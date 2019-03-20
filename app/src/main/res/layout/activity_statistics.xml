@@ -29,8 +29,8 @@
         <com.opiumfive.telechart.chart.ChartView
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_marginLeft="@dimen/margin"
             android:layout_marginRight="@dimen/margin"
+            android:layout_marginEnd="@dimen/margin"
             android:layout_height="250dp" />
 
         <com.opiumfive.telechart.chart.PreviewChartView
