@@ -5,7 +5,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.opiumfive.telechart.chart.ILineChart;
+import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
 
@@ -18,7 +18,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
 
     private float sideDragZone;
 
-    public PreviewChartTouchHandler(Context context, ILineChart chart) {
+    public PreviewChartTouchHandler(Context context, IChart chart) {
         super(context, chart);
         gestureListener = new PreviewChartGestureListener();
         gestureDetector = new GestureDetectorCompat(context, gestureListener);

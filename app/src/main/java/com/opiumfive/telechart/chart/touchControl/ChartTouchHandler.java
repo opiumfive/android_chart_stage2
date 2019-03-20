@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.ViewParent;
 
-import com.opiumfive.telechart.chart.ILineChart;
+import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValues;
@@ -13,7 +13,7 @@ import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 public class ChartTouchHandler {
 
     protected ChartScroller chartScroller;
-    protected ILineChart chart;
+    protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
     protected LineChartRenderer renderer;
 
@@ -24,7 +24,7 @@ public class ChartTouchHandler {
 
     protected ViewParent viewParent;
 
-    public ChartTouchHandler(Context context, ILineChart chart) {
+    public ChartTouchHandler(Context context, IChart chart) {
         this.chart = chart;
         this.chartViewrectHandler = chart.getChartViewrectHandler();
         this.renderer = chart.getChartRenderer();

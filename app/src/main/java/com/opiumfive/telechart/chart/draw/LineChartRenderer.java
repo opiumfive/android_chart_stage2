@@ -12,7 +12,7 @@ import android.graphics.drawable.NinePatchDrawable;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.Util;
-import com.opiumfive.telechart.chart.ILineChart;
+import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
@@ -39,7 +39,7 @@ public class LineChartRenderer {
     private static final float DEFAULT_MAX_ANGLE_VARIATION = 2f;
 
     public int DEFAULT_LABEL_MARGIN_DP = 2;
-    protected ILineChart chart;
+    protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
     private SimpleDateFormat dateFormat = new SimpleDateFormat(SELECTED_VALUES_DATE_FORMAT, Locale.ENGLISH);
 
@@ -68,7 +68,7 @@ public class LineChartRenderer {
 
     private Viewrect tempMaximumViewrect = new Viewrect();
 
-    public LineChartRenderer(Context context, ILineChart chart, ChartDataProvider dataProvider) {
+    public LineChartRenderer(Context context, IChart chart, ChartDataProvider dataProvider) {
         this.density = context.getResources().getDisplayMetrics().density;
         this.scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         this.chart = chart;
@@ -205,7 +205,7 @@ public class LineChartRenderer {
                 minPointDistanceValue.setColor(line.getColor());
                 minPointDistanceValue.setLine(line.getTitle());
                 selectedValues.add(minPointDistanceValue);
-                selectedValues.setTouchX(minPointX);
+                selectedValues.setTouchX(touchX);
             }
         }
 

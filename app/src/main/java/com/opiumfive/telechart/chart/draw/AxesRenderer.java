@@ -8,7 +8,7 @@ import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
 
 import com.opiumfive.telechart.chart.Util;
-import com.opiumfive.telechart.chart.ILineChart;
+import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Axis;
 
 import com.opiumfive.telechart.chart.model.Viewrect;
@@ -26,7 +26,7 @@ public class AxesRenderer {
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'};
 
-    private ILineChart chart;
+    private IChart chart;
     private ChartViewrectHandler chartViewrectHandler;
     private int axisMargin;
     private float density;
@@ -53,7 +53,7 @@ public class AxesRenderer {
 
     private AxisAutoValues[] autoValuesBufferTab = new AxisAutoValues[]{new AxisAutoValues(), new AxisAutoValues(), new AxisAutoValues(), new AxisAutoValues()};
 
-    public AxesRenderer(Context context, ILineChart chart) {
+    public AxesRenderer(Context context, IChart chart) {
         this.chart = chart;
         chartViewrectHandler = chart.getChartViewrectHandler();
         density = context.getResources().getDisplayMetrics().density;

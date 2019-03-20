@@ -16,6 +16,10 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="Checkbox">
+        <item name="android:button">@drawable/checkbox</item>
+    </style>
+
     <style name="LightTheme" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="windowBackground">@color/windowBackground</item>

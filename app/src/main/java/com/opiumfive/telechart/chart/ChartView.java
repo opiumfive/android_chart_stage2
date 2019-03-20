@@ -19,7 +19,7 @@ import com.opiumfive.telechart.chart.draw.AxesRenderer;
 import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 
 
-public class ChartView extends View implements ILineChart, ChartDataProvider {
+public class ChartView extends View implements IChart, ChartDataProvider {
 
     protected LineChartData data;
 

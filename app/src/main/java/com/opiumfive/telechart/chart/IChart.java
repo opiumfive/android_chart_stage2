@@ -5,7 +5,7 @@ import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 
-public interface ILineChart {
+public interface IChart {
 
     LineChartData getChartData();
     LineChartRenderer getChartRenderer();
