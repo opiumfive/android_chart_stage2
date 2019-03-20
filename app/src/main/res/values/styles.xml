@@ -2,6 +2,7 @@
 
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/ActionBar.Transparent</item>
+        <item name="android:homeAsUpIndicator">@drawable/arrow_left</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
@@ -21,6 +22,7 @@
     </style>
 
     <style name="LightTheme" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="windowBackground">@color/windowBackground</item>
         <item name="titleColor">@color/titleColor</item>
@@ -35,6 +37,7 @@
     </style>
 
     <style name="DarkTheme" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_Dark</item>
         <item name="colorPrimary">@color/colorPrimary_Dark</item>
         <item name="windowBackground">@color/windowBackground_Dark</item>
         <item name="titleColor">@color/titleColor_Dark</item>
@@ -49,6 +52,7 @@
     </style>
 
     <attr name="colorPrimary" format="color"/>
+    <attr name="colorPrimaryDark" format="color"/>
     <attr name="windowBackground" format="color"/>
     <attr name="titleColor" format="color"/>
     <attr name="textColor" format="color"/>

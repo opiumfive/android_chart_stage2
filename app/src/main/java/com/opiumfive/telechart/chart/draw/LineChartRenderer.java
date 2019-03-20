@@ -38,7 +38,7 @@ public class LineChartRenderer {
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
 
 
-    public int DEFAULT_LABEL_MARGIN_DP = 2;
+    public int DEFAULT_LABEL_MARGIN_DP = 8;
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
     private SimpleDateFormat dateFormat = new SimpleDateFormat(SELECTED_VALUES_DATE_FORMAT, Locale.ENGLISH);
@@ -112,7 +112,7 @@ public class LineChartRenderer {
 
     public void onChartSizeChanged() {
         final int internalMargin = calculateContentRectInternalMargin();
-        chartViewrectHandler.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
+        chartViewrectHandler.insetContentRectByInternalMargins(0, internalMargin, internalMargin, internalMargin);
     }
 
     public void onChartDataChanged() {
@@ -136,7 +136,7 @@ public class LineChartRenderer {
         selectedValues.clear();
 
         final int internalMargin = calculateContentRectInternalMargin();
-        chartViewrectHandler.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
+        chartViewrectHandler.insetContentRectByInternalMargins(0, internalMargin, internalMargin, internalMargin);
 
         onChartViewportChanged();
     }

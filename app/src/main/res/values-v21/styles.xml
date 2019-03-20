@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light">
+        <item name="android:actionBarStyle">@style/ActionBar.Transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorPrimaryDark">?attr/colorPrimaryDark</item>
+        <item name="android:homeAsUpIndicator">@drawable/arrow_left</item>
+        <item name="android:colorPrimary">?attr/colorPrimary</item>
+        <item name="android:navigationBarColor">#000000</item>
+    </style>
+</resources>
