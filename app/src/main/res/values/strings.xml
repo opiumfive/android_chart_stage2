@@ -4,4 +4,5 @@
     <string name="change_theme">Change theme</string>
     <string name="followers">Followers</string>
     <string name="chart_number">Chart number</string>
+    <string name="choose_chart">Choose a chart</string>
 </resources>

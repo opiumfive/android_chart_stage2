@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
@@ -35,7 +36,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private RecyclerView checkboxList;
     private LineChartData data;
     private LineChartData previewData;
-    private List<ChartData> chartDataList;
+    //private List<ChartData> chartDataList;
     private ShowLineAdapter showLineAdapter;
 
     private ShowLineAdapter.OnLineCheckListener onLineCheckListener = new ShowLineAdapter.OnLineCheckListener() {
@@ -74,14 +75,14 @@ public class StatisticsActivity extends ChangeThemeActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         boolean isRecreatedByThemeChange = intent.hasExtra(KEY_EXTRA_CIRCULAR_REVEAL);
 
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
-
-        chartDataList = ChartDataParser.loadAndParseInput(this);
 
         checkboxList.setLayoutManager(new LinearLayoutManager(this));
         checkboxList.setHasFixedSize(true);
@@ -90,32 +91,13 @@ public class StatisticsActivity extends ChangeThemeActivity {
         if (isRecreatedByThemeChange) {
 
             //TODO from save state
-            chooseChart(0);
+            ChartData chartData = getIntent().getParcelableExtra("chart");
+            inflateChart(chartData);
         } else {
             //showShowChartDialog();
-            chooseChart(2);
+            ChartData chartData = getIntent().getParcelableExtra("chart");
+            inflateChart(chartData);
         }
-    }
-
-    private void showShowChartDialog() {
-        /*String[] chartNames = new String[chartDataList.size()];
-        for (int i = 0; i < chartNames.length; i++) {
-            chartNames[i] = String.valueOf(i);
-        }
-        new AlertDialog.Builder(this)
-                .setCancelable(true)
-                .setTitle(R.string.chart_number)
-                .setSingleChoiceItems(chartNames, -1, (dialog, which) -> {
-                    dialog.dismiss();
-                    chooseChart(which);
-                })
-                .setOnCancelListener(d -> chooseChart(0))
-                .show();*/
-    }
-
-    private void chooseChart(int pos) {
-        ChartData chartData = chartDataList.get(pos);
-        inflateChart(chartData);
     }
 
     private void inflateChart(@Nullable ChartData chartData) {
@@ -193,5 +175,16 @@ public class StatisticsActivity extends ChangeThemeActivity {
             chart.setCurrentViewrectAdjustingRect(newViewrect);
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
