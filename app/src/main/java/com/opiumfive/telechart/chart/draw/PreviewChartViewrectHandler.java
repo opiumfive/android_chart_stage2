@@ -17,11 +17,4 @@ public class PreviewChartViewrectHandler extends ChartViewrectHandler {
     public Viewrect getVisibleViewport() {
         return maxViewrect;
     }
-
-    public void constrainViewport(float left, float top, float right, float bottom) {
-        super.constrainViewport(left, top, right, bottom);
-        if (viewrectChangeListener != null) {
-            viewrectChangeListener.onViewportChanged(currentViewrect);
-        }
-    }
 }

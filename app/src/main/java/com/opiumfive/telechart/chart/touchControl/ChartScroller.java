@@ -26,7 +26,7 @@ public class ChartScroller {
         return true;
     }
 
-    public boolean scroll(ChartViewrectHandler chartViewrectHandler, float distanceX, float distanceY, ScrollResult scrollResult) {
+    public boolean scroll(ChartViewrectHandler chartViewrectHandler, float distanceX, ScrollResult scrollResult) {
 
         final Viewrect maxViewrect = chartViewrectHandler.getMaximumViewport();
         final Viewrect visibleViewrect = chartViewrectHandler.getVisibleViewport();
@@ -46,7 +46,7 @@ public class ChartScroller {
             case FULL:
                 if (canScrollX) {
                     chartViewrectHandler.computeScrollSurfaceSize(surfaceSizeBuffer);
-                    chartViewrectHandler.setViewportTopLeft(currentViewrect.left + viewportOffsetX, currentViewrect.top);
+                    chartViewrectHandler.setViewportTopLeft(currentViewrect.left + viewportOffsetX, currentViewrect.top, distanceX);
                 }
                 break;
             case LEFT_SIDE:
@@ -73,7 +73,7 @@ public class ChartScroller {
             final float currXRange = maxViewrect.left + maxViewrect.width() * scroller.getCurrX() / surfaceSizeBuffer.x;
             final float currYRange = maxViewrect.top - maxViewrect.height() * scroller.getCurrY() / surfaceSizeBuffer.y;
 
-            chartViewrectHandler.setViewportTopLeft(currXRange, currYRange);
+            chartViewrectHandler.setViewportTopLeft(currXRange, currYRange, 0f);
 
             return true;
         }

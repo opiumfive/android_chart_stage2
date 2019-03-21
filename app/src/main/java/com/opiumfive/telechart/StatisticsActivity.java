@@ -37,7 +37,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private LineChartData previewData;
     private ShowLineAdapter showLineAdapter;
     private ChartData chartData;
-    private boolean animatedRect = false;
+    private boolean shouldAnimateRect = false;
     private boolean shouldPreviewAffectMain = true;
 
 
@@ -74,10 +74,10 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
     private ViewrectChangeListener previewRectListener = new ViewrectChangeListener() {
         @Override
-        public void onViewportChanged(Viewrect newViewrect) {
+        public void onViewportChanged(Viewrect newViewrect, float distanceX) {
             if (shouldPreviewAffectMain) {
-                chart.setCurrentViewrectAdjustingRect(newViewrect, animatedRect);
-                animatedRect = true;
+                chart.setCurrentViewrectAdjustingRect(newViewrect, shouldAnimateRect, distanceX);
+                shouldAnimateRect = true;
             }
         }
     };
@@ -117,6 +117,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         if (savedInstanceState == null) {
             chartData = getIntent().getParcelableExtra(CHART_EXTRA_KEY);
+            savedViewrect = getIntent().getParcelableExtra(VIEWRECT_EXTRA_KEY);
         } else {
             chartData = savedInstanceState.getParcelable(CHART_EXTRA_KEY);
             savedViewrect = savedInstanceState.getParcelable(VIEWRECT_EXTRA_KEY);
@@ -127,7 +128,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
     private void inflateChart(@Nullable ChartData chartData, Viewrect savedViewrect) {
         data = DataMapper.mapFromPlainData(chartData);
-        data.setBaseValue(Float.NEGATIVE_INFINITY);
         data.setAxisYLeft(
             new Axis()
                 .setHasLines(true)

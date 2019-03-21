@@ -3,6 +3,7 @@ package com.opiumfive.telechart.chart.draw;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.PointValue;
@@ -70,7 +71,7 @@ public class ChartViewrectHandler {
         contentRectMinusAllMargins.bottom = contentRectMinusAllMargins.bottom - deltaBottom;
     }
 
-    public void constrainViewport(float left, float top, float right, float bottom) {
+    public void constrainViewport(float left, float top, float right, float bottom, float distanceX) {
         if (right - left < minViewportWidth) {
             right = left + minViewportWidth;
             if (left < maxViewrect.left) {
@@ -104,17 +105,17 @@ public class ChartViewrectHandler {
         currentViewrect.bottom = Math.max(maxViewrect.bottom, bottom);*/
 
         if (viewrectChangeListener != null) {
-            viewrectChangeListener.onViewportChanged(currentViewrect);
+            viewrectChangeListener.onViewportChanged(currentViewrect, distanceX);
         }
     }
 
-    public void setViewportTopLeft(float left, float top) {
+    public void setViewportTopLeft(float left, float top, float distanceX) {
         final float curWidth = currentViewrect.width();
         final float curHeight = currentViewrect.height();
 
         left = Math.max(maxViewrect.left, Math.min(left, maxViewrect.right - curWidth));
         top = Math.max(maxViewrect.bottom + curHeight, Math.min(top, maxViewrect.top));
-        constrainViewport(left, top, left + curWidth, top - curHeight);
+        constrainViewport(left, top, left + curWidth, top - curHeight, distanceX);
     }
 
     public float computeRawX(float valueX) {
@@ -158,11 +159,11 @@ public class ChartViewrectHandler {
     }
 
     public void setCurrentViewrect(Viewrect viewrect) {
-        constrainViewport(viewrect.left, viewrect.top, viewrect.right, viewrect.bottom);
+        constrainViewport(viewrect.left, viewrect.top, viewrect.right, viewrect.bottom, 0f);
     }
 
     public void setCurrentViewport(float left, float top, float right, float bottom) {
-        constrainViewport(left, top, right, bottom);
+        constrainViewport(left, top, right, bottom, 0f);
     }
 
     public Viewrect getMaximumViewport() {
@@ -174,7 +175,14 @@ public class ChartViewrectHandler {
     }
 
     // Kalman filter for smooth min-max morphling
-    public void filterSmooth(Viewrect current, Viewrect targetAdjustedViewrect) {
+    public void filterSmooth(Viewrect current, Viewrect targetAdjustedViewrect, float distanceX) {
+
+        if (distanceX != 0f) {
+            filterFactor = KALMAN_FILTER_FACTOR * Math.abs(distanceX);
+        } else {
+            filterFactor = KALMAN_FILTER_FACTOR;
+        }
+
         float targetYMax = targetAdjustedViewrect.top;
         float targetYMin = targetAdjustedViewrect.bottom;
         float currentYMax = current.top;

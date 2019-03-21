@@ -9,7 +9,6 @@ import java.util.List;
 
 public class LineChartData {
 
-    public static final float DEFAULT_BASE_VALUE = 0.0f;
     public static final int DEFAULT_TEXT_SIZE_SP = 14;
 
     protected Axis axisXBottom;
@@ -20,12 +19,7 @@ public class LineChartData {
     protected int valueLabelTextSize = DEFAULT_TEXT_SIZE_SP;
     protected Typeface valueLabelTypeface;
 
-    protected boolean isValueLabelBackgroundEnabled = true;
-    protected boolean isValueLabelBackgrountAuto = true;
-    protected int valueLabelBackgroundColor;
-
-    private List<Line> lines = new ArrayList<Line>();
-    private float baseValue = DEFAULT_BASE_VALUE;
+    private List<Line> lines = new ArrayList<>();
 
     public LineChartData() {
 
@@ -45,7 +39,6 @@ public class LineChartData {
         this.valueLabelTextColor = data.valueLabelTextColor;
         this.valueLabelTextSize = data.valueLabelTextSize;
         this.valueLabelTypeface = data.valueLabelTypeface;
-        this.baseValue = data.baseValue;
         this.lines = data.lines;
     }
 
@@ -64,37 +57,16 @@ public class LineChartData {
         return data;
     }
 
-    public void update(float scale) {
-        for (Line line : lines) {
-            line.update(scale);
-        }
-    }
-
-    public void finish() {
-        for (Line line : lines) {
-            line.finish();
-        }
-    }
-
     public List<Line> getLines() {
         return lines;
     }
 
     public LineChartData setLines(List<Line> lines) {
         if (null == lines) {
-            this.lines = new ArrayList<Line>();
+            this.lines = new ArrayList<>();
         } else {
             this.lines = lines;
         }
-        return this;
-    }
-
-    public float getBaseValue() {
-        return baseValue;
-    }
-
-    public LineChartData setBaseValue(float baseValue) {
-        this.baseValue = baseValue;
         return this;
     }
 
@@ -132,33 +104,5 @@ public class LineChartData {
 
     public Typeface getValueLabelTypeface() {
         return valueLabelTypeface;
-    }
-
-    public void setValueLabelTypeface(Typeface typeface) {
-        this.valueLabelTypeface = typeface;
-    }
-
-    public boolean isValueLabelBackgroundEnabled() {
-        return isValueLabelBackgroundEnabled;
-    }
-
-    public void setValueLabelBackgroundEnabled(boolean isValueLabelBackgroundEnabled) {
-        this.isValueLabelBackgroundEnabled = isValueLabelBackgroundEnabled;
-    }
-
-    public boolean isValueLabelBackgroundAuto() {
-        return isValueLabelBackgrountAuto;
-    }
-
-    public void setValueLabelBackgroundAuto(boolean isValueLabelBackgrountAuto) {
-        this.isValueLabelBackgrountAuto = isValueLabelBackgrountAuto;
-    }
-
-    public int getValueLabelBackgroundColor() {
-        return valueLabelBackgroundColor;
-    }
-
-    public void setValueLabelBackgroundColor(int valueLabelBackgroundColor) {
-        this.valueLabelBackgroundColor = valueLabelBackgroundColor;
     }
 }

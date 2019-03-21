@@ -210,14 +210,15 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect, boolean useFilter) {
+    public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect, boolean useFilter, float distanceX) {
 
         if (null != targetViewrect) {
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
             Viewrect current = getCurrentViewrect();
             if (useFilter) {
                 // Kalman filter to provide smooth min-max adjusting with time
-                chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect);
+
+                chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect, distanceX);
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
         }
