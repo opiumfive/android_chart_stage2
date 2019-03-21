@@ -28,6 +28,7 @@ import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 public class StatisticsActivity extends ChangeThemeActivity {
 
     public static final String CHART_EXTRA_KEY = "chart";
+    public static final String VIEWRECT_EXTRA_KEY = "rect";
 
     private ChartView chart;
     private PreviewChartView previewChart;
@@ -112,16 +113,19 @@ public class StatisticsActivity extends ChangeThemeActivity {
         checkboxList.setHasFixedSize(true);
         checkboxList.addItemDecoration(new ListDividerDecorator(this, getResources().getDimensionPixelSize(R.dimen.divider_margin)));
 
+        Viewrect savedViewrect = null;
+
         if (savedInstanceState == null) {
             chartData = getIntent().getParcelableExtra(CHART_EXTRA_KEY);
         } else {
             chartData = savedInstanceState.getParcelable(CHART_EXTRA_KEY);
+            savedViewrect = savedInstanceState.getParcelable(VIEWRECT_EXTRA_KEY);
         }
 
-        inflateChart(chartData);
+        inflateChart(chartData, savedViewrect);
     }
 
-    private void inflateChart(@Nullable ChartData chartData) {
+    private void inflateChart(@Nullable ChartData chartData, Viewrect savedViewrect) {
         data = DataMapper.mapFromPlainData(chartData);
         data.setBaseValue(Float.NEGATIVE_INFINITY);
         data.setAxisYLeft(
@@ -155,11 +159,14 @@ public class StatisticsActivity extends ChangeThemeActivity {
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
         previewChart.setPreviewBackgroundColor(getColorFromAttr(this, R.attr.previewBackColor));
 
-        Viewrect tempViewrect = new Viewrect(chart.getMaximumViewrect());
-        float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
-        tempViewrect.inset(dx, 0);
-
-        previewChart.setCurrentViewrect(tempViewrect);
+        if (savedViewrect == null) {
+            Viewrect tempViewrect = new Viewrect(chart.getMaximumViewrect());
+            float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
+            tempViewrect.inset(dx, 0);
+            previewChart.setCurrentViewrect(tempViewrect);
+        } else {
+            previewChart.setCurrentViewrect(savedViewrect);
+        }
 
         showLineAdapter = new ShowLineAdapter(data.getLines(), onLineCheckListener);
         checkboxList.setAdapter(showLineAdapter);
@@ -167,9 +174,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             backToChoosing();
         }
 
@@ -201,5 +206,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
     private void saveState(Bundle bundle) {
         bundle.putParcelable(CHART_EXTRA_KEY, chartData);
+        Viewrect rect = new Viewrect(previewChart.getCurrentViewrect());
+        bundle.putParcelable(VIEWRECT_EXTRA_KEY, rect);
     }
 }
