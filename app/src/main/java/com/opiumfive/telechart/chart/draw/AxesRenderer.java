@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
+import android.util.Log;
+import android.util.SparseArray;
 
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
@@ -13,6 +15,10 @@ import com.opiumfive.telechart.chart.model.Axis;
 
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.AxisAutoValues;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AxesRenderer {
 
@@ -49,6 +55,10 @@ public class AxesRenderer {
     private float[][] rawValuesTab = new float[4][0];
 
     private float[][] autoValuesToDrawTab = new float[4][0];
+
+    private float[][] autoValuesToDrawTabFull = new float[4][0];
+
+    private Map<String, Float> alphaValuesTab = new HashMap<>();
 
     private float[][] linesDrawBufferTab = new float[4][0];
 
@@ -187,6 +197,7 @@ public class AxesRenderer {
         boolean isAxisVertical = isAxisVertical(position);
         float start, stop;
         int contentRectDimension;
+
         if (isAxisVertical) {
             start = visibleViewrect.bottom;
             stop = visibleViewrect.top;
@@ -229,6 +240,12 @@ public class AxesRenderer {
             }
         }
         valuesToDrawNumTab[position] = valueToDrawIndex;
+
+        if (position == BOTTOM) {
+            Log.d("labeling", "rawValuesTab: " + Arrays.toString(rawValuesTab[position]));
+            Log.d("labeling", "autoValuesToDrawTab: " + Arrays.toString(autoValuesToDrawTab[position]));
+            Log.d("labeling", "valuesToDrawNumTab: " + valuesToDrawNumTab[position]);
+        }
     }
 
     public void drawInForeground(Canvas canvas) {
