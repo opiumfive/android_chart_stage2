@@ -162,8 +162,8 @@ public class ChartViewrectHandler {
         constrainViewport(viewrect.left, viewrect.top, viewrect.right, viewrect.bottom, 0f);
     }
 
-    public void setCurrentViewport(float left, float top, float right, float bottom) {
-        constrainViewport(left, top, right, bottom, 0f);
+    public void setCurrentViewport(float left, float top, float right, float bottom, float distanceX) {
+        constrainViewport(left, top, right, bottom, distanceX);
     }
 
     public Viewrect getMaximumViewport() {

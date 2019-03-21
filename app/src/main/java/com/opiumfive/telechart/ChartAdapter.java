@@ -47,7 +47,7 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.ViewHolderIm
         }
 
         void bind(int pos) {
-            title.setText("Chart #" + String.valueOf(pos));
+            title.setText("Chart #" + String.valueOf(pos + 1));
         }
     }
 

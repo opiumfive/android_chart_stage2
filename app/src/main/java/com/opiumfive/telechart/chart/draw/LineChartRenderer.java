@@ -36,7 +36,7 @@ public class LineChartRenderer {
 
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
-    private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.05f;
+    private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
 
 
     public int DEFAULT_LABEL_MARGIN_DP = 2;

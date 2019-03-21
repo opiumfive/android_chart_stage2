@@ -50,11 +50,11 @@ public class ChartScroller {
                 }
                 break;
             case LEFT_SIDE:
-                chartViewrectHandler.setCurrentViewport(currentViewrect.left + viewportOffsetX, currentViewrect.top, currentViewrect.right, currentViewrect.bottom);
+                chartViewrectHandler.setCurrentViewport(currentViewrect.left + viewportOffsetX, currentViewrect.top, currentViewrect.right, currentViewrect.bottom, distanceX);
                 canScrollX = true;
                 break;
             case RIGHT_SIDE:
-                chartViewrectHandler.setCurrentViewport(currentViewrect.left, currentViewrect.top, currentViewrect.right + viewportOffsetX, currentViewrect.bottom);
+                chartViewrectHandler.setCurrentViewport(currentViewrect.left, currentViewrect.top, currentViewrect.right + viewportOffsetX, currentViewrect.bottom, distanceX);
                 canScrollX = true;
                 break;
         }
