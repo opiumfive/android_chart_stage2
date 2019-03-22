@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.NinePatchDrawable;
+import android.util.Log;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.Util;
@@ -67,7 +68,7 @@ public class LineChartRenderer {
     private Paint innerPointPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
 
-    private Viewrect tempMaximumViewrect = new Viewrect();
+    protected Viewrect tempMaximumViewrect = new Viewrect();
 
     public LineChartRenderer(Context context, IChart chart, ChartDataProvider dataProvider) {
         this.density = context.getResources().getDisplayMetrics().density;
@@ -137,7 +138,7 @@ public class LineChartRenderer {
         selectedValues.clear();
 
         final int internalMargin = calculateContentRectInternalMargin();
-        chartViewrectHandler.insetContentRectByInternalMargins(0, internalMargin, internalMargin, internalMargin);
+        chartViewrectHandler.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
 
         onChartViewportChanged();
     }
@@ -259,7 +260,7 @@ public class LineChartRenderer {
             }
         }
 
-        //additional offset 5%
+        //additional offset 7.5%
         float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
         adjustedViewrect.bottom = adjustedViewrect.bottom - diff;
         adjustedViewrect.top = adjustedViewrect.top + diff;

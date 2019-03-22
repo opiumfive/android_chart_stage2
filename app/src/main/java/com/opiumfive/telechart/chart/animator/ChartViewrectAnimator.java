@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Line;
@@ -20,6 +21,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     private Viewrect newViewrect = new Viewrect();
     private ChartAnimationListener animationListener;
     private Line animatingLine;
+    private boolean animateMaxToo = false;
 
     public ChartViewrectAnimator(IChart chart) {
         this.chart = chart;
@@ -30,6 +32,11 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     }
 
     public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect) {
+        startAnimationWithToggleLine(startViewrect, targetViewrect, null);
+    }
+
+    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean animateMaxToo) {
+        this.animateMaxToo = animateMaxToo;
         startAnimationWithToggleLine(startViewrect, targetViewrect, null);
     }
 
@@ -54,9 +61,9 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         float dTop = targetViewrect.top - startViewrect.top;
         float dBot = targetViewrect.bottom - startViewrect.bottom;
         float diffLeft = dLeft != 0f ? dLeft * scale : 1f;
-        float diffTop = dTop * scale;
+        float diffTop = dTop != 0f ? dTop * scale : 1f;
         float diffRight = dRight != 0f ? dRight * scale : 1f;
-        float diffBottom = dBot * scale;
+        float diffBottom = dBot != 0f ? dBot * scale : 1f;
 
         newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
         if (animatingLine != null) {
@@ -68,6 +75,11 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
             }
 
             animatingLine.setAlpha(alpha);
+        }
+        if (animateMaxToo) {
+            Viewrect maxViewrect = chart.getMaximumViewrect();
+            maxViewrect.bottom = newViewrect.bottom;
+            maxViewrect.top = newViewrect.top;
         }
         chart.setCurrentViewrect(newViewrect);
     }

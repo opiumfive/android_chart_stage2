@@ -18,6 +18,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 
+import com.opiumfive.telechart.App;
 import com.opiumfive.telechart.R;
 
 public abstract class ChangeThemeActivity extends Activity {
@@ -28,6 +29,7 @@ public abstract class ChangeThemeActivity extends Activity {
 
     private View mainView = null;
     private Drawable previousWindowBackground = null;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +102,7 @@ public abstract class ChangeThemeActivity extends Activity {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    App.setChangingTheme(false);
                     getWindow().setBackgroundDrawable(previousWindowBackground);
                 }
 
@@ -127,7 +130,7 @@ public abstract class ChangeThemeActivity extends Activity {
             startActivity(intent);
             int animDuration = getResources().getInteger(R.integer.change_theme_time);
             overridePendingTransition(android.R.anim.fade_in, R.anim.fade_out_long);
-            new Handler().postDelayed(() -> {
+            handler.postDelayed(() -> {
                 finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }, animDuration * 2);
@@ -146,7 +149,8 @@ public abstract class ChangeThemeActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_theme) {
+        if (id == R.id.action_theme && !App.isChangingTheme()) {
+            App.setChangingTheme(true);
             View actionView = findViewById(R.id.action_theme);
             int[] location = new int[2];
             actionView.getLocationOnScreen(location);
@@ -158,4 +162,10 @@ public abstract class ChangeThemeActivity extends Activity {
     }
 
     public abstract Bundle getDataForSaveState();
+
+    @Override
+    protected void onDestroy() {
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
 }

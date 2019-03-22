@@ -12,6 +12,7 @@ public interface IChart {
     void setChartRenderer(LineChartRenderer renderer);
     ChartViewrectHandler getChartViewrectHandler();
     void setCurrentViewrect(Viewrect targetViewrect);
+    void setMaximumViewrect(Viewrect maximumViewrect);
     Viewrect getMaximumViewrect();
     void setScrollEnabled(boolean isScrollEnabled);
 }
