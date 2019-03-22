@@ -35,6 +35,7 @@ public class AxesRenderer {
 
     private IChart chart;
     private ChartViewrectHandler chartViewrectHandler;
+
     private int axisMargin;
     private float density;
     private float scaledDensity;
@@ -47,19 +48,12 @@ public class AxesRenderer {
     private int[] labelDimensionForMarginsTab = new int[2];
     private int[] labelDimensionForStepsTab = new int[2];
     private FontMetricsInt[] fontMetricsTab = new FontMetricsInt[]{new FontMetricsInt(), new FontMetricsInt()};
-
     private char[] labelBuffer = new char[64];
-
     private int[] valuesToDrawNumTab = new int[2];
-
     private float[][] rawValuesTab = new float[2][0];
-
     private float[][] autoValuesToDrawTab = new float[2][0];
-
     private List<Label> additionalAutoValuesAxisX = new ArrayList<>();
-
     private float[][] linesDrawBufferTab = new float[2][0];
-
     private AxisAutoValues[] autoValuesBufferTab = new AxisAutoValues[]{new AxisAutoValues(), new AxisAutoValues()};
 
     private boolean initialLabelAddition = true;
@@ -209,7 +203,7 @@ public class AxesRenderer {
             contentRectDimension = contentRect.width();
         }
 
-        int dim = labelDimensionForStepsTab[position] * 4;
+        int dim = labelDimensionForStepsTab[position] * 3;
         if (dim == 0) dim = 1;
         int steps = Math.abs(contentRectDimension) / dim;
 
@@ -278,7 +272,7 @@ public class AxesRenderer {
                 }
 
                 if (label.alpha > 0f) {
-                    label.rawX = chartViewrectHandler.computeRawX(label.value);
+                    label.raw = chartViewrectHandler.computeRawX(label.value);
                 } else {
                     iterator.remove();
                 }
@@ -304,7 +298,7 @@ public class AxesRenderer {
     private boolean checkRawValue(Rect rect, float rawValue, boolean axisInside, int position, boolean isVertical) {
         if (axisInside) {
             if (isVertical) {
-                float marginBottom = labelTextAscentTab[BOTTOM] + axisMargin;
+                float marginBottom = labelTextAscentTab[BOTTOM] + axisMargin * 4;
                 return rawValue <= rect.bottom - marginBottom && rawValue >= rect.top;
             } else {
                 float margin = labelWidthTab[position] / 2f;
@@ -380,7 +374,7 @@ public class AxesRenderer {
                 final float value = label.value;
                 charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
 
-                labelX = label.rawX;
+                labelX = label.raw;
 
                 canvas.drawText(labelBuffer, labelBuffer.length - charsNumber, charsNumber, labelX, labelY, labelPaintTab[position]);
             }
@@ -395,13 +389,13 @@ public class AxesRenderer {
 
     private static class Label {
 
-        Label(float value) {
+        public Label(float value) {
             this.value = value;
         }
 
         float value;
         float alpha;
-        float rawX;
+        float raw;
 
         @Override
         public boolean equals(@Nullable Object obj) {

@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.widget.ListView;
 
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.ChartDataParser;
 import com.opiumfive.telechart.theming.ThemeHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseActivity extends Activity {
@@ -26,16 +26,15 @@ public class ChooseActivity extends Activity {
 
         chartDataList = ChartDataParser.loadAndParseInput(this);
 
-        RecyclerView list = findViewById(R.id.list);
-        list.addItemDecoration(new ListDividerDecorator(this, 0));
-        list.setLayoutManager(new LinearLayoutManager(this));
-        list.setHasFixedSize(true);
-        ChartAdapter chartAdapter = new ChartAdapter(chartDataList.size(),
-                (pos) -> {
-                       startActivity(new Intent(ChooseActivity.this, StatisticsActivity.class).putExtra("chart", chartDataList.get(pos)));
-                       finish();
-                }
-        );
+        List<String> charts = new ArrayList<>(chartDataList.size());
+        for (int i = 1; i <= chartDataList.size(); i++) charts.add("Chart #" + i);
+        ListView list = findViewById(R.id.list);
+        ChartAdapter chartAdapter = new ChartAdapter(this, charts);
+
+        list.setOnItemClickListener(((parent, view, pos, id) -> {
+            startActivity(new Intent(ChooseActivity.this, StatisticsActivity.class).putExtra("chart", chartDataList.get(pos)));
+            finish();
+        }));
         list.setAdapter(chartAdapter);
     }
 }

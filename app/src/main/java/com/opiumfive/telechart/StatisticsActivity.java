@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
@@ -32,44 +31,13 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
     private ChartView chart;
     private PreviewChartView previewChart;
-    private RecyclerView checkboxList;
+    private ListView checkboxList;
     private LineChartData data;
     private LineChartData previewData;
     private ShowLineAdapter showLineAdapter;
     private ChartData chartData;
     private boolean shouldAnimateRect = false;
     private boolean shouldPreviewAffectMain = true;
-
-
-    private ShowLineAdapter.OnLineCheckListener onLineCheckListener = new ShowLineAdapter.OnLineCheckListener() {
-        @Override
-        public void onLineToggle(int position) {
-            Line line = data.getLines().get(position);
-
-            int activeLines = 0;
-            for (Line l : data.getLines()) if (l.isActive()) activeLines++;
-
-            // prevent unchecking all
-            if (!line.isActive() || line.isActive() && activeLines > 1) {
-                line.setActive(!line.isActive());
-
-                chart.onChartDataChange();
-                previewChart.onChartDataChange();
-
-                Viewrect current = chart.getCurrentViewrect();
-                chart.recalculateMax();
-                Viewrect target = new Viewrect(chart.getMaximumViewrect());
-
-                target.left = current.left;
-                target.right = current.right;
-
-                chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
-                previewChart.setCurrentViewrectAnimated(target);
-            } else {
-                checkboxList.post(() -> showLineAdapter.recheck(position));
-            }
-        }
-    };
 
     private ViewrectChangeListener previewRectListener = new ViewrectChangeListener() {
         @Override
@@ -107,10 +75,6 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
-
-        checkboxList.setLayoutManager(new LinearLayoutManager(this));
-        checkboxList.setHasFixedSize(true);
-        checkboxList.addItemDecoration(new ListDividerDecorator(this, getResources().getDimensionPixelSize(R.dimen.divider_margin)));
 
         Viewrect savedViewrect = null;
 
@@ -167,7 +131,32 @@ public class StatisticsActivity extends ChangeThemeActivity {
             previewChart.setCurrentViewrect(savedViewrect);
         }
 
-        showLineAdapter = new ShowLineAdapter(data.getLines(), onLineCheckListener);
+        showLineAdapter = new ShowLineAdapter(this, data.getLines(), pos -> {
+            Line line = data.getLines().get(pos);
+
+            int activeLines = 0;
+            for (Line l : data.getLines()) if (l.isActive()) activeLines++;
+
+            // prevent unchecking all
+            if (!line.isActive() || line.isActive() && activeLines > 1) {
+                line.setActive(!line.isActive());
+
+                chart.onChartDataChange();
+                previewChart.onChartDataChange();
+
+                Viewrect current = chart.getCurrentViewrect();
+                chart.recalculateMax();
+                Viewrect target = new Viewrect(chart.getMaximumViewrect());
+
+                target.left = current.left;
+                target.right = current.right;
+
+                chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
+                previewChart.setCurrentViewrectAnimated(target);
+            } else {
+                checkboxList.post(() -> showLineAdapter.notifyDataSetChanged());
+            }
+        });
         checkboxList.setAdapter(showLineAdapter);
     }
 

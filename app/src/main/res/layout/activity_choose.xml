@@ -22,9 +22,12 @@
             android:layout_marginBottom="@dimen/half_margin"
             android:layout_height="wrap_content" />
 
-        <android.support.v7.widget.RecyclerView
+        <ListView
             android:id="@+id/list"
             android:layout_width="match_parent"
+            android:dividerHeight="1dp"
+            android:layout_marginTop="@dimen/half_margin"
+            android:divider="?attr/dividerColor"
             android:layout_height="match_parent" />
 
     </LinearLayout>

@@ -41,10 +41,14 @@
             android:paddingRight="@dimen/margin"
             android:layout_height="70dp" />
 
-        <android.support.v7.widget.RecyclerView
+        <ListView
             android:id="@+id/checkboxList"
             android:layout_width="match_parent"
             android:overScrollMode="never"
+            android:paddingLeft="@dimen/margin"
+            android:paddingStart="@dimen/margin"
+            android:divider="@drawable/line_divider"
+            android:dividerHeight="1dp"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>

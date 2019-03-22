@@ -428,16 +428,8 @@ public class LineChartRenderer {
         }
     }
 
-    public boolean isViewrectCalculationEnabled() {
-        return isViewportCalculationEnabled;
-    }
-
     public void setViewrectCalculationEnabled(boolean isEnabled) {
         this.isViewportCalculationEnabled = isEnabled;
-    }
-
-    public void selectValue(SelectedValues selectedValues) {
-        this.selectedValues.set(selectedValues);
     }
 
     public SelectedValues getSelectedValues() {
