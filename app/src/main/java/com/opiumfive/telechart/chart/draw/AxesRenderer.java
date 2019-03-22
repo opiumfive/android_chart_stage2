@@ -298,7 +298,7 @@ public class AxesRenderer {
     private boolean checkRawValue(Rect rect, float rawValue, boolean axisInside, int position, boolean isVertical) {
         if (axisInside) {
             if (isVertical) {
-                float marginBottom = labelTextAscentTab[BOTTOM] + axisMargin * 4;
+                float marginBottom = labelTextAscentTab[BOTTOM] + axisMargin;
                 return rawValue <= rect.bottom - marginBottom && rawValue >= rect.top;
             } else {
                 float margin = labelWidthTab[position] / 2f;

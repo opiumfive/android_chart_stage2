@@ -21,6 +21,7 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
 
     private LineCheckListener listener;
     private List<Line> lines = new ArrayList<>();
+    private boolean isUncheckingEnabled = true;
 
     public ShowLineAdapter(Context c, List<Line> list, LineCheckListener listener) {
         super(c, 0);
@@ -37,6 +38,14 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
     @Override
     public int getCount() {
         return lines.size();
+    }
+
+    public boolean isUncheckingEnabled() {
+        return isUncheckingEnabled;
+    }
+
+    public void setUncheckingEnabled(boolean uncheckingEnabled) {
+        isUncheckingEnabled = uncheckingEnabled;
     }
 
     @Override
@@ -60,8 +69,12 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
         viewHolder.checkbox.setText(line.getTitle());
 
         viewHolder.checkbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
-            if (listener != null) {
-                listener.onLineCheck(position);
+            if (!isChecked && !isUncheckingEnabled) {
+                buttonView.setChecked(true);
+            } else {
+                if (listener != null) {
+                    listener.onLineCheck(position);
+                }
             }
         }));
 

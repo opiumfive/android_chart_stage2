@@ -134,28 +134,27 @@ public class StatisticsActivity extends ChangeThemeActivity {
         showLineAdapter = new ShowLineAdapter(this, data.getLines(), pos -> {
             Line line = data.getLines().get(pos);
 
+            // prevent unchecking all
+            line.setActive(!line.isActive());
+
             int activeLines = 0;
             for (Line l : data.getLines()) if (l.isActive()) activeLines++;
 
-            // prevent unchecking all
-            if (!line.isActive() || line.isActive() && activeLines > 1) {
-                line.setActive(!line.isActive());
+            showLineAdapter.setUncheckingEnabled(activeLines > 1);
 
-                chart.onChartDataChange();
-                previewChart.onChartDataChange();
+            chart.onChartDataChange();
+            previewChart.onChartDataChange();
 
-                Viewrect current = chart.getCurrentViewrect();
-                chart.recalculateMax();
-                Viewrect target = new Viewrect(chart.getMaximumViewrect());
+            Viewrect current = chart.getCurrentViewrect();
+            chart.recalculateMax();
+            Viewrect target = new Viewrect(chart.getMaximumViewrect());
 
-                target.left = current.left;
-                target.right = current.right;
+            target.left = current.left;
+            target.right = current.right;
 
-                chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
-                previewChart.setCurrentViewrectAnimated(target);
-            } else {
-                checkboxList.post(() -> showLineAdapter.notifyDataSetChanged());
-            }
+            chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
+            previewChart.setCurrentViewrectAnimated(target);
+
         });
         checkboxList.setAdapter(showLineAdapter);
     }

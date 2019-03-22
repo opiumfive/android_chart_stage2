@@ -47,7 +47,7 @@
             android:overScrollMode="never"
             android:paddingLeft="@dimen/margin"
             android:paddingStart="@dimen/margin"
-            android:divider="@drawable/line_divider"
+            android:divider="?attr/dividerColor"
             android:dividerHeight="1dp"
             android:layout_height="wrap_content"/>
 
