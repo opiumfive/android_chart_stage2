@@ -203,7 +203,7 @@ public class AxesRenderer {
             contentRectDimension = contentRect.width();
         }
 
-        int dim = labelDimensionForStepsTab[position] * 3;
+        int dim = labelDimensionForStepsTab[position] * 4;
         if (dim == 0) dim = 1;
         int steps = Math.abs(contentRectDimension) / dim;
 
@@ -324,6 +324,7 @@ public class AxesRenderer {
 
         if (axis.hasLines()) {
             int valueToDrawIndex = 0;
+            linePaintTab[position].setAlpha(255);
             canvas.drawLine(lineX1, contentRectMargins.bottom, lineX2, contentRectMargins.bottom, linePaintTab[position]);
             for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                 if (isAxisVertical) {

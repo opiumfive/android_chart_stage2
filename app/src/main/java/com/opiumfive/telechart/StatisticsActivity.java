@@ -27,6 +27,7 @@ import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 public class StatisticsActivity extends ChangeThemeActivity {
 
     public static final String CHART_EXTRA_KEY = "chart";
+    public static final String LINES_EXTRA_KEY = "lines";
     public static final String VIEWRECT_EXTRA_KEY = "rect";
 
     private ChartView chart;
@@ -37,12 +38,12 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private ShowLineAdapter showLineAdapter;
     private ChartData chartData;
     private boolean shouldAnimateRect = false;
-    private boolean shouldPreviewAffectMain = true;
+    private boolean isAnimatingPreview = true;
 
     private ViewrectChangeListener previewRectListener = new ViewrectChangeListener() {
         @Override
         public void onViewportChanged(Viewrect newViewrect, float distanceX) {
-            if (shouldPreviewAffectMain) {
+            if (isAnimatingPreview) {
                 chart.setCurrentViewrectAdjustingRect(newViewrect, shouldAnimateRect, distanceX);
                 shouldAnimateRect = true;
             }
@@ -52,12 +53,14 @@ public class StatisticsActivity extends ChangeThemeActivity {
     private ChartAnimationListener previewAnimListener = new ChartAnimationListener() {
         @Override
         public void onAnimationStarted() {
-            shouldPreviewAffectMain = false;
+            isAnimatingPreview = false;
+            showLineAdapter.setEnabled(false);
         }
 
         @Override
         public void onAnimationFinished() {
-            shouldPreviewAffectMain = true;
+            isAnimatingPreview = true;
+            showLineAdapter.setEnabled(true);
         }
     };
 
@@ -77,19 +80,22 @@ public class StatisticsActivity extends ChangeThemeActivity {
         checkboxList = findViewById(R.id.checkboxList);
 
         Viewrect savedViewrect = null;
+        boolean[] linesState = null;
 
         if (savedInstanceState == null) {
             chartData = getIntent().getParcelableExtra(CHART_EXTRA_KEY);
             savedViewrect = getIntent().getParcelableExtra(VIEWRECT_EXTRA_KEY);
+            linesState = getIntent().getBooleanArrayExtra(LINES_EXTRA_KEY);
         } else {
             chartData = savedInstanceState.getParcelable(CHART_EXTRA_KEY);
             savedViewrect = savedInstanceState.getParcelable(VIEWRECT_EXTRA_KEY);
+            linesState = savedInstanceState.getBooleanArray(LINES_EXTRA_KEY);
         }
 
-        inflateChart(chartData, savedViewrect);
+        inflateChart(chartData, savedViewrect, linesState);
     }
 
-    private void inflateChart(@Nullable ChartData chartData, Viewrect savedViewrect) {
+    private void inflateChart(@Nullable ChartData chartData, Viewrect savedViewrect, boolean[] linesState) {
         data = DataMapper.mapFromPlainData(chartData);
         data.setAxisYLeft(
             new Axis()
@@ -105,6 +111,16 @@ public class StatisticsActivity extends ChangeThemeActivity {
                 .setTextColor(getColorFromAttr(this, R.attr.labelColor))
         );
 
+        if (linesState != null) {
+            for (int i = 0; i < data.getLines().size(); i++) {
+                Line line = data.getLines().get(i);
+                line.setActive(linesState[i]);
+                if (!linesState[i]) {
+                    line.setAlpha(0f);
+                }
+            }
+        }
+
         previewData = new LineChartData(data);
         previewData.setAxisYLeft(null);
         previewData.setAxisXBottom(null);
@@ -112,13 +128,13 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setChartData(data);
         chart.setScrollEnabled(false);
 
-        chart.setViewportCalculationEnabled(false);
+        chart.setViewrectRecalculation(false);
         chart.setValueTouchEnabled(true);
 
         previewChart.setChartData(previewData);
-        previewChart.setViewportChangeListener(previewRectListener);
-        previewChart.setViewportAnimationListener(previewAnimListener);
-        previewChart.setViewportCalculationEnabled(false);
+        previewChart.setViewrectChangeListener(previewRectListener);
+        previewChart.setViewrectAnimationListener(previewAnimListener);
+        previewChart.setViewrectRecalculation(false);
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
         previewChart.setPreviewBackgroundColor(getColorFromAttr(this, R.attr.previewBackColor));
 
@@ -134,12 +150,12 @@ public class StatisticsActivity extends ChangeThemeActivity {
         showLineAdapter = new ShowLineAdapter(this, data.getLines(), pos -> {
             Line line = data.getLines().get(pos);
 
-            // prevent unchecking all
             line.setActive(!line.isActive());
 
             int activeLines = 0;
             for (Line l : data.getLines()) if (l.isActive()) activeLines++;
 
+            // prevent unchecking all
             showLineAdapter.setUncheckingEnabled(activeLines > 1);
 
             chart.onChartDataChange();
@@ -195,5 +211,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
         bundle.putParcelable(CHART_EXTRA_KEY, chartData);
         Viewrect rect = new Viewrect(previewChart.getCurrentViewrect());
         bundle.putParcelable(VIEWRECT_EXTRA_KEY, rect);
+        boolean[] linesChecked = new boolean[data.getLines().size()];
+        for (int i = 0; i < data.getLines().size(); i++) linesChecked[i] = data.getLines().get(i).isActive();
+        bundle.putBooleanArray(LINES_EXTRA_KEY, linesChecked);
     }
 }

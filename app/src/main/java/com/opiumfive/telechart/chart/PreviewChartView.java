@@ -57,9 +57,9 @@ public class PreviewChartView extends ChartView {
     public void setCurrentViewrectAnimated(Viewrect targetViewrect) {
 
         if (null != targetViewrect) {
-            viewportAnimator.cancelAnimation();
+            viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
-            viewportAnimator.startAnimation(current, targetViewrect, true);
+            viewrectAnimator.startAnimation(current, targetViewrect, true);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }

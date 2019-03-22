@@ -22,6 +22,7 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
     private LineCheckListener listener;
     private List<Line> lines = new ArrayList<>();
     private boolean isUncheckingEnabled = true;
+    private boolean isEnabled = true;
 
     public ShowLineAdapter(Context c, List<Line> list, LineCheckListener listener) {
         super(c, 0);
@@ -40,12 +41,12 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
         return lines.size();
     }
 
-    public boolean isUncheckingEnabled() {
-        return isUncheckingEnabled;
-    }
-
     public void setUncheckingEnabled(boolean uncheckingEnabled) {
         isUncheckingEnabled = uncheckingEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
 
         ViewHolder viewHolder;
         if (convertView == null) {
-            viewHolder = new ViewHolder();
+            viewHolder = new ViewHolder(listener);
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.item_show_chart, parent, false);
             viewHolder.checkbox = convertView.findViewById(R.id.checkbox);
@@ -65,26 +66,48 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
 
         Line line = getItem(position);
 
-        viewHolder.checkbox.setChecked(line.isActive());
-        viewHolder.checkbox.setText(line.getTitle());
-
-        viewHolder.checkbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
-            if (!isChecked && !isUncheckingEnabled) {
-                buttonView.setChecked(true);
-            } else {
-                if (listener != null) {
-                    listener.onLineCheck(position);
-                }
-            }
-        }));
-
-        CompoundButtonCompat.setButtonTintList(viewHolder.checkbox, ColorStateList.valueOf(line.getColor()));
+        viewHolder.bind(line, position);
 
         return convertView;
     }
 
-    private static class ViewHolder {
+    private class ViewHolder {
+
         CheckBox checkbox;
+        LineCheckListener listener;
+        boolean shouldNotif = true;
+
+        public ViewHolder(LineCheckListener listener) {
+            this.listener = listener;
+        }
+
+        void bind(Line line, int position) {
+            shouldNotif = false;
+            checkbox.setChecked(line.isActive());
+            shouldNotif = true;
+            checkbox.setText(line.getTitle());
+            CompoundButtonCompat.setButtonTintList(checkbox, ColorStateList.valueOf(line.getColor()));
+
+            checkbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+                if (shouldNotif) {
+                    if (isEnabled) {
+                        if (!isChecked && !isUncheckingEnabled) {
+                            shouldNotif = false;
+                            buttonView.setChecked(true);
+                            shouldNotif = true;
+                        } else {
+                            if (listener != null) {
+                                listener.onLineCheck(position);
+                            }
+                        }
+                    } else {
+                        shouldNotif = false;
+                        buttonView.setChecked(!isChecked);
+                        shouldNotif = true;
+                    }
+                }
+            }));
+        }
     }
 
     interface LineCheckListener {

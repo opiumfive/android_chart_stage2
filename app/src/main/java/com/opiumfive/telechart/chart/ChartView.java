@@ -27,7 +27,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
-    protected ChartViewrectAnimator viewportAnimator;
+    protected ChartViewrectAnimator viewrectAnimator;
 
     private float yMaxFilterBuff = 1f;
     private float yMinFilterBuff = 1f;
@@ -48,7 +48,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         chartViewrectHandler = new ChartViewrectHandler();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
-        this.viewportAnimator = new ChartViewrectAnimator(this);
+        this.viewrectAnimator = new ChartViewrectAnimator(this);
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setChartData(LineChartData.generateDummyData());
@@ -120,11 +120,11 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         }
     }
 
-    public void setViewportAnimationListener(ChartAnimationListener animationListener) {
-        viewportAnimator.setChartAnimationListener(animationListener);
+    public void setViewrectAnimationListener(ChartAnimationListener animationListener) {
+        viewrectAnimator.setChartAnimationListener(animationListener);
     }
 
-    public void setViewportChangeListener(ViewrectChangeListener viewrectChangeListener) {
+    public void setViewrectChangeListener(ViewrectChangeListener viewrectChangeListener) {
         chartViewrectHandler.setViewrectChangeListener(viewrectChangeListener);
     }
 
@@ -170,9 +170,9 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     public void setCurrentViewrectAnimated(Viewrect targetViewrect) {
 
         if (null != targetViewrect) {
-            viewportAnimator.cancelAnimation();
+            viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
-            viewportAnimator.startAnimation(current, targetViewrect);
+            viewrectAnimator.startAnimation(current, targetViewrect);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -180,9 +180,9 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     public void setCurrentViewrectAnimated(Viewrect targetViewrect, Line line) {
 
         if (null != targetViewrect) {
-            viewportAnimator.cancelAnimation();
+            viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
-            viewportAnimator.startAnimationWithToggleLine(current, targetViewrect, line);
+            viewrectAnimator.startAnimationWithToggleLine(current, targetViewrect, line);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -190,10 +190,10 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, Line line) {
 
         if (null != targetViewrect) {
-            viewportAnimator.cancelAnimation();
+            viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
-            viewportAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, line);
+            viewrectAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, line);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -216,8 +216,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
             Viewrect current = getCurrentViewrect();
             if (useFilter) {
-                // Kalman filter to provide smooth min-max adjusting with time
-
+                // Kalman filter to provide smooth min-max depending on scroll speed
                 chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect, distanceX);
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
@@ -225,7 +224,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    public void setViewportCalculationEnabled(boolean isEnabled) {
+    public void setViewrectRecalculation(boolean isEnabled) {
         chartRenderer.setViewrectCalculationEnabled(isEnabled);
     }
 

@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/margin"
             android:layout_marginRight="@dimen/margin"
-            android:layout_height="250dp" />
+            android:layout_height="@dimen/chart_height" />
 
         <com.opiumfive.telechart.chart.PreviewChartView
             android:id="@+id/chart_preview"
@@ -39,7 +39,7 @@
             android:layout_marginTop="@dimen/half_margin"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
-            android:layout_height="70dp" />
+            android:layout_height="@dimen/preview_height" />
 
         <ListView
             android:id="@+id/checkboxList"
@@ -47,7 +47,7 @@
             android:overScrollMode="never"
             android:paddingLeft="@dimen/margin"
             android:paddingStart="@dimen/margin"
-            android:divider="?attr/dividerColor"
+            android:divider="@drawable/line_divider"
             android:dividerHeight="1dp"
             android:layout_height="wrap_content"/>
 
