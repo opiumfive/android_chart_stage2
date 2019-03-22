@@ -16,7 +16,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".ChooseActivity"
+            android:name=".ui.ChooseActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
         </activity>
 
         <activity
-            android:name=".StatisticsActivity"
+            android:name=".ui.StatisticsActivity"
             android:label="@string/statistics" />
 
         <meta-data

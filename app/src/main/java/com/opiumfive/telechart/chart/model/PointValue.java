@@ -25,15 +25,6 @@ public class PointValue {
         set(pointValue.x, pointValue.y);
     }
 
-    public void update(float scale) {
-        x = originX + diffX * scale;
-        y = originY + diffY * scale;
-    }
-
-    public void finish() {
-        set(originX + diffX, originY + diffY);
-    }
-
     public PointValue set(float x, float y) {
         this.x = x;
         this.y = y;
@@ -41,13 +32,6 @@ public class PointValue {
         this.originY = y;
         this.diffX = 0;
         this.diffY = 0;
-        return this;
-    }
-
-    public PointValue setTarget(float targetX, float targetY) {
-        set(x, y);
-        this.diffX = targetX - originX;
-        this.diffY = targetY - originY;
         return this;
     }
 
@@ -81,11 +65,6 @@ public class PointValue {
 
     public void setLine(String line) {
         this.line = line;
-    }
-
-    @Override
-    public String toString() {
-        return "PointValue [x=" + x + ", y=" + y + "]";
     }
 
     @Override

@@ -29,11 +29,6 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewrectAnimator;
 
-    private float yMaxFilterBuff = 1f;
-    private float yMinFilterBuff = 1f;
-    private float filterFactor = 0.1f;
-    private float filterNoise = 25f;
-
     public ChartView(Context context) {
         this(context, null, 0);
     }
@@ -142,16 +137,8 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         return chartViewrectHandler;
     }
 
-    public boolean isScrollEnabled() {
-        return touchHandler.isScrollEnabled();
-    }
-
     public void setScrollEnabled(boolean isScrollEnabled) {
         touchHandler.setScrollEnabled(isScrollEnabled);
-    }
-
-    public boolean isValueTouchEnabled() {
-        return touchHandler.isValueTouchEnabled();
     }
 
     public void setValueTouchEnabled(boolean isValueTouchEnabled) {
@@ -173,16 +160,6 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
             viewrectAnimator.startAnimation(current, targetViewrect);
-        }
-        ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    public void setCurrentViewrectAnimated(Viewrect targetViewrect, Line line) {
-
-        if (null != targetViewrect) {
-            viewrectAnimator.cancelAnimation();
-            Viewrect current = getCurrentViewrect();
-            viewrectAnimator.startAnimationWithToggleLine(current, targetViewrect, line);
         }
         ViewCompat.postInvalidateOnAnimation(this);
     }

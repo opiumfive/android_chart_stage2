@@ -34,13 +34,11 @@ import static com.opiumfive.telechart.chart.Util.getDrawableFromAttr;
 public class LineChartRenderer {
 
     private static final String DETAIL_TITLE_PATTERN = "00000000000";
-
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
+    private static final int DEFAULT_LABEL_MARGIN_DP = 2;
 
-
-    public int DEFAULT_LABEL_MARGIN_DP = 2;
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
     private SimpleDateFormat dateFormat = new SimpleDateFormat(SELECTED_VALUES_DATE_FORMAT, Locale.ENGLISH);

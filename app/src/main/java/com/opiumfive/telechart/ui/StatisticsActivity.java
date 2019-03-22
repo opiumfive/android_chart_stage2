@@ -1,4 +1,4 @@
-package com.opiumfive.telechart;
+package com.opiumfive.telechart.ui;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;

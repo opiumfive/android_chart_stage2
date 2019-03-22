@@ -90,10 +90,6 @@ public class Viewrect implements Parcelable {
         this.left = left;
     }
 
-    public boolean contains(float x, float y) {
-        return left < right && bottom < top && x >= left && x < right && y >= bottom && y < top;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -121,13 +117,5 @@ public class Viewrect implements Parcelable {
         top = in.readFloat();
         right = in.readFloat();
         bottom = in.readFloat();
-    }
-
-    @Override
-    public String toString() {
-        return "Viewrect{" +
-                "top=" + top +
-                ", bottom=" + bottom +
-                '}';
     }
 }

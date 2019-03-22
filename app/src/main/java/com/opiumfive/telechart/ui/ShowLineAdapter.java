@@ -1,4 +1,4 @@
-package com.opiumfive.telechart;
+package com.opiumfive.telechart.ui;
 
 import android.content.Context;
 
@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 
+import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.model.Line;
 
 import java.util.ArrayList;

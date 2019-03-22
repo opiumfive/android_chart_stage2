@@ -24,7 +24,6 @@ public class Line {
     private int strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
 
-    private LineChartValueFormatter formatter = new SimpleLineChartValueFormatter();
     private List<PointValue> values = new ArrayList<>();
     private String id = UUID.randomUUID().toString();
 
@@ -40,22 +39,9 @@ public class Line {
         this.pointColor = line.pointColor;
         this.strokeWidth = line.strokeWidth;
         this.pointRadius = line.pointRadius;
-        this.formatter = line.formatter;
 
         for (PointValue pointValue : line.values) {
             this.values.add(new PointValue(pointValue));
-        }
-    }
-
-    public void update(float scale) {
-        for (PointValue value : values) {
-            value.update(scale);
-        }
-    }
-
-    public void finish() {
-        for (PointValue value : values) {
-            value.finish();
         }
     }
 
@@ -65,7 +51,7 @@ public class Line {
 
     public void setValues(List<PointValue> values) {
         if (null == values) {
-            this.values = new ArrayList<PointValue>();
+            this.values = new ArrayList<>();
         } else {
             this.values = values;
         }
@@ -77,19 +63,6 @@ public class Line {
 
     public Line setColor(int color) {
         this.color = color;
-        return this;
-    }
-
-    public int getPointColor() {
-        if (pointColor == UNINITIALIZED) {
-            return color;
-        } else {
-            return pointColor;
-        }
-    }
-
-    public Line setPointColor(int pointColor) {
-        this.pointColor = pointColor;
         return this;
     }
 
@@ -108,17 +81,6 @@ public class Line {
 
     public Line setPointRadius(int pointRadius) {
         this.pointRadius = pointRadius;
-        return this;
-    }
-
-    public LineChartValueFormatter getFormatter() {
-        return formatter;
-    }
-
-    public Line setFormatter(LineChartValueFormatter formatter) {
-        if (null != formatter) {
-            this.formatter = formatter;
-        }
         return this;
     }
 

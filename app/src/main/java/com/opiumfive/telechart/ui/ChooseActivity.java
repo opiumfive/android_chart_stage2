@@ -1,4 +1,4 @@
-package com.opiumfive.telechart;
+package com.opiumfive.telechart.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.ListView;
 
+import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.ChartDataParser;
 import com.opiumfive.telechart.theming.ThemeHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.opiumfive.telechart.ui.StatisticsActivity.CHART_EXTRA_KEY;
 
 public class ChooseActivity extends Activity {
 
@@ -32,9 +35,11 @@ public class ChooseActivity extends Activity {
         ChartAdapter chartAdapter = new ChartAdapter(this, charts);
 
         list.setOnItemClickListener(((parent, view, pos, id) -> {
-            startActivity(new Intent(ChooseActivity.this, StatisticsActivity.class).putExtra("chart", chartDataList.get(pos)));
+            Intent intent = new Intent(ChooseActivity.this, StatisticsActivity.class).putExtra(CHART_EXTRA_KEY, chartDataList.get(pos));
+            startActivity(intent);
             finish();
         }));
+
         list.setAdapter(chartAdapter);
     }
 }

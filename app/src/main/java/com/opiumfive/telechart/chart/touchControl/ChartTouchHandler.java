@@ -107,16 +107,8 @@ public class ChartTouchHandler {
         return renderer.isTouched();
     }
 
-    public boolean isScrollEnabled() {
-        return isScrollEnabled;
-    }
-
     public void setScrollEnabled(boolean isScrollEnabled) {
         this.isScrollEnabled = isScrollEnabled;
-    }
-
-    public boolean isValueTouchEnabled() {
-        return isValueTouchEnabled;
     }
 
     public void setValueTouchEnabled(boolean isValueTouchEnabled) {

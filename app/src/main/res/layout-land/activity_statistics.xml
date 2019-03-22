@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:layout_height="match_parent"
     android:background="?attr/itemBackground"
-    tools:context=".StatisticsActivity">
+    tools:context=".ui.StatisticsActivity">
 
     <LinearLayout
         android:layout_width="0dp"

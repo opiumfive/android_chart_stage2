@@ -78,21 +78,21 @@ public class ChartData implements Parcelable {
     protected ChartData(Parcel in) {
         this.columns = in.createTypedArrayList(ColumnData.CREATOR);
         int typesSize = in.readInt();
-        this.types = new HashMap<String, String>(typesSize);
+        this.types = new HashMap<>(typesSize);
         for (int i = 0; i < typesSize; i++) {
             String key = in.readString();
             String value = in.readString();
             this.types.put(key, value);
         }
         int namesSize = in.readInt();
-        this.names = new HashMap<String, String>(namesSize);
+        this.names = new HashMap<>(namesSize);
         for (int i = 0; i < namesSize; i++) {
             String key = in.readString();
             String value = in.readString();
             this.names.put(key, value);
         }
         int colorsSize = in.readInt();
-        this.colors = new HashMap<String, String>(colorsSize);
+        this.colors = new HashMap<>(colorsSize);
         for (int i = 0; i < colorsSize; i++) {
             String key = in.readString();
             String value = in.readString();
