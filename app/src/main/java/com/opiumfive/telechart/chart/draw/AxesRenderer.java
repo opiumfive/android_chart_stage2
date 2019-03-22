@@ -26,6 +26,7 @@ public class AxesRenderer {
     private static final int BOTTOM = 1;
     private static final char[] nillLabel = "0".toCharArray();
 
+    // for text measure
     private static final char[] labelWidthChars = new char[]{
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
             '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -394,12 +395,7 @@ public class AxesRenderer {
 
     private static class Label {
 
-        public Label(float value, float alpha) {
-            this.value = value;
-            this.alpha = alpha;
-        }
-
-        public Label(float value) {
+        Label(float value) {
             this.value = value;
         }
 

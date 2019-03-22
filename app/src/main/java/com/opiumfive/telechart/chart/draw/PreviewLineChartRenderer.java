@@ -3,7 +3,6 @@ package com.opiumfive.telechart.chart.draw;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
@@ -59,16 +58,8 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
         chartViewrectHandler.setMaxViewrect(tempMaximumViewrect);
     }
 
-    public int getPreviewColor() {
-        return previewColor;
-    }
-
     public void setPreviewColor(int color) {
         previewColor = color;
-    }
-
-    public int getBackgroundColor() {
-        return backrgroundColor;
     }
 
     public void setBackgroundColor(int color) {

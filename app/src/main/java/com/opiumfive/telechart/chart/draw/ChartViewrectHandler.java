@@ -1,16 +1,10 @@
 package com.opiumfive.telechart.chart.draw;
 
 import android.graphics.Point;
-import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
-import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.Viewrect;
-
-import java.util.List;
-
 
 public class ChartViewrectHandler {
 
@@ -29,7 +23,6 @@ public class ChartViewrectHandler {
     protected Viewrect maxViewrect = new Viewrect();
     protected float minViewportWidth;
     protected float minViewportHeight;
-    protected LinePathOptimizer linePathOptimizer;
 
     protected ViewrectChangeListener viewrectChangeListener;
 
@@ -39,7 +32,6 @@ public class ChartViewrectHandler {
     private float filterNoise = KALMAN_FILTER_NOISE_FACTOR;
 
     public ChartViewrectHandler() {
-        linePathOptimizer = new LinePathOptimizer(this);
     }
 
     public void setContentRect(int width, int height, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
@@ -71,7 +63,7 @@ public class ChartViewrectHandler {
         contentRectMinusAllMargins.bottom = contentRectMinusAllMargins.bottom - deltaBottom;
     }
 
-    public void constrainViewport(float left, float top, float right, float bottom, float distanceX) {
+    public void limitViewport(float left, float top, float right, float bottom, float distanceX) {
         if (right - left < minViewportWidth) {
             right = left + minViewportWidth;
             if (left < maxViewrect.left) {
@@ -99,11 +91,6 @@ public class ChartViewrectHandler {
         currentViewrect.right = right;
         currentViewrect.bottom = bottom;
 
-        /*currentViewrect.left = Math.max(maxViewrect.left, left);
-        currentViewrect.top = Math.min(maxViewrect.top, top);
-        currentViewrect.right = Math.min(maxViewrect.right, right);
-        currentViewrect.bottom = Math.max(maxViewrect.bottom, bottom);*/
-
         if (viewrectChangeListener != null) {
             viewrectChangeListener.onViewportChanged(currentViewrect, distanceX);
         }
@@ -115,7 +102,7 @@ public class ChartViewrectHandler {
 
         left = Math.max(maxViewrect.left, Math.min(left, maxViewrect.right - curWidth));
         top = Math.max(maxViewrect.bottom + curHeight, Math.min(top, maxViewrect.top));
-        constrainViewport(left, top, left + curWidth, top - curHeight, distanceX);
+        limitViewport(left, top, left + curWidth, top - curHeight, distanceX);
     }
 
     public float computeRawX(float valueX) {
@@ -130,15 +117,6 @@ public class ChartViewrectHandler {
     public float computeRawY(float valueY) {
         final float pixelOffset = (valueY - currentViewrect.bottom) * (contentRectMinusAllMargins.height() / currentViewrect.height());
         return contentRectMinusAllMargins.bottom - pixelOffset;
-    }
-
-    public boolean rawPixelsToDataPoint(float x, float y, PointF dest) {
-        if (!contentRectMinusAllMargins.contains((int) x, (int) y)) {
-            return false;
-        }
-        dest.set(currentViewrect.left + (x - contentRectMinusAllMargins.left) * currentViewrect.width() / contentRectMinusAllMargins.width(),
-                currentViewrect.bottom + (y - contentRectMinusAllMargins.bottom) * currentViewrect.height() / -contentRectMinusAllMargins.height());
-        return true;
     }
 
     public void computeScrollSurfaceSize(Point out) {
@@ -159,11 +137,11 @@ public class ChartViewrectHandler {
     }
 
     public void setCurrentViewrect(Viewrect viewrect) {
-        constrainViewport(viewrect.left, viewrect.top, viewrect.right, viewrect.bottom, 0f);
+        limitViewport(viewrect.left, viewrect.top, viewrect.right, viewrect.bottom, 0f);
     }
 
     public void setCurrentViewport(float left, float top, float right, float bottom, float distanceX) {
-        constrainViewport(left, top, right, bottom, distanceX);
+        limitViewport(left, top, right, bottom, distanceX);
     }
 
     public Viewrect getMaximumViewport() {
@@ -218,9 +196,5 @@ public class ChartViewrectHandler {
     private void computeMinimumWidthAndHeight() {
         minViewportWidth = this.maxViewrect.width() / MAXIMUM_ZOOM;
         minViewportHeight = this.maxViewrect.height() / MAXIMUM_ZOOM;
-    }
-
-    public List<PointValue> optimizeLine(List<PointValue> values, float maxAngleVariation) {
-        return linePathOptimizer.optimizeLine(values, maxAngleVariation);
     }
 }

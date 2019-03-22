@@ -138,7 +138,7 @@ public class LineChartRenderer {
         selectedValues.clear();
 
         final int internalMargin = calculateContentRectInternalMargin();
-        chartViewrectHandler.insetContentRectByInternalMargins(internalMargin, internalMargin, internalMargin, internalMargin);
+        chartViewrectHandler.insetContentRectByInternalMargins(0, internalMargin, internalMargin, internalMargin);
 
         onChartViewportChanged();
     }
