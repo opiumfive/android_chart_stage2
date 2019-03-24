@@ -105,7 +105,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
                 boolean canScroll = chartScroller.scroll(chartViewrectHandler, -distanceX, scrollResult);
                 allowParentInterceptTouchEvent(scrollResult);
 
-                if (++numberOfEvents % 30 == 0) {
+                if (++numberOfEvents % 40 == 0) {
                     if (onUpTouchListener != null) {
                         onUpTouchListener.onUp();
                     }

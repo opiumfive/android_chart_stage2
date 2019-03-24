@@ -24,7 +24,7 @@ public class AxesRenderer {
     private static final int DEFAULT_AXIS_MARGIN_DP = 0;
     private static final int LEFT = 0;
     private static final int BOTTOM = 1;
-    private static final int LABEL_ANIM_STEPS = 10;
+    private static final int LABEL_ANIM_STEPS = 12;
 
     // for text measure
     private static final char[] labelWidthChars = new char[]{
@@ -253,7 +253,7 @@ public class AxesRenderer {
                             float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
 
-                            animStep = currentDiff / 30f / LABEL_ANIM_STEPS;
+                            animStep = currentDiff / 20f / LABEL_ANIM_STEPS;
 
                             if (targetDiff < currentDiff) {
                                 animDirection = 1f;
@@ -265,6 +265,7 @@ public class AxesRenderer {
                                 autoValuesYBuff.values[i] += LABEL_ANIM_STEPS * animStep * animDirection;
                             }
                             autoValuesYBuff.alpha = 0f;
+                            autoValuesBufferTab[position].alpha = 1f;
                             isCurrentlyAnimatingLabels = true;
                         }
 
@@ -279,8 +280,8 @@ public class AxesRenderer {
                             autoValuesBufferTab[position].step++;
                             autoValuesYBuff.step++;
 
-                            autoValuesBufferTab[position].alpha -= 4f / LABEL_ANIM_STEPS;
-                            autoValuesYBuff.alpha += 4f / LABEL_ANIM_STEPS;
+                            autoValuesBufferTab[position].alpha -= 3f / LABEL_ANIM_STEPS;
+                            autoValuesYBuff.alpha += 3f / LABEL_ANIM_STEPS;
                             if (autoValuesBufferTab[position].alpha < 0f) autoValuesBufferTab[position].alpha = 0f;
                             if (autoValuesYBuff.alpha > 1f) autoValuesYBuff.alpha = 1f;
                             for (int i = 0; i < autoValuesBufferTab[position].values.length; i++) {
