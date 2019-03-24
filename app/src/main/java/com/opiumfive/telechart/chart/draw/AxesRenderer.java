@@ -13,7 +13,7 @@ import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Axis;
 
 import com.opiumfive.telechart.chart.model.Viewrect;
-import com.opiumfive.telechart.chart.AxisAutoValues;
+import com.opiumfive.telechart.chart.model.AxisValues;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +24,7 @@ public class AxesRenderer {
     private static final int DEFAULT_AXIS_MARGIN_DP = 0;
     private static final int LEFT = 0;
     private static final int BOTTOM = 1;
-    private static final char[] nillLabel = "0".toCharArray();
+    private static final int LABEL_ANIM_STEPS = 10;
 
     // for text measure
     private static final char[] labelWidthChars = new char[]{
@@ -54,10 +54,31 @@ public class AxesRenderer {
     private float[][] autoValuesToDrawTab = new float[2][0];
     private List<Label> additionalAutoValuesAxisX = new ArrayList<>();
     private float[][] linesDrawBufferTab = new float[2][0];
-    private AxisAutoValues[] autoValuesBufferTab = new AxisAutoValues[]{new AxisAutoValues(), new AxisAutoValues()};
+    private AxisValues[] autoValuesBufferTab = new AxisValues[]{new AxisValues(), new AxisValues()};
 
+    private AxisValues autoValuesYBuff = new AxisValues();
+    private AxisValues targetValuesYBuff = new AxisValues();
+    private AxisValues currentValuesYBuff = new AxisValues();
+    private float[] linesDrawBufferTabY = new float[] {};
+    private float[] rawValuesTabY = new float[] {};
+    private float[] autoValuesToDrawTabY = new float[] {};
+
+    private boolean needUpdateYBuffer = true;
     private boolean initialLabelAddition = true;
+    private boolean isCurrentlyAnimatingLabels = false;
+    private float animDirection = 1f;
+    private float animStep = 1f;
+    private boolean toggleAnimation = false;
+    //private boolean i
 
+
+    public void setToggleAnimation() {
+        toggleAnimation = true;
+    }
+
+    public boolean isCurrentlyAnimatingLabels() {
+        return isCurrentlyAnimatingLabels;
+    }
 
     public AxesRenderer(Context context, IChart chart) {
         this.chart = chart;
@@ -207,17 +228,94 @@ public class AxesRenderer {
         if (dim == 0) dim = 1;
         int steps = Math.abs(contentRectDimension) / dim;
 
-        Util.generatedAxisValues(start, stop, steps, autoValuesBufferTab[position]);
+        if (position == BOTTOM) {
+            Util.generatedAxisValues(start, stop, steps, autoValuesBufferTab[position]);
+        } else if (position == LEFT) {
+            if (toggleAnimation) {
+
+                if (needUpdateYBuffer) {
+                    Util.generatedVerticalAxisValues(start, stop, 6, targetValuesYBuff);
+                    autoValuesYBuff = new AxisValues(targetValuesYBuff);
+                    autoValuesYBuff.step = 0;
+                    needUpdateYBuffer = false;
+                }
+                if (!targetValuesYBuff.equals(currentValuesYBuff) || isCurrentlyAnimatingLabels) {
+
+                    if (currentValuesYBuff.valuesNumber == 0) {
+                        currentValuesYBuff = new AxisValues(autoValuesYBuff);
+                        autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
+                        needUpdateYBuffer = true;
+                    } else {
+
+                        if (autoValuesBufferTab[position].step == 0) {
+                            autoValuesYBuff = new AxisValues(targetValuesYBuff);
+                            autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
+
+                            float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
+                            float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
+
+                            animStep = currentDiff / 30f / LABEL_ANIM_STEPS;
+
+                            if (targetDiff < currentDiff) {
+                                animDirection = 1f;
+                            } else {
+                                animDirection = -1f;
+                            }
+
+                            for (int i = 0; i < autoValuesYBuff.values.length; i++) {
+                                autoValuesYBuff.values[i] += LABEL_ANIM_STEPS * animStep * animDirection;
+                            }
+                            autoValuesYBuff.alpha = 0f;
+                            isCurrentlyAnimatingLabels = true;
+                        }
+
+                        // start animating
+                        if (autoValuesBufferTab[position].step >= LABEL_ANIM_STEPS - 1) {
+                            currentValuesYBuff = new AxisValues(targetValuesYBuff);
+                            autoValuesBufferTab[position] = new AxisValues(targetValuesYBuff);
+                            needUpdateYBuffer = true;
+                            isCurrentlyAnimatingLabels = false;
+                            toggleAnimation = false;
+                        } else {
+                            autoValuesBufferTab[position].step++;
+                            autoValuesYBuff.step++;
+
+                            autoValuesBufferTab[position].alpha -= 4f / LABEL_ANIM_STEPS;
+                            autoValuesYBuff.alpha += 4f / LABEL_ANIM_STEPS;
+                            if (autoValuesBufferTab[position].alpha < 0f) autoValuesBufferTab[position].alpha = 0f;
+                            if (autoValuesYBuff.alpha > 1f) autoValuesYBuff.alpha = 1f;
+                            for (int i = 0; i < autoValuesBufferTab[position].values.length; i++) {
+                                autoValuesBufferTab[position].values[i] += autoValuesBufferTab[position].step * animStep * animDirection;
+                            }
+
+                            for (int i = 0; i < autoValuesYBuff.values.length; i++) {
+                                autoValuesYBuff.values[i] += autoValuesYBuff.step * animStep * animDirection;
+                            }
+                        }
+                    }
+                } else {
+                    needUpdateYBuffer = true;
+                }
+            } else {
+                Util.generatedVerticalAxisValues(start, stop, 6, targetValuesYBuff);
+                autoValuesYBuff = new AxisValues(targetValuesYBuff);
+                currentValuesYBuff = new AxisValues(autoValuesYBuff);
+                autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
+            }
+        }
 
         if (axis.hasLines() && (linesDrawBufferTab[position].length < autoValuesBufferTab[position].valuesNumber * 4)) {
             linesDrawBufferTab[position] = new float[autoValuesBufferTab[position].valuesNumber * 4];
+            linesDrawBufferTabY = new float[autoValuesYBuff.valuesNumber * 4];
         }
 
         if (rawValuesTab[position].length < autoValuesBufferTab[position].valuesNumber) {
             rawValuesTab[position] = new float[autoValuesBufferTab[position].valuesNumber];
+            rawValuesTabY = new float[autoValuesYBuff.valuesNumber];
         }
         if (autoValuesToDrawTab[position].length < autoValuesBufferTab[position].valuesNumber) {
             autoValuesToDrawTab[position] = new float[autoValuesBufferTab[position].valuesNumber];
+            autoValuesToDrawTabY = new float[autoValuesYBuff.valuesNumber];
         }
 
         float rawValue;
@@ -228,9 +326,14 @@ public class AxesRenderer {
             } else {
                 rawValue = chartViewrectHandler.computeRawX(autoValuesBufferTab[position].values[i]);
             }
-            if (checkRawValue(contentRect, rawValue, axis.isInside(), position, isAxisVertical)) {
+            //if (checkRawValue(contentRect, rawValue, axis.isInside(), position, isAxisVertical)) {
                 rawValuesTab[position][valueToDrawIndex] = rawValue;
                 autoValuesToDrawTab[position][valueToDrawIndex] = autoValuesBufferTab[position].values[i];
+
+                if (position == LEFT && isCurrentlyAnimatingLabels) {
+                    rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawY(autoValuesYBuff.values[i]);
+                    autoValuesToDrawTabY[valueToDrawIndex] = autoValuesYBuff.values[i];
+                }
 
                 if (position == BOTTOM) {
                     Label label = new Label(autoValuesToDrawTab[position][valueToDrawIndex]);
@@ -241,7 +344,7 @@ public class AxesRenderer {
                 }
 
                 ++valueToDrawIndex;
-            }
+            //}
         }
 
         if (position == BOTTOM) {
@@ -295,19 +398,6 @@ public class AxesRenderer {
         }
     }
 
-    private boolean checkRawValue(Rect rect, float rawValue, boolean axisInside, int position, boolean isVertical) {
-        if (axisInside) {
-            if (isVertical) {
-                float marginBottom = labelTextAscentTab[BOTTOM] + axisMargin;
-                return rawValue <= rect.bottom - marginBottom && rawValue >= rect.top;
-            } else {
-                float margin = labelWidthTab[position] / 2f;
-                return rawValue >= rect.left + margin && rawValue <= rect.right - margin;
-            }
-        }
-        return true;
-    }
-
     private void drawAxisLines(Canvas canvas, Axis axis, int position) {
         final Rect contentRectMargins = chartViewrectHandler.getContentRectMinusAxesMargins();
         float lineX1, lineY1, lineX2, lineY2;
@@ -324,8 +414,8 @@ public class AxesRenderer {
 
         if (axis.hasLines()) {
             int valueToDrawIndex = 0;
-            linePaintTab[position].setAlpha(255);
-            canvas.drawLine(lineX1, contentRectMargins.bottom, lineX2, contentRectMargins.bottom, linePaintTab[position]);
+            linePaintTab[position].setAlpha((int)(255 * autoValuesBufferTab[position].alpha));
+
             for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                 if (isAxisVertical) {
                     lineY1 = lineY2 = rawValuesTab[position][valueToDrawIndex];
@@ -338,6 +428,23 @@ public class AxesRenderer {
                 linesDrawBufferTab[position][valueToDrawIndex * 4 + 3] = lineY2;
             }
             canvas.drawLines(linesDrawBufferTab[position], 0, valueToDrawIndex * 4, linePaintTab[position]);
+
+            if (isCurrentlyAnimatingLabels) {
+                linePaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
+                valueToDrawIndex = 0;
+                for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
+                    if (isAxisVertical) {
+                        lineY1 = lineY2 = rawValuesTabY[valueToDrawIndex];
+                    } else {
+                        lineX1 = lineX2 = rawValuesTabY[valueToDrawIndex];
+                    }
+                    linesDrawBufferTabY[valueToDrawIndex * 4] = lineX1;
+                    linesDrawBufferTabY[valueToDrawIndex * 4 + 1] = lineY1;
+                    linesDrawBufferTabY[valueToDrawIndex * 4 + 2] = lineX2;
+                    linesDrawBufferTabY[valueToDrawIndex * 4 + 3] = lineY2;
+                }
+                canvas.drawLines(linesDrawBufferTabY, 0, valueToDrawIndex * 4, linePaintTab[position]);
+            }
         }
     }
 
@@ -348,13 +455,12 @@ public class AxesRenderer {
         if (LEFT == position) {
             labelX = labelBaselineTab[position];
 
-            labelPaintTab[position].setAlpha(255);
-            canvas.drawText(nillLabel, 0, nillLabel.length, labelX, chartViewrectHandler.getContentRectMinusAllMargins().bottom - Util.dp2px(density, 2), labelPaintTab[position]);
+            labelPaintTab[position].setAlpha((int)(255 * autoValuesBufferTab[position].alpha));
 
             for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                 int charsNumber = 0;
 
-                final float value = autoValuesToDrawTab[position][valueToDrawIndex];
+                final float value = currentValuesYBuff.values[valueToDrawIndex];
                 charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
 
                 if (isAxisVertical) {
@@ -364,6 +470,27 @@ public class AxesRenderer {
                 }
 
                 canvas.drawText(labelBuffer, labelBuffer.length - charsNumber, charsNumber, labelX, labelY, labelPaintTab[position]);
+            }
+
+            if (isCurrentlyAnimatingLabels) {
+                labelPaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
+
+                for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
+                    int charsNumber = 0;
+
+                    final float value = targetValuesYBuff.values[valueToDrawIndex];
+                    charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
+
+                    if (isAxisVertical) {
+                        labelY = rawValuesTabY[valueToDrawIndex] - Util.dp2px(density, 4);
+                    } else {
+                        labelX = rawValuesTabY[valueToDrawIndex];
+                    }
+
+                    if (labelY < chartViewrectHandler.getContentRectMinusAxesMargins().bottom + Util.dp2px(density, 4)) {
+                        canvas.drawText(labelBuffer, labelBuffer.length - charsNumber, charsNumber, labelX, labelY, labelPaintTab[position]);
+                    }
+                }
             }
         } else if (BOTTOM == position) {
             labelY = labelBaselineTab[position];

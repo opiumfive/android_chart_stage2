@@ -5,6 +5,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import com.opiumfive.telechart.chart.draw.PreviewChartViewrectHandler;
 import com.opiumfive.telechart.chart.model.Viewrect;
+import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.touchControl.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.draw.PreviewLineChartRenderer;
@@ -13,6 +14,7 @@ import com.opiumfive.telechart.chart.draw.PreviewLineChartRenderer;
 public class PreviewChartView extends ChartView {
 
     protected PreviewLineChartRenderer previewChartRenderer;
+    protected ChartTouchHandler.OnUpTouchListener onUpTouchListener;
 
     public PreviewChartView(Context context) {
         this(context, null, 0);

@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
+import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
@@ -62,6 +63,8 @@ public class StatisticsActivity extends ChangeThemeActivity {
         public void onAnimationFinished() {
             isAnimatingPreview = true;
             showLineAdapter.setEnabled(true);
+            chart.toggleAxisAnim();
+            chart.postDrawIfNeeded();
         }
     };
 
@@ -133,6 +136,10 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setValueTouchEnabled(true);
 
         previewChart.setChartData(previewData);
+        previewChart.setOnUpTouchListener(() -> {
+            chart.toggleAxisAnim();
+            chart.postDrawIfNeeded();
+        });
         previewChart.setViewrectChangeListener(previewRectListener);
         previewChart.setViewrectAnimationListener(previewAnimListener);
         previewChart.setViewrectRecalculation(false);

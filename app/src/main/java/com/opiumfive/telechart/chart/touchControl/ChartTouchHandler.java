@@ -23,12 +23,17 @@ public class ChartTouchHandler {
     protected SelectedValues selectedValues = new SelectedValues();
 
     protected ViewParent viewParent;
+    protected OnUpTouchListener onUpTouchListener;
 
     public ChartTouchHandler(Context context, IChart chart) {
         this.chart = chart;
         this.chartViewrectHandler = chart.getChartViewrectHandler();
         this.renderer = chart.getChartRenderer();
         chartScroller = new ChartScroller(context);
+    }
+
+    public void setOnUpTouchListener(OnUpTouchListener listener) {
+        onUpTouchListener = listener;
     }
 
     public void resetTouchHandler() {
@@ -80,6 +85,9 @@ public class ChartTouchHandler {
                     renderer.clearTouch();
                     needInvalidate = true;
                 }
+                if (onUpTouchListener != null) {
+                    onUpTouchListener.onUp();
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 isTouched = checkTouch(event.getX());
@@ -113,5 +121,9 @@ public class ChartTouchHandler {
 
     public void setValueTouchEnabled(boolean isValueTouchEnabled) {
         this.isValueTouchEnabled = isValueTouchEnabled;
+    }
+
+    public interface OnUpTouchListener {
+        void onUp();
     }
 }

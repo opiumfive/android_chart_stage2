@@ -49,6 +49,10 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         setChartData(LineChartData.generateDummyData());
     }
 
+    public void setOnUpTouchListener(ChartTouchHandler.OnUpTouchListener listener) {
+        touchHandler.setOnUpTouchListener(listener);
+    }
+
     @Override
     public LineChartData getChartData() {
         return data;
@@ -73,7 +77,6 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
         chartViewrectHandler.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
-        chartRenderer.onChartSizeChanged();
         axesRenderer.onChartSizeChanged();
     }
 
@@ -89,8 +92,20 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
             axesRenderer.drawInForeground(canvas);
             chartRenderer.drawSelectedValues(canvas);
+
+            postDrawIfNeeded();
         } else {
             canvas.drawColor(Util.DEFAULT_COLOR);
+        }
+    }
+
+    public void toggleAxisAnim() {
+        axesRenderer.setToggleAnimation();
+    }
+
+    public void postDrawIfNeeded() {
+        if (axesRenderer.isCurrentlyAnimatingLabels()) {
+            invalidate();
         }
     }
 

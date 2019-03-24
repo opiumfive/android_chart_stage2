@@ -28,6 +28,9 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
 
     @Override
     public boolean handleTouchEvent(MotionEvent event) {
+        if (onUpTouchListener != null) {
+            computeTouch(event);
+        }
         Viewrect currentViewrect = chartViewrectHandler.getCurrentViewrect();
         final Viewrect maxViewrect = chartViewrectHandler.getMaximumViewport();
         final float left = chartViewrectHandler.computeRawX(currentViewrect.left);
@@ -57,10 +60,29 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         return false;
     }
 
+    @Override
+    protected boolean computeTouch(MotionEvent event) {
+        boolean needInvalidate = false;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_UP:
+                if (onUpTouchListener != null) {
+                    onUpTouchListener.onUp();
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                if (onUpTouchListener != null) {
+                    onUpTouchListener.onUp();
+                }
+                break;
+        }
+        return needInvalidate;
+    }
+
     protected class PreviewChartGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         protected ChartScroller.ScrollResult scrollResult = new ChartScroller.ScrollResult();
         private ScrollMode scrollMode = ScrollMode.FULL;
+        private int numberOfEvents = 0;
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -82,6 +104,12 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
             if (isScrollEnabled) {
                 boolean canScroll = chartScroller.scroll(chartViewrectHandler, -distanceX, scrollResult);
                 allowParentInterceptTouchEvent(scrollResult);
+
+                if (++numberOfEvents % 30 == 0) {
+                    if (onUpTouchListener != null) {
+                        onUpTouchListener.onUp();
+                    }
+                }
                 return canScroll;
             }
 

@@ -110,11 +110,6 @@ public class LineChartRenderer {
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
     }
 
-    public void onChartSizeChanged() {
-        final int internalMargin = calculateContentRectInternalMargin();
-        chartViewrectHandler.insetContentRectByInternalMargins(0, internalMargin, internalMargin, internalMargin);
-    }
-
     public void onChartDataChanged() {
         final LineChartData data = chart.getChartData();
 
@@ -134,9 +129,6 @@ public class LineChartRenderer {
         labelPaint.getFontMetricsInt(fontMetrics);
 
         selectedValues.clear();
-
-        final int internalMargin = calculateContentRectInternalMargin();
-        chartViewrectHandler.insetContentRectByInternalMargins(0, internalMargin, internalMargin, internalMargin);
 
         onChartViewportChanged();
     }
@@ -260,7 +252,7 @@ public class LineChartRenderer {
 
         //additional offset 7.5%
         float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
-        adjustedViewrect.bottom = adjustedViewrect.bottom - diff;
+        adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
         adjustedViewrect.top = adjustedViewrect.top + diff;
 
         return adjustedViewrect;
@@ -366,8 +358,8 @@ public class LineChartRenderer {
 
         labelBackgroundRect.set(left, 0, right, oneLineHeight * lines);
 
-        Rect shadowBackgroundRect = new Rect((int)(labelBackgroundRect.left - detailCornerRadius / 5), (int)(labelBackgroundRect.top - detailCornerRadius/ 5),
-                (int)(labelBackgroundRect.right + detailCornerRadius/ 5), (int)(labelBackgroundRect.bottom + detailCornerRadius/ 5));
+        Rect shadowBackgroundRect = new Rect((int)(labelBackgroundRect.left - detailCornerRadius / 5), (int)(labelBackgroundRect.top - detailCornerRadius / 5),
+                (int)(labelBackgroundRect.right + detailCornerRadius / 5), (int)(labelBackgroundRect.bottom + detailCornerRadius / 5));
 
         shadowDrawable.setBounds(shadowBackgroundRect);
         shadowDrawable.draw(canvas);
