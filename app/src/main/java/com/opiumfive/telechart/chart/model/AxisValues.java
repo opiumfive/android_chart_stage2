@@ -8,6 +8,7 @@ import java.util.Arrays;
 public class AxisValues {
 
     public float[] values = new float[]{};
+    public float[] rawValues = new float[]{};
     public int valuesNumber = 0;
     public float alpha = 1.0f;
     public int step = 0;
@@ -17,6 +18,7 @@ public class AxisValues {
 
     public AxisValues(AxisValues axisValues) {
         this.values = Arrays.copyOf(axisValues.values, axisValues.values.length);
+        this.rawValues = Arrays.copyOf(axisValues.rawValues, axisValues.rawValues.length);
         this.valuesNumber = axisValues.valuesNumber;
     }
 

@@ -120,10 +120,10 @@ public class Util {
     }
 
     public static void generatedVerticalAxisValues(float start, float stop, int steps, AxisValues outValues) {
-
-        double range = stop - start;
+        float range = stop - start;
         if (steps == 0 || range <= 0) {
             outValues.values = new float[]{};
+            outValues.rawValues = new float[]{};
             outValues.valuesNumber = 0;
             return;
         }
@@ -132,17 +132,17 @@ public class Util {
 
         float first = start + interval / 2;
 
-        int valuesNum = steps;
+        outValues.valuesNumber = steps;
 
-        outValues.valuesNumber = valuesNum;
-
-        if (outValues.values.length < valuesNum) {
-            outValues.values = new float[valuesNum];
+        if (outValues.values.length < steps) {
+            outValues.values = new float[steps];
+            outValues.rawValues = new float[steps];
         }
 
         float intervalValue;
         int valueIndex;
-        for (intervalValue = first, valueIndex = 0; valueIndex < valuesNum; intervalValue += interval, ++valueIndex) {
+        for (intervalValue = first, valueIndex = 0; valueIndex < steps; intervalValue += interval, ++valueIndex) {
+            outValues.rawValues[valueIndex] = intervalValue;
             outValues.values[valueIndex] = round(intervalValue);
         }
     }

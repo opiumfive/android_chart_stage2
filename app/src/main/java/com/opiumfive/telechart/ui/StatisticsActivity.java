@@ -10,7 +10,6 @@ import android.widget.ListView;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
-import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
@@ -63,8 +62,9 @@ public class StatisticsActivity extends ChangeThemeActivity {
         public void onAnimationFinished() {
             isAnimatingPreview = true;
             showLineAdapter.setEnabled(true);
-            chart.toggleAxisAnim();
+
             chart.postDrawIfNeeded();
+            chart.toggleAxisAnim();
         }
     };
 
@@ -86,6 +86,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         Viewrect savedViewrect = null;
         boolean[] linesState = null;
 
+        // try to restore state
         if (savedInstanceState == null) {
             chartData = getIntent().getParcelableExtra(CHART_EXTRA_KEY);
             savedViewrect = getIntent().getParcelableExtra(VIEWRECT_EXTRA_KEY);
@@ -136,15 +137,17 @@ public class StatisticsActivity extends ChangeThemeActivity {
         chart.setValueTouchEnabled(true);
 
         previewChart.setChartData(previewData);
-        previewChart.setOnUpTouchListener(() -> {
-            chart.toggleAxisAnim();
-            chart.postDrawIfNeeded();
-        });
         previewChart.setViewrectChangeListener(previewRectListener);
         previewChart.setViewrectAnimationListener(previewAnimListener);
         previewChart.setViewrectRecalculation(false);
         previewChart.setPreviewColor(getColorFromAttr(this, R.attr.previewFrameColor));
         previewChart.setPreviewBackgroundColor(getColorFromAttr(this, R.attr.previewBackColor));
+
+        // for y-animation trigger
+        previewChart.setOnUpTouchListener(() -> {
+            chart.toggleAxisAnim();
+            chart.postDrawIfNeeded();
+        });
 
         if (savedViewrect == null) {
             Viewrect tempViewrect = new Viewrect(chart.getMaximumViewrect());

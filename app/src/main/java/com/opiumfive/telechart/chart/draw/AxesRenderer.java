@@ -69,7 +69,6 @@ public class AxesRenderer {
     private float animDirection = 1f;
     private float animStep = 1f;
     private boolean toggleAnimation = false;
-    //private boolean i
 
 
     public void setToggleAnimation() {
@@ -298,9 +297,13 @@ public class AxesRenderer {
                 }
             } else {
                 Util.generatedVerticalAxisValues(start, stop, 6, targetValuesYBuff);
+
                 autoValuesYBuff = new AxisValues(targetValuesYBuff);
-                currentValuesYBuff = new AxisValues(autoValuesYBuff);
-                autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
+                if (initialLabelAddition) {
+                    currentValuesYBuff = new AxisValues(autoValuesYBuff);
+                }
+                autoValuesBufferTab[position] = new AxisValues(targetValuesYBuff);
+
             }
         }
 
@@ -322,29 +325,32 @@ public class AxesRenderer {
         int valueToDrawIndex = 0;
         for (int i = 0; i < autoValuesBufferTab[position].valuesNumber; ++i) {
             if (isAxisVertical) {
-                rawValue = chartViewrectHandler.computeRawY(autoValuesBufferTab[position].values[i]);
+                rawValue = chartViewrectHandler.computeRawY(autoValuesBufferTab[position].rawValues[i]);
             } else {
                 rawValue = chartViewrectHandler.computeRawX(autoValuesBufferTab[position].values[i]);
             }
-            //if (checkRawValue(contentRect, rawValue, axis.isInside(), position, isAxisVertical)) {
-                rawValuesTab[position][valueToDrawIndex] = rawValue;
-                autoValuesToDrawTab[position][valueToDrawIndex] = autoValuesBufferTab[position].values[i];
 
-                if (position == LEFT && isCurrentlyAnimatingLabels) {
+            rawValuesTab[position][valueToDrawIndex] = rawValue;
+            autoValuesToDrawTab[position][valueToDrawIndex] = autoValuesBufferTab[position].values[i];
+
+            if (position == LEFT) {
+                if (isCurrentlyAnimatingLabels) {
                     rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawY(autoValuesYBuff.values[i]);
-                    autoValuesToDrawTabY[valueToDrawIndex] = autoValuesYBuff.values[i];
+                } else {
+                    rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawY(autoValuesYBuff.rawValues[i]);
                 }
+                autoValuesToDrawTabY[valueToDrawIndex] = autoValuesYBuff.values[i];
+            }
 
-                if (position == BOTTOM) {
-                    Label label = new Label(autoValuesToDrawTab[position][valueToDrawIndex]);
-                    if (!additionalAutoValuesAxisX.contains(label)) {
-                        label.alpha = initialLabelAddition ? 1.0f : 0.0f;
-                        additionalAutoValuesAxisX.add(label);
-                    }
+            if (position == BOTTOM) {
+                Label label = new Label(autoValuesToDrawTab[position][valueToDrawIndex]);
+                if (!additionalAutoValuesAxisX.contains(label)) {
+                    label.alpha = initialLabelAddition ? 1.0f : 0.0f;
+                    additionalAutoValuesAxisX.add(label);
                 }
+            }
 
-                ++valueToDrawIndex;
-            //}
+            ++valueToDrawIndex;
         }
 
         if (position == BOTTOM) {
