@@ -17,6 +17,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.valueFormat.DateValueFormatter;
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.DataMapper;
+import com.opiumfive.telechart.data.State;
 
 import static com.opiumfive.telechart.Settings.INITIAL_PREVIEW_SCALE;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
@@ -59,17 +60,17 @@ public class ChartWithPreview extends LinearLayout {
         }
     };
 
-    public ChartWithPreview(Context context, ChartData chartData) {
+    public ChartWithPreview(Context context, ChartData chartData, State state) {
         super(context);
         inflate(context, R.layout.chart_with_preview, this);
 
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
-        setChartData(chartData);
+        setChartData(chartData, state);
     }
 
-    public void setChartData(ChartData chartData) {
+    public void setChartData(ChartData chartData, State state) {
         data = DataMapper.mapFromPlainData(chartData);
         data.setAxisYLeft(
                 new Axis()
@@ -84,6 +85,16 @@ public class ChartWithPreview extends LinearLayout {
                         .setInside(false)
                         .setTextColor(getColorFromAttr(getContext(), R.attr.labelColor))
         );
+
+        if (state != null && state.getLinesState() != null) {
+            for (int i = 0; i < data.getLines().size(); i++) {
+                Line line = data.getLines().get(i);
+                line.setActive(state.getLinesState()[i]);
+                if (!state.getLinesState()[i]) {
+                    line.setAlpha(0f);
+                }
+            }
+        }
 
         previewData = new LineChartData(data);
         previewData.setAxisYLeft(null);
@@ -109,10 +120,14 @@ public class ChartWithPreview extends LinearLayout {
         });
 
 
-        Viewrect tempViewrect = new Viewrect(chart.getMaximumViewrect());
-        float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
-        tempViewrect.inset(dx, 0);
-        previewChart.setCurrentViewrect(tempViewrect);
+        if (state != null && state.getCurrentViewrect() != null) {
+            previewChart.setCurrentViewrect(state.getCurrentViewrect());
+        } else {
+            Viewrect tempViewrect = new Viewrect(chart.getMaximumViewrect());
+            float dx = tempViewrect.width() * (1f - INITIAL_PREVIEW_SCALE) / 2;
+            tempViewrect.inset(dx, 0);
+            previewChart.setCurrentViewrect(tempViewrect);
+        }
 
         showLineAdapter = new ShowLineAdapter(getContext(), data.getLines(), pos -> {
             Line line = data.getLines().get(pos);
@@ -149,5 +164,11 @@ public class ChartWithPreview extends LinearLayout {
         checkboxList.setLayoutParams(layoutParams);
 
         checkboxList.setAdapter(showLineAdapter);
+    }
+
+    public State getState() {
+        boolean[] linesChecked = new boolean[data.getLines().size()];
+        for (int i = 0; i < data.getLines().size(); i++) linesChecked[i] = data.getLines().get(i).isActive();
+        return new State(previewChart.getCurrentViewrect(), linesChecked);
     }
 }

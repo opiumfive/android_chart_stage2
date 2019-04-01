@@ -118,7 +118,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             postInvalidateOnAnimation();
         }
 
-        return true;
+        return needInvalidate;
     }
 
     @Override

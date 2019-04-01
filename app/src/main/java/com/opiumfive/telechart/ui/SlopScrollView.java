@@ -24,7 +24,6 @@ public class SlopScrollView extends ScrollView {
         touchSlopX = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
 

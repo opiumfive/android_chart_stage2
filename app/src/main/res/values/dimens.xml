@@ -5,5 +5,5 @@
     <dimen name="divider_margin">32dp</dimen>
     <dimen name="checkbox_height">50dp</dimen>
     <dimen name="chart_height">200dp</dimen>
-    <dimen name="preview_height">40dp</dimen>
+    <dimen name="preview_height">45dp</dimen>
 </resources>

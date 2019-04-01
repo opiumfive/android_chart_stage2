@@ -23,7 +23,7 @@ public class AxesRenderer {
     private static final int DEFAULT_AXIS_MARGIN_DP = 0;
     private static final int LEFT = 0;
     private static final int BOTTOM = 1;
-    private static final int LABEL_ANIM_STEPS = 12;
+    private static final int LABEL_ANIM_STEPS = 15;
 
     // for text measure
     private static final char[] labelWidthChars = new char[]{

@@ -1,22 +1,25 @@
 package com.opiumfive.telechart.ui;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.ChartDataParser;
+import com.opiumfive.telechart.data.State;
 import com.opiumfive.telechart.theming.ChangeThemeActivity;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsActivity extends ChangeThemeActivity {
 
-    public static final String CHART_EXTRA_KEY = "chart";
-    public static final String LINES_EXTRA_KEY = "lines";
-    public static final String VIEWRECT_EXTRA_KEY = "rect";
+    public static final String STATE_EXTRA_KEY = "state";
 
     private List<ChartData> chartDataList;
     private LinearLayout container;
+    private ChartWithPreview[] chartViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +30,29 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         chartDataList = ChartDataParser.loadAndParseInput(this);
 
-        for (ChartData chartData: chartDataList) {
-            ChartWithPreview chartWithPreview = new ChartWithPreview(this, chartData);
+        List<State> states = null;
+
+        // try to restore state
+        if (savedInstanceState == null) {
+            states = getIntent().getParcelableArrayListExtra(STATE_EXTRA_KEY);
+        } else {
+            states = savedInstanceState.getParcelableArrayList(STATE_EXTRA_KEY);
+        }
+
+        chartViews = new ChartWithPreview[chartDataList.size()];
+
+        for (int i = 0; i < chartDataList.size(); i++) {
+            State state = null;
+            if (states != null && states.size() > i) {
+                state = states.get(i);
+            }
+
+            ChartData chartData = chartDataList.get(i);
+            ChartWithPreview chartWithPreview = new ChartWithPreview(this, chartData, state);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin));
+            chartWithPreview.setLayoutParams(layoutParams);
+            chartViews[i] = chartWithPreview;
             container.addView(chartWithPreview);
         }
     }
@@ -47,11 +71,10 @@ public class StatisticsActivity extends ChangeThemeActivity {
     }
 
     private void saveState(Bundle bundle) {
-        /*bundle.putParcelable(CHART_EXTRA_KEY, chartData);
-        Viewrect rect = new Viewrect(previewChart.getCurrentViewrect());
-        bundle.putParcelable(VIEWRECT_EXTRA_KEY, rect);
-        boolean[] linesChecked = new boolean[data.getLines().size()];
-        for (int i = 0; i < data.getLines().size(); i++) linesChecked[i] = data.getLines().get(i).isActive();
-        bundle.putBooleanArray(LINES_EXTRA_KEY, linesChecked);*/
+        ArrayList<State> states = new ArrayList<>(chartViews.length);
+        for (int i = 0; i < chartViews.length; i++) {
+            states.add(chartViews[i].getState());
+        }
+        bundle.putParcelableArrayList(STATE_EXTRA_KEY, states);
     }
 }
