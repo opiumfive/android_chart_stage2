@@ -1,8 +1,5 @@
 package com.opiumfive.telechart.chart.model;
 
-
-import android.support.annotation.Nullable;
-
 import java.util.Arrays;
 
 public class AxisValues {
@@ -23,7 +20,7 @@ public class AxisValues {
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null) return false;
         if (this == obj) return true;
         AxisValues other = (AxisValues) obj;

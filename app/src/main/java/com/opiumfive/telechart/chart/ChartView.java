@@ -2,7 +2,6 @@ package com.opiumfive.telechart.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -116,7 +115,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         boolean needInvalidate = touchHandler.handleTouchEvent(event);
 
         if (needInvalidate) {
-            ViewCompat.postInvalidateOnAnimation(this);
+            postInvalidateOnAnimation();
         }
 
         return true;
@@ -126,7 +125,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     public void computeScroll() {
         super.computeScroll();
         if (touchHandler.computeScroll()) {
-            ViewCompat.postInvalidateOnAnimation(this);
+            postInvalidateOnAnimation();
         }
     }
 
@@ -145,7 +144,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     public void setChartRenderer(LineChartRenderer renderer) {
         chartRenderer = renderer;
         resetRendererAndTouchHandler();
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public ChartViewrectHandler getChartViewrectHandler() {
@@ -166,7 +165,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
     public void setMaximumViewrect(Viewrect maxViewrect) {
         chartRenderer.setMaximumViewrect(maxViewrect);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setCurrentViewrectAnimated(Viewrect targetViewrect) {
@@ -176,7 +175,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             Viewrect current = getCurrentViewrect();
             viewrectAnimator.startAnimation(current, targetViewrect);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, Line line) {
@@ -187,7 +186,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
             viewrectAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, line);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public Viewrect getCurrentViewrect() {
@@ -199,7 +198,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         if (null != targetViewrect) {
             chartRenderer.setCurrentViewrect(targetViewrect);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect, boolean useFilter, float distanceX) {
@@ -213,7 +212,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setViewrectRecalculation(boolean isEnabled) {
@@ -228,7 +227,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         chartViewrectHandler.resetContentRect();
         chartRenderer.onChartDataChanged();
         axesRenderer.onChartDataChanged();
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     protected void resetRendererAndTouchHandler() {

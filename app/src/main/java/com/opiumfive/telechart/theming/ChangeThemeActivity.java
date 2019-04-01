@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +31,7 @@ public abstract class ChangeThemeActivity extends Activity {
     private Handler handler = new Handler();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         setTheme(ThemeHolder.getCurrentTheme(this));
         super.onCreate(savedInstanceState);
     }

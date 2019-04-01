@@ -1,8 +1,6 @@
 package com.opiumfive.telechart.data;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -21,8 +19,7 @@ import static com.opiumfive.telechart.Settings.CHART_DATA_NAME;
 
 public class ChartDataParser {
 
-    @Nullable
-    public static ChartData loadAndParseInput(@NonNull Context context, int pos) {
+    public static ChartData loadAndParseInput(Context context, int pos) {
         List<ChartData> charts = loadAndParseInput(context);
         if (charts != null && charts.size() > pos) {
             return loadAndParseInput(context).get(pos);
@@ -31,8 +28,7 @@ public class ChartDataParser {
         }
     }
 
-    @Nullable
-    public static List<ChartData> loadAndParseInput(@NonNull Context context) {
+    public static List<ChartData> loadAndParseInput(Context context) {
         String json = getDataFromJson(context);
         if (TextUtils.isEmpty(json)) {
             return null;
@@ -41,8 +37,7 @@ public class ChartDataParser {
         }
     }
 
-    @Nullable
-    private static String getDataFromJson(@NonNull Context context) {
+    private static String getDataFromJson(Context context) {
         try {
             InputStream is = context.getAssets().open(CHART_DATA_NAME);
             int size = is.available();
@@ -56,7 +51,7 @@ public class ChartDataParser {
         }
     }
 
-    private static List<ChartData> parseData(@NonNull String json) {
+    private static List<ChartData> parseData(String json) {
         List<ChartData> chartDatas = new ArrayList<>();
 
         try {

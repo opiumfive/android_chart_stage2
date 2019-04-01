@@ -1,7 +1,6 @@
 package com.opiumfive.telechart.chart;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import com.opiumfive.telechart.chart.draw.PreviewChartViewrectHandler;
 import com.opiumfive.telechart.chart.model.Viewrect;
@@ -35,12 +34,12 @@ public class PreviewChartView extends ChartView {
 
     public void setPreviewColor(int color) {
         previewChartRenderer.setPreviewColor(color);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setPreviewBackgroundColor(int color) {
         previewChartRenderer.setBackgroundColor(color);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     @Override
@@ -63,6 +62,6 @@ public class PreviewChartView extends ChartView {
             Viewrect current = getCurrentViewrect();
             viewrectAnimator.startAnimation(current, targetViewrect, true);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 }

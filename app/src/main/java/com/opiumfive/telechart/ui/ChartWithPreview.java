@@ -1,6 +1,7 @@
 package com.opiumfive.telechart.ui;
 
 import android.content.Context;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -142,6 +143,10 @@ public class ChartWithPreview extends LinearLayout {
         int active = 0;
         for (Line l : data.getLines()) if (l.isActive()) active++;
         showLineAdapter.setUncheckingEnabled(active > 1);
+
+        ViewGroup.LayoutParams layoutParams = checkboxList.getLayoutParams();
+        layoutParams.height = (int) getContext().getResources().getDimension(R.dimen.checkbox_height) * data.getLines().size();
+        checkboxList.setLayoutParams(layoutParams);
 
         checkboxList.setAdapter(showLineAdapter);
     }

@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
@@ -533,7 +532,7 @@ public class AxesRenderer {
         float raw;
 
         @Override
-        public boolean equals(@Nullable Object obj) {
+        public boolean equals(Object obj) {
             if (obj == null) return false;
             return ((Label) obj).value == value;
         }

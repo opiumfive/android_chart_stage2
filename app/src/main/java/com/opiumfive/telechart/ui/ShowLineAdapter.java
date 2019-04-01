@@ -3,8 +3,6 @@ package com.opiumfive.telechart.ui;
 import android.content.Context;
 
 import android.content.res.ColorStateList;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +15,6 @@ import com.opiumfive.telechart.chart.model.Line;
 import java.util.ArrayList;
 import java.util.List;
 
-// list view just to reduce apk size
 public class ShowLineAdapter extends ArrayAdapter<Line> {
 
     private LineCheckListener listener;
@@ -31,7 +28,6 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
         lines.addAll(list);
     }
 
-    @Nullable
     @Override
     public Line getItem(int position) {
         return lines.get(position);
@@ -87,7 +83,7 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
             checkbox.setChecked(line.isActive());
             shouldNotif = true;
             checkbox.setText(line.getTitle());
-            CompoundButtonCompat.setButtonTintList(checkbox, ColorStateList.valueOf(line.getColor()));
+            //CompoundButtonCompat.setButtonTintList(checkbox, ColorStateList.valueOf(line.getColor()));
 
             checkbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
                 if (shouldNotif) {

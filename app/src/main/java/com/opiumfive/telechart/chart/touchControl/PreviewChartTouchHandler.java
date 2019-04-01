@@ -1,7 +1,7 @@
 package com.opiumfive.telechart.chart.touchControl;
 
 import android.content.Context;
-import android.support.v4.view.GestureDetectorCompat;
+
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -13,7 +13,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
 
     private static final float SIDE_DRAG_ZONE = 0.05f; // percent from width
 
-    private GestureDetectorCompat gestureDetector;
+    private GestureDetector gestureDetector;
     private PreviewChartGestureListener gestureListener;
 
     private float sideDragZone;
@@ -21,7 +21,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
     public PreviewChartTouchHandler(Context context, IChart chart) {
         super(context, chart);
         gestureListener = new PreviewChartGestureListener();
-        gestureDetector = new GestureDetectorCompat(context, gestureListener);
+        gestureDetector = new GestureDetector(context, gestureListener);
 
         isValueTouchEnabled = false;
     }
@@ -87,7 +87,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         @Override
         public boolean onDown(MotionEvent e) {
             if (isScrollEnabled) {
-                disallowParentInterceptTouchEvent();
+                //disallowParentInterceptTouchEvent();
                 return chartScroller.startScroll(chartViewrectHandler, scrollMode);
             }
 
@@ -103,7 +103,7 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (isScrollEnabled) {
                 boolean canScroll = chartScroller.scroll(chartViewrectHandler, -distanceX, scrollResult);
-                allowParentInterceptTouchEvent(scrollResult);
+                //allowParentInterceptTouchEvent(scrollResult);
 
                 if (++numberOfEvents % 40 == 0) {
                     if (onUpTouchListener != null) {
