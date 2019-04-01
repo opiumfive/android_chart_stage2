@@ -105,7 +105,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
     public void postDrawIfNeeded() {
         if (axesRenderer.isCurrentlyAnimatingLabels()) {
-            invalidate();
+            postInvalidate();
         }
     }
 

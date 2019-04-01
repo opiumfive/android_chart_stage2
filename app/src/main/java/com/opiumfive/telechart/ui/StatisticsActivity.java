@@ -183,6 +183,11 @@ public class StatisticsActivity extends ChangeThemeActivity {
             previewChart.setCurrentViewrectAnimated(target);
 
         });
+
+        int active = 0;
+        for (Line l : data.getLines()) if (l.isActive()) active++;
+        showLineAdapter.setUncheckingEnabled(active > 1);
+
         checkboxList.setAdapter(showLineAdapter);
     }
 
