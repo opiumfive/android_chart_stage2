@@ -152,15 +152,11 @@ public class LineChartRenderer {
     public void drawSelectedValues(Canvas canvas) {
         if (isTouched() && !selectedValues.getPoints().isEmpty()) {
             Rect content = chartViewrectHandler.getContentRectMinusAllMargins();
-            float lineX = chartViewrectHandler.computeRawX(selectedValues.getPoints().get(0).getX());
+            float lineX = selectedValues.getTouchX();
             canvas.drawLine(lineX, content.top, lineX, content.bottom, touchLinePaint);
 
             for (PointValue pointValue : selectedValues.getPoints()) {
-
-                final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
-                final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
-
-                highlightPoint(canvas, pointValue, rawX, rawY);
+                highlightPoint(canvas, pointValue, lineX, pointValue.getApproxY());
             }
 
             drawLabel(canvas);
@@ -176,19 +172,33 @@ public class LineChartRenderer {
 
             float minDistance = 100f;
             PointValue minPointDistanceValue = null;
-            float minPointX = 0f;
+            PointValue nearPointValue = null;
 
-            for (PointValue pointValue : line.getValues()) {
+            for (int i = 0; i < line.getValues().size(); i++) {
+                PointValue pointValue = line.getValues().get(i);
+
                 float rawPointX = chartViewrectHandler.computeRawX(pointValue.getX());
 
                 if (rawPointX < chartViewrectHandler.getContentRectMinusAllMargins().left ||
-                    rawPointX > chartViewrectHandler.getContentRectMinusAllMargins().right) continue;
+                        rawPointX > chartViewrectHandler.getContentRectMinusAllMargins().right) continue;
 
                 float dist = Math.abs(touchX - rawPointX);
                 if (dist <= minDistance) {
                     minDistance = dist;
                     minPointDistanceValue = pointValue;
-                    minPointX = rawPointX;
+                    if (touchX <= rawPointX) {
+                        if (i == 0) {
+                            nearPointValue = line.getValues().get(i + 1);
+                        } else {
+                            nearPointValue = line.getValues().get(i - 1);
+                        }
+                    } else {
+                        if (i >= line.getValues().size() - 1) {
+                            nearPointValue = line.getValues().get(i - 1);
+                        } else {
+                            nearPointValue = line.getValues().get(i + 1);
+                        }
+                    }
                 }
             }
 
@@ -196,6 +206,15 @@ public class LineChartRenderer {
                 minPointDistanceValue.setPointRadius(line.getPointRadius());
                 minPointDistanceValue.setColor(line.getColor());
                 minPointDistanceValue.setLine(line.getTitle());
+
+                float rawPointX = chartViewrectHandler.computeRawX(minPointDistanceValue.getX());
+                float rawPointY = chartViewrectHandler.computeRawY(minPointDistanceValue.getY());
+                float rawNearPointX = chartViewrectHandler.computeRawX(nearPointValue.getX());
+                float rawNearPointY = chartViewrectHandler.computeRawY(nearPointValue.getY());
+                
+                float k = (rawPointY - rawNearPointY) / (rawPointX - rawNearPointX);
+                minPointDistanceValue.setApproxY(k * touchX + rawPointY - k * rawPointX);
+
                 selectedValues.add(minPointDistanceValue);
                 selectedValues.setTouchX(touchX);
             }
