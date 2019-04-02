@@ -24,7 +24,8 @@ public class AxesRenderer {
     private static final int DEFAULT_AXIS_MARGIN_DP = 0;
     private static final int LEFT = 0;
     private static final int BOTTOM = 1;
-    private static final int LABEL_ANIM_STEPS = 15;
+    private static final int LABEL_ANIM_STEPS = 20;
+    private static final char[] nillLabel = "0".toCharArray();
 
     // for text measure
     private static final char[] labelWidthChars = new char[]{
@@ -206,6 +207,10 @@ public class AxesRenderer {
         }
     }
 
+    public static float calcYAnimOffsetFactor(int step, int lineNum, float factor) {
+        return lineNum * factor * step * (step + 1);
+    }
+
     private void prepareAxisToDraw(Axis axis, int position) {
         final Viewrect visibleViewrect = chartViewrectHandler.getVisibleViewport();
         final Rect contentRect = chartViewrectHandler.getContentRectMinusAllMargins();
@@ -253,7 +258,7 @@ public class AxesRenderer {
                             float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
 
-                            animStep = currentDiff / 5f / LABEL_ANIM_STEPS;
+                            animStep = currentDiff / 150f / LABEL_ANIM_STEPS;
 
                             if (targetDiff < currentDiff) {
                                 animDirection = 1f;
@@ -262,7 +267,7 @@ public class AxesRenderer {
                             }
 
                             for (int i = 0; i < autoValuesYBuff.values.length; i++) {
-                                autoValuesYBuff.values[i] += LABEL_ANIM_STEPS * animStep * animDirection;
+                                autoValuesYBuff.values[i] -= calcYAnimOffsetFactor(LABEL_ANIM_STEPS, i, animStep) * animDirection;
                             }
                             autoValuesYBuff.alpha = 0f;
                             autoValuesBufferTab[position].alpha = 1f;
@@ -280,20 +285,21 @@ public class AxesRenderer {
                             autoValuesBufferTab[position].step++;
                             autoValuesYBuff.step++;
 
-                            autoValuesBufferTab[position].alpha -= 1.0f * autoValuesBufferTab[position].step / LABEL_ANIM_STEPS;
-                            autoValuesYBuff.alpha += 1.0f * autoValuesYBuff.step / LABEL_ANIM_STEPS;
-
-                            Log.d("alphach", "prepareAxisToDraw: " + autoValuesBufferTab[position].alpha + " " + autoValuesYBuff.alpha);
+                            autoValuesBufferTab[position].alpha -= 1.0f / LABEL_ANIM_STEPS;
+                            autoValuesYBuff.alpha += 1.0f / LABEL_ANIM_STEPS;
 
                             if (autoValuesBufferTab[position].alpha < 0f) autoValuesBufferTab[position].alpha = 0f;
                             if (autoValuesYBuff.alpha > 1f) autoValuesYBuff.alpha = 1f;
+
                             for (int i = 0; i < autoValuesBufferTab[position].values.length; i++) {
-                                autoValuesBufferTab[position].values[i] += autoValuesBufferTab[position].step * animStep * animDirection;
+                                autoValuesBufferTab[position].values[i] = currentValuesYBuff.values[i] + calcYAnimOffsetFactor(autoValuesBufferTab[position].step, i, animStep) * animDirection;
                             }
 
                             for (int i = 0; i < autoValuesYBuff.values.length; i++) {
-                                autoValuesYBuff.values[i] += autoValuesYBuff.step * animStep * animDirection;
+                                autoValuesYBuff.values[i] = targetValuesYBuff.values[i] + calcYAnimOffsetFactor(LABEL_ANIM_STEPS - autoValuesYBuff.step, i, animStep) * animDirection;
                             }
+
+                            Log.d("alphachka", "prepareAxisToDraw: " + autoValuesBufferTab[position].values[1]);
                         }
                     }
                 } else {
@@ -423,7 +429,12 @@ public class AxesRenderer {
         }
 
         if (axis.hasLines()) {
-            int valueToDrawIndex = 0;
+
+            linePaintTab[position].setAlpha(255);
+
+            canvas.drawLine(lineX1, contentRectMargins.bottom - Util.dp2px(density, 6), lineX2, contentRectMargins.bottom - Util.dp2px(density, 6), linePaintTab[position]);
+
+            int valueToDrawIndex = 1;
             linePaintTab[position].setAlpha((int)(255 * autoValuesBufferTab[position].alpha));
 
             for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
@@ -441,7 +452,7 @@ public class AxesRenderer {
 
             if (isCurrentlyAnimatingLabels) {
                 linePaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
-                valueToDrawIndex = 0;
+                valueToDrawIndex = 1;
                 for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                     if (isAxisVertical) {
                         lineY1 = lineY2 = rawValuesTabY[valueToDrawIndex];
@@ -465,9 +476,13 @@ public class AxesRenderer {
         if (LEFT == position) {
             labelX = labelBaselineTab[position];
 
+            labelPaintTab[position].setAlpha(255);
+
+            canvas.drawText(nillLabel, 0, nillLabel.length, labelX, chartViewrectHandler.getContentRectMinusAxesMargins().bottom - Util.dp2px(density, 8), labelPaintTab[position]);
+
             labelPaintTab[position].setAlpha((int)(255 * autoValuesBufferTab[position].alpha));
 
-            for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
+            for (int valueToDrawIndex = 1; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                 int charsNumber = 0;
 
                 final float value = currentValuesYBuff.values[valueToDrawIndex];
@@ -485,7 +500,7 @@ public class AxesRenderer {
             if (isCurrentlyAnimatingLabels) {
                 labelPaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
 
-                for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
+                for (int valueToDrawIndex = 1; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                     int charsNumber = 0;
 
                     final float value = targetValuesYBuff.values[valueToDrawIndex];

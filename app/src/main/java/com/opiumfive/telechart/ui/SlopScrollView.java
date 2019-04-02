@@ -38,11 +38,11 @@ public class SlopScrollView extends ScrollView {
                 float dx = x - previousX;
                 float dy = y - previousY;
 
-                if(dx > 25 && !doScrolling) {
+                if (dx > 300 && !doScrolling) {
                     blockScrolling = true;
                 }
 
-                if(dy > 25 && !blockScrolling) {
+                if (dy > 300 && !blockScrolling) {
                     doScrolling = true;
                 }
 
