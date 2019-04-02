@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
@@ -252,7 +253,7 @@ public class AxesRenderer {
                             float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
 
-                            animStep = currentDiff / 20f / LABEL_ANIM_STEPS;
+                            animStep = currentDiff / 5f / LABEL_ANIM_STEPS;
 
                             if (targetDiff < currentDiff) {
                                 animDirection = 1f;
@@ -279,8 +280,11 @@ public class AxesRenderer {
                             autoValuesBufferTab[position].step++;
                             autoValuesYBuff.step++;
 
-                            autoValuesBufferTab[position].alpha -= 3f / LABEL_ANIM_STEPS;
-                            autoValuesYBuff.alpha += 3f / LABEL_ANIM_STEPS;
+                            autoValuesBufferTab[position].alpha -= 1.0f * autoValuesBufferTab[position].step / LABEL_ANIM_STEPS;
+                            autoValuesYBuff.alpha += 1.0f * autoValuesYBuff.step / LABEL_ANIM_STEPS;
+
+                            Log.d("alphach", "prepareAxisToDraw: " + autoValuesBufferTab[position].alpha + " " + autoValuesYBuff.alpha);
+
                             if (autoValuesBufferTab[position].alpha < 0f) autoValuesBufferTab[position].alpha = 0f;
                             if (autoValuesYBuff.alpha > 1f) autoValuesYBuff.alpha = 1f;
                             for (int i = 0; i < autoValuesBufferTab[position].values.length; i++) {

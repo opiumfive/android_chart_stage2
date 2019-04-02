@@ -6,8 +6,11 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
+import android.widget.CompoundButton;
 
 import com.opiumfive.telechart.chart.model.AxisValues;
+
+import java.lang.reflect.Field;
 
 public class Util {
 
@@ -25,6 +28,26 @@ public class Util {
         TypedArray a = context.getTheme().obtainStyledAttributes(new int[] { resId });
         int attributeResourceId = a.getResourceId(0, 0);
         return context.getResources().getDrawable(attributeResourceId);
+    }
+
+    public static Drawable getButtonDrawable(CompoundButton button) {
+        Field sButtonDrawableField = null;
+
+        try {
+            sButtonDrawableField = CompoundButton.class.getDeclaredField("mButtonDrawable");
+            sButtonDrawableField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        if (sButtonDrawableField != null) {
+            try {
+                return (Drawable) sButtonDrawableField.get(button);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public static int dp2px(float density, int dp) {

@@ -3,13 +3,14 @@ package com.opiumfive.telechart.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 import android.widget.ScrollView;
 
 public class SlopScrollView extends ScrollView {
 
-    private int touchSlopX;
-    private float previousX;
+    private float previousX = 0;
+    private float previousY = 0;
+    private boolean blockScrolling = false;
+    private boolean doScrolling = false;
 
     public SlopScrollView(Context context) {
         this(context, null, 0);
@@ -21,28 +22,52 @@ public class SlopScrollView extends ScrollView {
 
     public SlopScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        touchSlopX = ViewConfiguration.get(context).getScaledTouchSlop();
+    }
+
+    @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
+        float x = ev.getX();
+        float y = ev.getY();
+        final int action = ev.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                doScrolling = false;
+                blockScrolling = false;
+                super.onTouchEvent(ev);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float dx = x - previousX;
+                float dy = y - previousY;
+
+                if(dx > 25 && !doScrolling) {
+                    blockScrolling = true;
+                }
+
+                if(dy > 25 && !blockScrolling) {
+                    doScrolling = true;
+                }
+
+                if (!blockScrolling) {
+                    super.onTouchEvent(ev);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if(!blockScrolling) {
+                    super.onTouchEvent(ev);
+                }
+                doScrolling = false;
+                blockScrolling = false;
+                return false;
+            default:
+                break;
+        }
+        previousX = x;
+        previousY = y;
+        return false;
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                MotionEvent me = MotionEvent.obtain(event);
-                previousX = me.getX();
-                me.recycle();
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                final float eventX = event.getX();
-                float xDiff = Math.abs(eventX - previousX);
-
-                if (xDiff > touchSlopX) {
-                    return false;
-                }
-        }
-
-        return super.onInterceptTouchEvent(event);
+    public boolean onTouchEvent(MotionEvent ev) {
+        super.onTouchEvent(ev);
+        return true;
     }
 }

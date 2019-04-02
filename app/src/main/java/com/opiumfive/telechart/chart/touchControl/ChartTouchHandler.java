@@ -16,13 +16,9 @@ public class ChartTouchHandler {
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
     protected LineChartRenderer renderer;
-
     protected boolean isScrollEnabled = true;
     protected boolean isValueTouchEnabled = true;
-
     protected SelectedValues selectedValues = new SelectedValues();
-
-    protected ViewParent viewParent;
     protected OnUpTouchListener onUpTouchListener;
 
     public ChartTouchHandler(Context context, IChart chart) {
@@ -57,18 +53,6 @@ public class ChartTouchHandler {
         }
 
         return needInvalidate;
-    }
-
-    protected void disallowParentInterceptTouchEvent() {
-        if (null != viewParent) {
-            viewParent.requestDisallowInterceptTouchEvent(true);
-        }
-    }
-
-    protected void allowParentInterceptTouchEvent(ScrollResult scrollResult) {
-        if (null != viewParent && !scrollResult.canScrollX) {
-            viewParent.requestDisallowInterceptTouchEvent(false);
-        }
     }
 
     protected boolean computeTouch(MotionEvent event) {

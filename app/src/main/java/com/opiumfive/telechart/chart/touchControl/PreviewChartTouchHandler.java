@@ -87,7 +87,6 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         @Override
         public boolean onDown(MotionEvent e) {
             if (isScrollEnabled) {
-                //disallowParentInterceptTouchEvent();
                 return chartScroller.startScroll(chartViewrectHandler, scrollMode);
             }
 
@@ -103,9 +102,8 @@ public class PreviewChartTouchHandler extends ChartTouchHandler {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (isScrollEnabled) {
                 boolean canScroll = chartScroller.scroll(chartViewrectHandler, -distanceX, scrollResult);
-                //allowParentInterceptTouchEvent(scrollResult);
 
-                if (++numberOfEvents % 50 == 0) {
+                if (++numberOfEvents % 40 == 0) {
                     if (onUpTouchListener != null) {
                         onUpTouchListener.onUp();
                     }

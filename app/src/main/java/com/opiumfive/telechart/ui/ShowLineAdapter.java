@@ -3,17 +3,23 @@ package com.opiumfive.telechart.ui;
 import android.content.Context;
 
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.model.Line;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.opiumfive.telechart.chart.Util.getButtonDrawable;
 
 public class ShowLineAdapter extends ArrayAdapter<Line> {
 
@@ -83,7 +89,8 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
             checkbox.setChecked(line.isActive());
             shouldNotif = true;
             checkbox.setText(line.getTitle());
-            //CompoundButtonCompat.setButtonTintList(checkbox, ColorStateList.valueOf(line.getColor()));
+
+            setCheckboxTint(line.getColor());
 
             checkbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
                 if (shouldNotif) {
@@ -104,6 +111,18 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
                     }
                 }
             }));
+        }
+
+        private void setCheckboxTint(int color) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                checkbox.setButtonTintList(ColorStateList.valueOf(color));
+            } else {
+                Drawable buttonDrawable = getButtonDrawable(checkbox);
+                if (buttonDrawable != null) {
+                    buttonDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                    checkbox.setButtonDrawable(buttonDrawable);
+                }
+            }
         }
     }
 

@@ -80,7 +80,7 @@ public class ChartViewrectHandler {
         currentViewrect.left = left;
         currentViewrect.top = top;
         currentViewrect.right = right;
-        currentViewrect.bottom = bottom;
+        currentViewrect.bottom = 0;
 
         if (viewrectChangeListener != null) {
             viewrectChangeListener.onViewportChanged(currentViewrect, distanceX);
@@ -168,7 +168,7 @@ public class ChartViewrectHandler {
         yMinFilterBuff = (1f - factor) * yMinFilterPrediction;
 
         targetAdjustedViewrect.top = targetYMax;
-        targetAdjustedViewrect.bottom = targetYMin;
+        targetAdjustedViewrect.bottom = 0;
     }
 
     public void setMaxViewport(float left, float top, float right, float bottom) {
