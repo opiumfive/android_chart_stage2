@@ -211,7 +211,7 @@ public class LineChartRenderer {
                 float rawPointY = chartViewrectHandler.computeRawY(minPointDistanceValue.getY());
                 float rawNearPointX = chartViewrectHandler.computeRawX(nearPointValue.getX());
                 float rawNearPointY = chartViewrectHandler.computeRawY(nearPointValue.getY());
-                
+
                 float k = (rawPointY - rawNearPointY) / (rawPointX - rawNearPointX);
                 minPointDistanceValue.setApproxY(k * touchX + rawPointY - k * rawPointX);
 
