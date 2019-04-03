@@ -62,13 +62,13 @@ public class LineChartData {
     }
 
     public Bounds getBoundsForViewrect(Viewrect viewrect) {
-        return new Bounds(binarySearchNearest(viewrect.left), binarySearchNearest(viewrect.right));
+        int right = binarySearchNearest(viewrect.right);
+        if (right < lines.get(0).getValues().size() - 1) right++;
+        return new Bounds(binarySearchNearest(viewrect.left), right);
     }
 
     private int binarySearchNearest(float value) {
-
         List<PointValue> a = lines.get(0).getValues();
-
 
         if(value < a.get(0).getX()) {
             return 0;

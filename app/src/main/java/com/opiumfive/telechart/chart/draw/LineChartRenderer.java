@@ -316,7 +316,7 @@ public class LineChartRenderer {
 
         Log.d("fromto", "fromto: " + bounds.from + " " + bounds.to);
 
-        canvas.drawLines(lines, 0, (bounds.to - bounds.from) * 4, linePaint);
+        canvas.drawLines(lines, 0, valueIndex * 4, linePaint);
     }
 
     private void prepareLinePaint(final Line line) {

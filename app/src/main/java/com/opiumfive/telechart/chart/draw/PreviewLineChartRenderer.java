@@ -65,7 +65,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     }
 
     public void onChartSizeChanged() {
-        cacheBitmap = Bitmap.createBitmap(chartViewrectHandler.getContentRectMinusAllMargins().width(), chartViewrectHandler.getContentRectMinusAllMargins().height(), Bitmap.Config.ARGB_8888);
+        cacheBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight(), Bitmap.Config.ARGB_8888);
         cacheCanvas.setBitmap(cacheBitmap);
     }
 
