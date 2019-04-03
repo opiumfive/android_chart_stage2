@@ -55,8 +55,8 @@ public class ChartWithPreview extends LinearLayout {
             isAnimatingPreview = true;
             showLineAdapter.setEnabled(true);
 
-            chart.postDrawIfNeeded();
-            chart.toggleAxisAnim();
+            //chart.postDrawIfNeeded();
+            //chart.toggleAxisAnim();
         }
     };
 
@@ -115,8 +115,8 @@ public class ChartWithPreview extends LinearLayout {
 
         // for y-animation trigger
         previewChart.setOnUpTouchListener(() -> {
-            chart.toggleAxisAnim();
-            chart.postDrawIfNeeded();
+            //chart.toggleAxisAnim();
+            //chart.postDrawIfNeeded();
         });
 
 
@@ -160,7 +160,8 @@ public class ChartWithPreview extends LinearLayout {
         showLineAdapter.setUncheckingEnabled(active > 1);
 
         ViewGroup.LayoutParams layoutParams = checkboxList.getLayoutParams();
-        layoutParams.height = (int) getContext().getResources().getDimension(R.dimen.checkbox_height) * data.getLines().size();
+        layoutParams.height = (int) (getContext().getResources().getDimension(R.dimen.checkbox_height) * data.getLines().size() +
+                getContext().getResources().getDimension(R.dimen.divider_height) * (data.getLines().size() - 1));
         checkboxList.setLayoutParams(layoutParams);
 
         checkboxList.setAdapter(showLineAdapter);

@@ -45,6 +45,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         animatingLine = line;
         animator.setDuration(FAST_ANIMATION_DURATION);
         animator.start();
+        chart.toggleAxisAnim(targetViewrect);
     }
 
     public void cancelAnimation() {

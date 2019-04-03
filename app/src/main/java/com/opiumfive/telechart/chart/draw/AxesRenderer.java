@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
@@ -24,7 +23,7 @@ public class AxesRenderer {
     private static final int DEFAULT_AXIS_MARGIN_DP = 0;
     private static final int LEFT = 0;
     private static final int BOTTOM = 1;
-    private static final int LABEL_ANIM_STEPS = 20;
+    private static final int LABEL_ANIM_STEPS = 15;
     private static final char[] nillLabel = "0".toCharArray();
 
     // for text measure
@@ -70,10 +69,12 @@ public class AxesRenderer {
     private float animDirection = 1f;
     private float animStep = 1f;
     private boolean toggleAnimation = false;
+    private Viewrect targetViewrect = null;
 
 
-    public void setToggleAnimation() {
+    public void setToggleAnimation(Viewrect targetViewrect) {
         toggleAnimation = true;
+        this.targetViewrect = targetViewrect;
     }
 
     public boolean isCurrentlyAnimatingLabels() {
@@ -238,7 +239,10 @@ public class AxesRenderer {
             if (toggleAnimation) {
 
                 if (needUpdateYBuffer) {
-                    Util.generatedVerticalAxisValues(start, stop, 6, targetValuesYBuff);
+
+                    float targetStart = targetViewrect.bottom;
+                    float targetStop = targetViewrect.top;
+                    Util.generatedVerticalAxisValues(targetStart, targetStop, 6, targetValuesYBuff);
                     autoValuesYBuff = new AxisValues(targetValuesYBuff);
                     autoValuesYBuff.step = 0;
                     needUpdateYBuffer = false;
@@ -298,8 +302,6 @@ public class AxesRenderer {
                             for (int i = 0; i < autoValuesYBuff.values.length; i++) {
                                 autoValuesYBuff.values[i] = targetValuesYBuff.values[i] + calcYAnimOffsetFactor(LABEL_ANIM_STEPS - autoValuesYBuff.step, i, animStep) * animDirection;
                             }
-
-                            Log.d("alphachka", "prepareAxisToDraw: " + autoValuesBufferTab[position].values[1]);
                         }
                     }
                 } else {

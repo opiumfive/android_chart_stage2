@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
+import com.opiumfive.telechart.chart.animator.ChartLabelAnimator;
 import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
@@ -27,6 +28,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewrectAnimator;
+    protected ChartLabelAnimator labelAnimator;
 
     public ChartView(Context context) {
         this(context, null, 0);
@@ -43,6 +45,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
         this.viewrectAnimator = new ChartViewrectAnimator(this);
+        this.labelAnimator = new ChartLabelAnimator(this);
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setChartData(LineChartData.generateDummyData());
@@ -91,15 +94,13 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
             axesRenderer.drawInForeground(canvas);
             chartRenderer.drawSelectedValues(canvas);
-
-            postDrawIfNeeded();
         } else {
             canvas.drawColor(Util.DEFAULT_COLOR);
         }
     }
 
-    public void toggleAxisAnim() {
-        axesRenderer.setToggleAnimation();
+    public void toggleAxisAnim(Viewrect targetViewrect) {
+        axesRenderer.setToggleAnimation(targetViewrect);
     }
 
     public void postDrawIfNeeded() {
@@ -211,6 +212,10 @@ public class ChartView extends View implements IChart, ChartDataProvider {
                 chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect, distanceX);
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
+
+            if (!labelAnimator.isAnimationStarted()) {
+                labelAnimator.startAnimation(targetViewrect);
+            }
         }
         postInvalidateOnAnimation();
     }

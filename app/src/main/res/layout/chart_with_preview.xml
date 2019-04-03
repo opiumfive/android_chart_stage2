@@ -40,7 +40,7 @@
         android:paddingLeft="@dimen/margin"
         android:paddingStart="@dimen/margin"
         android:divider="@drawable/line_divider"
-        android:dividerHeight="1dp"
+        android:dividerHeight="@dimen/divider_height"
         android:layout_height="wrap_content"/>
 
 </LinearLayout>

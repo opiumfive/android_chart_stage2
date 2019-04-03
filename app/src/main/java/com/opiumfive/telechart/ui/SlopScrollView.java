@@ -24,7 +24,8 @@ public class SlopScrollView extends ScrollView {
         super(context, attrs, defStyleAttr);
     }
 
-    @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
         float x = ev.getX();
         float y = ev.getY();
         final int action = ev.getAction();
