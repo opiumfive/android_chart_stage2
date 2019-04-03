@@ -1,11 +1,16 @@
 package com.opiumfive.telechart.chart.draw;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
+import com.opiumfive.telechart.chart.model.Line;
+import com.opiumfive.telechart.chart.model.LineChartData;
+import com.opiumfive.telechart.chart.model.PointValue;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.ChartDataProvider;
 
@@ -17,12 +22,59 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
 
     private int backrgroundColor;
     private int previewColor;
+    private Bitmap cacheBitmap;
 
     private Paint previewPaint = new Paint();
 
     public PreviewLineChartRenderer(Context context, IChart chart, ChartDataProvider dataProvider) {
         super(context, chart, dataProvider);
         previewPaint.setAntiAlias(false);
+    }
+
+    public void draw(Canvas canvas) {
+        final LineChartData data = dataProvider.getChartData();
+
+        int valuesSize = data.getLines().get(0).getValues().size();
+
+        boolean needRedraw = false;
+        for (Line line : data.getLines()) {
+            if (line.getAlpha() > 0f && line.getAlpha() < 1f) needRedraw = true;
+        }
+
+        if (needRedraw) {
+            for (Line line : data.getLines()) {
+                if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f))
+                    drawPath(canvas, line, 0, valuesSize - 1);
+            }
+        } else {
+            if (null != softwareBitmap) {
+                drawCanvas = softwareCanvas;
+                drawCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
+            } else {
+                drawCanvas = canvas;
+            }
+
+            for (Line line : data.getLines()) {
+                if (line.hasLines()) {
+                    drawPath(drawCanvas, line);
+                }
+            }
+
+            if (null != softwareBitmap) {
+                canvas.drawBitmap(softwareBitmap, 0, 0, null);
+            }
+        }
+    }
+
+    public void onChartSizeChanged() {
+        final int internalMargin = calculateContentRectInternalMargin();
+        chartViewrectHandler.insetContentRectByInternalMargins(internalMargin, internalMargin,
+                internalMargin, internalMargin);
+        if (chartViewrectHandler.getChartWidth() > 0 && chartViewrectHandler.getChartHeight() > 0) {
+            softwareBitmap = Bitmap.createBitmap(computator.getChartWidth(), computator.getChartHeight(),
+                    Bitmap.Config.ARGB_8888);
+            softwareCanvas.setBitmap(softwareBitmap);
+        }
     }
 
     @Override

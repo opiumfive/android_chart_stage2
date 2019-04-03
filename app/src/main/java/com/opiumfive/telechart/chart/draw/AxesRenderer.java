@@ -261,9 +261,9 @@ public class AxesRenderer {
                             animStep = currentDiff / 150f / LABEL_ANIM_STEPS;
 
                             if (targetDiff < currentDiff) {
-                                animDirection = 1f;
-                            } else {
                                 animDirection = -1f;
+                            } else {
+                                animDirection = 1f;
                             }
 
                             for (int i = 0; i < autoValuesYBuff.values.length; i++) {

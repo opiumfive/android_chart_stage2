@@ -57,7 +57,7 @@ public class LineChartRenderer {
     private int detailsTitleColor;
     private NinePatchDrawable shadowDrawable;
 
-    private ChartDataProvider dataProvider;
+    protected ChartDataProvider dataProvider;
     private float detailCornerRadius;
 
     private int touchToleranceMargin;
@@ -144,8 +144,25 @@ public class LineChartRenderer {
     public void draw(Canvas canvas) {
         final LineChartData data = dataProvider.getChartData();
 
+        Viewrect viewrect = getCurrentViewrect();
+        int from = 0;
+        int to = 0;
+
+        Line first = data.getLines().get(0);
+
+        //TODO binary search
+        for (int i = 0; i < first.getValues().size(); i++ ) {
+            if (first.getValues().get(i).getX() > viewrect.left && from == 0) {
+                from = i;
+            }
+
+            if (first.getValues().get(i).getX() > viewrect.right && to == 0) {
+                to = i;
+            }
+        }
+
         for (Line line : data.getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line);
+            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, from, to);
         }
     }
 
@@ -229,7 +246,7 @@ public class LineChartRenderer {
     }
 
     public void calculateMaxViewrect() {
-        tempMaximumViewrect.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, Float.MAX_VALUE);
+        tempMaximumViewrect.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, 0);
         LineChartData data = dataProvider.getChartData();
 
         for (Line line : data.getLines()) {
@@ -241,9 +258,6 @@ public class LineChartRenderer {
                 if (pointValue.getX() > tempMaximumViewrect.right) {
                     tempMaximumViewrect.right = pointValue.getX();
                 }
-                if (pointValue.getY() < tempMaximumViewrect.bottom) {
-                    tempMaximumViewrect.bottom = pointValue.getY();
-                }
                 if (pointValue.getY() > tempMaximumViewrect.top) {
                     tempMaximumViewrect.top = pointValue.getY();
                 }
@@ -252,16 +266,13 @@ public class LineChartRenderer {
     }
 
     public Viewrect calculateAdjustedViewrect(Viewrect target) {
-        Viewrect adjustedViewrect = new Viewrect(target.left, Float.MIN_VALUE, target.right, Float.MAX_VALUE);
+        Viewrect adjustedViewrect = new Viewrect(target.left, Float.MIN_VALUE, target.right, 0);
         LineChartData data = dataProvider.getChartData();
 
         for (Line line : data.getLines()) {
             if (!line.isActive()) continue;
             for (PointValue pointValue : line.getValues()) {
                 if (pointValue.getX() >= target.left && pointValue.getX() <= target.right) {
-                    if (pointValue.getY() < adjustedViewrect.bottom) {
-                        adjustedViewrect.bottom = pointValue.getY();
-                    }
                     if (pointValue.getY() > adjustedViewrect.top) {
                         adjustedViewrect.top = pointValue.getY();
                     }
@@ -271,13 +282,13 @@ public class LineChartRenderer {
 
         //additional offset 7.5%
         float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
-        adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
+        //adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
         adjustedViewrect.top = adjustedViewrect.top + diff;
 
         return adjustedViewrect;
     }
 
-    private int calculateContentRectInternalMargin() {
+    protected int calculateContentRectInternalMargin() {
         int contentAreaMargin = 0;
         final LineChartData data = dataProvider.getChartData();
         for (Line line : data.getLines()) {
@@ -290,12 +301,14 @@ public class LineChartRenderer {
         return Util.dp2px(density, contentAreaMargin);
     }
 
-    private void drawPath(Canvas canvas, final Line line) {
+    protected void drawPath(Canvas canvas, final Line line, int from, int to) {
         prepareLinePaint(line);
         float[] lines = linesMap.get(line.getId());
 
         int valueIndex = 0;
-        for (PointValue pointValue : line.getValues()) {
+
+        for (int i = from; i <= to; i++) {
+            PointValue pointValue = line.getValues().get(i);
 
             final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
             final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
@@ -314,10 +327,12 @@ public class LineChartRenderer {
             valueIndex++;
         }
 
-        canvas.drawLines(lines, linePaint);
+        Log.d("fromto", "fromto: " + from + " " + to);
+
+        canvas.drawLines(lines, 0, (to - from) * 4, linePaint);
     }
 
-    private void prepareLinePaint(final Line line) {
+    private void prepareLinePaint(final Line line) {on
         linePaint.setStrokeWidth(Util.dp2px(density, line.getStrokeWidth()));
         linePaint.setColor(line.getColor());
         int alpha = (int)(255 * line.getAlpha());
