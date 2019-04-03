@@ -145,24 +145,11 @@ public class LineChartRenderer {
         final LineChartData data = dataProvider.getChartData();
 
         Viewrect viewrect = getCurrentViewrect();
-        int from = 0;
-        int to = 0;
 
-        Line first = data.getLines().get(0);
-
-        //TODO binary search
-        for (int i = 0; i < first.getValues().size(); i++ ) {
-            if (first.getValues().get(i).getX() > viewrect.left && from == 0) {
-                from = i;
-            }
-
-            if (first.getValues().get(i).getX() > viewrect.right && to == 0) {
-                to = i;
-            }
-        }
+        LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
 
         for (Line line : data.getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, from, to);
+            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, bounds);
         }
     }
 
@@ -301,13 +288,13 @@ public class LineChartRenderer {
         return Util.dp2px(density, contentAreaMargin);
     }
 
-    protected void drawPath(Canvas canvas, final Line line, int from, int to) {
+    protected void drawPath(Canvas canvas, final Line line, LineChartData.Bounds bounds) {
         prepareLinePaint(line);
         float[] lines = linesMap.get(line.getId());
 
         int valueIndex = 0;
 
-        for (int i = from; i <= to; i++) {
+        for (int i = bounds.from; i <= bounds.to; i++) {
             PointValue pointValue = line.getValues().get(i);
 
             final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
@@ -327,12 +314,12 @@ public class LineChartRenderer {
             valueIndex++;
         }
 
-        Log.d("fromto", "fromto: " + from + " " + to);
+        Log.d("fromto", "fromto: " + bounds.from + " " + bounds.to);
 
-        canvas.drawLines(lines, 0, (to - from) * 4, linePaint);
+        canvas.drawLines(lines, 0, (bounds.to - bounds.from) * 4, linePaint);
     }
 
-    private void prepareLinePaint(final Line line) {on
+    private void prepareLinePaint(final Line line) {
         linePaint.setStrokeWidth(Util.dp2px(density, line.getStrokeWidth()));
         linePaint.setColor(line.getColor());
         int alpha = (int)(255 * line.getAlpha());
@@ -459,5 +446,4 @@ public class LineChartRenderer {
     public SelectedValues getSelectedValues() {
         return selectedValues;
     }
-
 }

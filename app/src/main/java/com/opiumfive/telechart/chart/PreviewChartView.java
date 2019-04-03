@@ -64,4 +64,9 @@ public class PreviewChartView extends ChartView {
         }
         postInvalidateOnAnimation();
     }
+
+    protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
+        super.onSizeChanged(width, height, oldWidth, oldHeight);
+        previewChartRenderer.onChartSizeChanged();
+    }
 }
