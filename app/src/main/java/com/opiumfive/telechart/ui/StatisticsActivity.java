@@ -15,11 +15,15 @@ import java.util.List;
 
 public class StatisticsActivity extends ChangeThemeActivity {
 
-    public static final String STATE_EXTRA_KEY = "state";
+    public static final String CHARTS_STATE_EXTRA_KEY = "state";
+    public static final String SCROLL_STATE_EXTRA_KEY = "scroll_state";
 
     private List<ChartData> chartDataList;
     private LinearLayout container;
     private ChartWithPreview[] chartViews;
+    private SlopScrollView slopScrollView;
+
+    private  int[] scrollPosition = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         setContentView(R.layout.activity_statistics);
 
         container = findViewById(R.id.container);
+        slopScrollView = findViewById(R.id.scrollContainer);
 
         chartDataList = ChartDataParser.loadAndParseInput(this);
 
@@ -34,9 +39,11 @@ public class StatisticsActivity extends ChangeThemeActivity {
 
         // try to restore state
         if (savedInstanceState == null) {
-            states = getIntent().getParcelableArrayListExtra(STATE_EXTRA_KEY);
+            states = getIntent().getParcelableArrayListExtra(CHARTS_STATE_EXTRA_KEY);
+            scrollPosition = getIntent().getIntArrayExtra(SCROLL_STATE_EXTRA_KEY);
         } else {
-            states = savedInstanceState.getParcelableArrayList(STATE_EXTRA_KEY);
+            states = savedInstanceState.getParcelableArrayList(CHARTS_STATE_EXTRA_KEY);
+            scrollPosition = savedInstanceState.getIntArray(SCROLL_STATE_EXTRA_KEY);
         }
 
         chartViews = new ChartWithPreview[chartDataList.size()];
@@ -54,6 +61,10 @@ public class StatisticsActivity extends ChangeThemeActivity {
             chartWithPreview.setLayoutParams(layoutParams);
             chartViews[i] = chartWithPreview;
             container.addView(chartWithPreview);
+        }
+
+        if (scrollPosition != null && scrollPosition.length > 1) {
+            slopScrollView.post(() -> slopScrollView.scrollTo(scrollPosition[0], scrollPosition[1]));
         }
     }
 
@@ -75,6 +86,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
         for (int i = 0; i < chartViews.length; i++) {
             states.add(chartViews[i].getState());
         }
-        bundle.putParcelableArrayList(STATE_EXTRA_KEY, states);
+        bundle.putParcelableArrayList(CHARTS_STATE_EXTRA_KEY, states);
+        bundle.putIntArray(SCROLL_STATE_EXTRA_KEY, new int[] { slopScrollView.getScrollX(), slopScrollView.getScrollY()});
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
@@ -256,6 +257,7 @@ public class AxesRenderer {
                     } else {
 
                         if (autoValuesBufferTab[position].step == 0) {
+                            Log.d("labelanim", "isCurrentlyAnimatingLabels = true");
                             autoValuesYBuff = new AxisValues(targetValuesYBuff);
                             autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
 

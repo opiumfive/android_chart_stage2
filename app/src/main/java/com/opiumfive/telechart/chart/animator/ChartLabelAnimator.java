@@ -2,6 +2,8 @@ package com.opiumfive.telechart.chart.animator;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.util.Log;
+
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Viewrect;
 

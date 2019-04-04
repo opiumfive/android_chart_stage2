@@ -3,6 +3,7 @@ package com.opiumfive.telechart.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -105,8 +106,9 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
     public void postDrawIfNeeded() {
         if (axesRenderer.isCurrentlyAnimatingLabels()) {
-            postInvalidate();
         }
+
+
     }
 
     @Override
