@@ -23,6 +23,7 @@ import com.opiumfive.telechart.chart.ChartDataProvider;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ public class LineChartRenderer {
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
     private static final int DEFAULT_LABEL_MARGIN_DP = 2;
+    private static final float DEFAULT_MAX_ANGLE_VARIATION = 20f;
 
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
@@ -65,6 +67,7 @@ public class LineChartRenderer {
     private Paint pointPaint = new Paint();
     private Paint innerPointPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
+    protected LinePathOptimizer linePathOptimizer;
 
     protected Viewrect tempMaximumViewrect = new Viewrect();
 
@@ -73,6 +76,8 @@ public class LineChartRenderer {
         this.scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         this.chart = chart;
         this.chartViewrectHandler = chart.getChartViewrectHandler();
+
+        linePathOptimizer = new LinePathOptimizer(this.chartViewrectHandler);
 
         labelMargin = Util.dp2px(density, DEFAULT_LABEL_MARGIN_DP);
         labelOffset = labelMargin;
@@ -445,5 +450,9 @@ public class LineChartRenderer {
 
     public SelectedValues getSelectedValues() {
         return selectedValues;
+    }
+
+    public List<PointValue> optimizeLine(List<PointValue> values, float maxAngleVariation) {
+        return linePathOptimizer.optimizeLine(values, maxAngleVariation);
     }
 }

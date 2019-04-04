@@ -3,13 +3,13 @@ package com.opiumfive.telechart.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animator.ChartLabelAnimator;
 import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
+import com.opiumfive.telechart.chart.draw.CalculationThread;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
@@ -30,6 +30,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewrectAnimator;
     protected ChartLabelAnimator labelAnimator;
+    protected CalculationThread calculationThread;
 
     public ChartView(Context context) {
         this(context, null, 0);
@@ -50,6 +51,30 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setChartData(LineChartData.generateDummyData());
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        calculationThread = new CalculationThread();
+        calculationThread.setRunning(true);
+        calculationThread.start();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        boolean retry = true;
+        calculationThread.setRunning(false);
+        while (retry) {
+            try {
+                calculationThread.join();
+                retry = false;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void setOnUpTouchListener(ChartTouchHandler.OnUpTouchListener listener) {
