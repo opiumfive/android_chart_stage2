@@ -1,5 +1,7 @@
 package com.opiumfive.telechart.chart.model;
 
+import android.util.Log;
+
 import java.util.Arrays;
 
 public class AxisValues {
@@ -24,7 +26,10 @@ public class AxisValues {
         if (obj == null) return false;
         if (this == obj) return true;
         AxisValues other = (AxisValues) obj;
-        float percent = Math.abs(values[values.length - 1] - values[0]) * 0.05f;
+        float percent = Math.abs(values[values.length - 1] - values[0]) * 0.005f;
+        if (valuesNumber == other.valuesNumber) {
+            Log.d("labelanim", "equals: " + values[values.length - 1] + "  " + other.values[other.values.length - 1]);
+        }
         return valuesNumber == other.valuesNumber && Math.abs(values[values.length - 1] - other.values[other.values.length - 1]) <= percent;
     }
 }

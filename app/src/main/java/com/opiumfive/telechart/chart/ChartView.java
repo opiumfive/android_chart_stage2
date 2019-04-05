@@ -3,6 +3,7 @@ package com.opiumfive.telechart.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -133,9 +134,8 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
     public void postDrawIfNeeded() {
         if (axesRenderer.isCurrentlyAnimatingLabels()) {
+            postInvalidateOnAnimation();
         }
-
-
     }
 
     @Override
@@ -242,8 +242,14 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
 
-            if (!labelAnimator.isAnimationStarted()) {
-                labelAnimator.startAnimation(targetViewrect);
+            if (axesRenderer.getCurrentLabelViewrect() != null) {
+                float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.05f;
+
+                if (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
+                        (Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetAdjustedViewrect.top) >= diff)) {
+                    labelAnimator.startAnimation(targetAdjustedViewrect);
+                    Log.d("labelanim", "startAnimation");
+                }
             }
         }
         postInvalidateOnAnimation();

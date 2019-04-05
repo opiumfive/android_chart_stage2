@@ -11,7 +11,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateListener {
 
-    private final static int FAST_ANIMATION_DURATION = 300;
+    private final static int FAST_ANIMATION_DURATION = 350;
 
     private final IChart chart;
     private ValueAnimator animator;
