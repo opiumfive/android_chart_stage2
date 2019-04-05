@@ -10,6 +10,7 @@ import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animator.ChartLabelAnimator;
 import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
 import com.opiumfive.telechart.chart.draw.CalculationThread;
+
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
@@ -31,6 +32,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     protected ChartViewrectAnimator viewrectAnimator;
     protected ChartLabelAnimator labelAnimator;
     protected CalculationThread calculationThread;
+
 
     public ChartView(Context context) {
         this(context, null, 0);

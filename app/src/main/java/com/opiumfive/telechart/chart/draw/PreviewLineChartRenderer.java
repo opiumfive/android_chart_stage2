@@ -37,8 +37,6 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     public void draw(Canvas canvas) {
         final LineChartData data = dataProvider.getChartData();
 
-        int valuesSize = data.getLines().get(0).getValues().size();
-
         boolean needRedraw = false;
         for (Line line : data.getLines()) {
             if (line.getAlpha() > 0f && line.getAlpha() < 1f) needRedraw = true;
@@ -47,7 +45,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
         if (needRedraw) {
             needRecache = true;
             for (Line line : data.getLines()) {
-                if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, new LineChartData.Bounds(0, valuesSize - 1));
+                if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, new LineChartData.Bounds(0, line.getValues().size() - 1));
             }
         } else {
             if (needRecache) {
@@ -56,7 +54,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
                 cacheCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
                 for (Line line : data.getLines()) {
-                    if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(cacheCanvas, line, new LineChartData.Bounds(0, valuesSize - 1));
+                    if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(cacheCanvas, line, new LineChartData.Bounds(0, line.getValues().size() - 1));
                 }
             }
 

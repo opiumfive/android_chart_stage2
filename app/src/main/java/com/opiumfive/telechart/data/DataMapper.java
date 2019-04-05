@@ -2,6 +2,8 @@ package com.opiumfive.telechart.data;
 
 import android.graphics.Color;
 
+import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
+import com.opiumfive.telechart.chart.draw.LinePathOptimizer;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.PointValue;
@@ -35,6 +37,14 @@ public class DataMapper {
             lines.add(line);
         }
 
-        return new LineChartData(lines);
+        return optimizeData(new LineChartData(lines));
+    }
+
+    private static LineChartData optimizeData(LineChartData data) {
+        LinePathOptimizer linePathOptimizer = new LinePathOptimizer();
+        for (Line line : data.getLines()) {
+            line.setValues(linePathOptimizer.optimizeLine(line.getValues(), 1f));
+        }
+        return data;
     }
 }

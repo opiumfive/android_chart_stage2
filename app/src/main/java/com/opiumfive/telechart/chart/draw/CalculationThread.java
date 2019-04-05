@@ -25,7 +25,9 @@ public class CalculationThread extends Thread {
 
             try {
                 // calculate predraw
-                Thread.sleep(sleepTimeMs);
+                if (sleepTimeMs > 0) {
+                    Thread.sleep(sleepTimeMs);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
