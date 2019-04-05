@@ -66,6 +66,8 @@ public class LineChartRenderer {
     private Paint pointPaint = new Paint();
     private Paint innerPointPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
+    float[] allLines;
+    int allSize = 0;
     private Map<String, Integer> linesSizeMap = new HashMap<>();
 
 
@@ -124,10 +126,15 @@ public class LineChartRenderer {
         linesMap.clear();
         linesSizeMap.clear();
 
+        int size = 0;
+
         for (Line line: data.getLines()) {
             linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
+            size += line.getValues().size() * 4;
             linesSizeMap.put(line.getId(), line.getValues().size() * 4);
         }
+
+        allLines = new float[size];
 
         labelPaint.setColor(data.getValueLabelTextColor());
         labelPaint.setTextSize(Util.sp2px(scaledDensity, data.getValueLabelTextSize()));
@@ -147,7 +154,7 @@ public class LineChartRenderer {
     }
 
     public void prepareDrawingData() {
-        final LineChartData data = dataProvider.getChartData();
+        /*final LineChartData data = dataProvider.getChartData();
 
         Viewrect viewrect = getCurrentViewrect();
 
@@ -178,7 +185,40 @@ public class LineChartRenderer {
                 }
                 linesSizeMap.put(line.getId(), valueIndex);
             }
+        }*/
+
+        final LineChartData data = dataProvider.getChartData();
+
+        Viewrect viewrect = getCurrentViewrect();
+
+        LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
+
+        int valueIndex = 0;
+        for (Line line : data.getLines()) {
+            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) {
+
+                for (int i = bounds.from; i <= bounds.to; i++) {
+                    PointValue pointValue = line.getValues().get(i);
+
+                    final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+                    final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
+
+                    if (valueIndex == 0) {
+                        allLines[valueIndex * 4] = rawX;
+                        allLines[valueIndex * 4 + 1] = rawY;
+                    } else {
+                        allLines[valueIndex * 4] =  allLines[valueIndex * 4 - 2];
+                        allLines[valueIndex * 4 + 1] =  allLines[valueIndex * 4 - 1];
+                    }
+
+                    allLines[valueIndex * 4 + 2] = rawX;
+                    allLines[valueIndex * 4 + 3] = rawY;
+
+                    valueIndex++;
+                }
+            }
         }
+        allSize = valueIndex;
     }
 
     public void draw(Canvas canvas) {
@@ -189,7 +229,7 @@ public class LineChartRenderer {
         }*/
 
 
-        final LineChartData data = dataProvider.getChartData();
+        /*final LineChartData data = dataProvider.getChartData();
 
         Viewrect viewrect = getCurrentViewrect();
 
@@ -197,7 +237,9 @@ public class LineChartRenderer {
 
         for (Line line : data.getLines()) {
             if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, bounds);
-        }
+        }*/
+
+        canvas.drawLines(allLines, 0, allSize * 4, linePaint);
     }
 
     public void drawSelectedValues(Canvas canvas) {
