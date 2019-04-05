@@ -66,6 +66,7 @@ public class LineChartRenderer {
     private Paint pointPaint = new Paint();
     private Paint innerPointPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
+    private Map<String, Integer> linesSizeMap = new HashMap<>();
 
 
     protected Viewrect tempMaximumViewrect = new Viewrect();
@@ -121,9 +122,11 @@ public class LineChartRenderer {
         }
 
         linesMap.clear();
+        linesSizeMap.clear();
 
         for (Line line: data.getLines()) {
             linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
+            linesSizeMap.put(line.getId(), line.getValues().size() * 4);
         }
 
         labelPaint.setColor(data.getValueLabelTextColor());
@@ -143,7 +146,49 @@ public class LineChartRenderer {
         }
     }
 
+    public void prepareDrawingData() {
+        final LineChartData data = dataProvider.getChartData();
+
+        Viewrect viewrect = getCurrentViewrect();
+
+        LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
+
+        for (Line line : data.getLines()) {
+            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) {
+                int valueIndex = 0;
+                float[] lines = linesMap.get(line.getId());
+                for (int i = bounds.from; i <= bounds.to; i++) {
+                    PointValue pointValue = line.getValues().get(i);
+
+                    final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+                    final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
+
+                    if (valueIndex == 0) {
+                        lines[valueIndex * 4] = rawX;
+                        lines[valueIndex * 4 + 1] = rawY;
+                    } else {
+                        lines[valueIndex * 4] =  lines[valueIndex * 4 - 2];
+                        lines[valueIndex * 4 + 1] =  lines[valueIndex * 4 - 1];
+                    }
+
+                    lines[valueIndex * 4 + 2] = rawX;
+                    lines[valueIndex * 4 + 3] = rawY;
+
+                    valueIndex++;
+                }
+                linesSizeMap.put(line.getId(), valueIndex);
+            }
+        }
+    }
+
     public void draw(Canvas canvas) {
+        /*final LineChartData data = dataProvider.getChartData();
+
+        for (Line line : data.getLines()) {
+            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath2(canvas, line);
+        }*/
+
+
         final LineChartData data = dataProvider.getChartData();
 
         Viewrect viewrect = getCurrentViewrect();
@@ -317,6 +362,12 @@ public class LineChartRenderer {
         }
 
         canvas.drawLines(lines, 0, valueIndex * 4, linePaint);
+    }
+
+    protected void drawPath2(Canvas canvas, final Line line) {
+        prepareLinePaint(line);
+        float[] lines = linesMap.get(line.getId());
+        canvas.drawLines(lines, 0, linesSizeMap.get(line.getId()) * 4, linePaint);
     }
 
     private void prepareLinePaint(final Line line) {

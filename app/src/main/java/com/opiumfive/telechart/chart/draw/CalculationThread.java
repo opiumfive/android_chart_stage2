@@ -1,13 +1,17 @@
 package com.opiumfive.telechart.chart.draw;
 
+import android.util.Log;
+
 public class CalculationThread extends Thread {
 
     private boolean isRunning = false;
     private long previousTime;
-    private final int fps = 70;
+    private LineChartRenderer lineChartRenderer;
+    private final int fps = 80;
 
-    public CalculationThread() {
+    public CalculationThread(LineChartRenderer lineChartRenderer) {
         setPriority(MIN_PRIORITY);
+        this.lineChartRenderer = lineChartRenderer;
         previousTime = System.currentTimeMillis();
     }
 
@@ -23,11 +27,14 @@ public class CalculationThread extends Thread {
             long elapsedTimeMs = currentTimeMillis - previousTime;
             long sleepTimeMs = (long) (1000f / fps - elapsedTimeMs);
 
+            Log.d("theres", this.getId() + "run: " + currentTimeMillis);
+
             try {
-                // calculate predraw
-                if (sleepTimeMs > 0) {
-                    Thread.sleep(sleepTimeMs);
-                }
+                lineChartRenderer.prepareDrawingData();
+                Thread.sleep(1);
+                //if (sleepTimeMs > 0) {
+                //    Thread.sleep(sleepTimeMs);
+                //}
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
