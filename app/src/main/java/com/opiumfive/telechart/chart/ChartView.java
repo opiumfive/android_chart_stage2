@@ -59,9 +59,9 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        calculationThread = new CalculationThread(chartRenderer);
-        calculationThread.setRunning(true);
-        calculationThread.start();
+        calculationThread = new CalculationThread(chartRenderer, axesRenderer);
+        //calculationThread.setRunning(true);
+        //calculationThread.start();
     }
 
     @Override

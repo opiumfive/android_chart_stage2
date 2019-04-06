@@ -281,7 +281,7 @@ public class LineChartRenderer {
 
         Shader shader = new LinearGradient(0, 0, 0, 200, rainbow, null, Shader.TileMode.REPEAT);
         Matrix matrix = new Matrix();
-        matrix.setRotate(90);
+        //matrix.setRotate(90);
         shader.setLocalMatrix(matrix);
         linePaint.setShader(shader);
 
@@ -388,7 +388,7 @@ public class LineChartRenderer {
     }
 
     public Viewrect calculateAdjustedViewrect(Viewrect target) {
-        Viewrect adjustedViewrect = new Viewrect(target.left, Float.MIN_VALUE, target.right, 0);
+        Viewrect adjustedViewrect = new Viewrect(target.left, Float.MIN_VALUE, target.right, Float.MAX_VALUE);
         LineChartData data = dataProvider.getChartData();
 
         for (Line line : data.getLines()) {
@@ -398,13 +398,16 @@ public class LineChartRenderer {
                     if (pointValue.getY() > adjustedViewrect.top) {
                         adjustedViewrect.top = pointValue.getY();
                     }
+                    if (pointValue.getY() < adjustedViewrect.bottom) {
+                        adjustedViewrect.bottom = pointValue.getY();
+                    }
                 }
             }
         }
 
         //additional offset 7.5%
         float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
-        //adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
+        adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
         adjustedViewrect.top = adjustedViewrect.top + diff;
 
         return adjustedViewrect;

@@ -37,6 +37,8 @@
         android:id="@+id/checkboxList"
         android:layout_width="match_parent"
         android:overScrollMode="never"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         android:paddingLeft="@dimen/margin"
         android:paddingStart="@dimen/margin"
         android:divider="@drawable/line_divider"

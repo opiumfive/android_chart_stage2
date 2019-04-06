@@ -70,6 +70,7 @@ public class AxesRenderer {
     private float animDirection = 1f;
     private float animStep = 1f;
     private boolean toggleAnimation = false;
+    int framesAnim = 0;
     private Viewrect targetViewrect = null;
     private Viewrect currentLabelViewrect = null;
 
@@ -77,6 +78,7 @@ public class AxesRenderer {
     public void setToggleAnimation(Viewrect targetViewrect) {
         toggleAnimation = true;
         this.targetViewrect = targetViewrect;
+        framesAnim = 0;
     }
 
     public boolean isCurrentlyAnimatingLabels() {
@@ -211,7 +213,7 @@ public class AxesRenderer {
     }
 
     public static float calcYAnimOffsetFactor(int step, int lineNum, float factor) {
-        return lineNum * factor * step * (step + 1);
+        return (lineNum + 1) * factor * step * (step + 1);
     }
 
     public Viewrect getCurrentLabelViewrect() {
@@ -243,8 +245,8 @@ public class AxesRenderer {
             Util.generatedAxisValues(start, stop, steps, autoValuesBufferTab[position]);
         } else if (position == LEFT) {
             if (toggleAnimation) {
+                framesAnim++;
                 currentLabelViewrect = new Viewrect(chartViewrectHandler.getCurrentViewrect());
-                Log.d("labelanim", "if (toggleAnimation) {");
                 if (needUpdateYBuffer) {
 
                     float targetStart = targetViewrect.bottom;
@@ -256,7 +258,7 @@ public class AxesRenderer {
                     needUpdateYBuffer = false;
                 }
                 if (!targetValuesYBuff.equals(currentValuesYBuff) || isCurrentlyAnimatingLabels) {
-                    Log.d("labelanim", "!targetValuesYBuff.equals");
+                    Log.d("labelanim", "!targetValuesYBuff.equals " + framesAnim);
                     if (currentValuesYBuff.valuesNumber == 0) {
                         currentValuesYBuff = new AxisValues(autoValuesYBuff);
                         autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
@@ -271,7 +273,7 @@ public class AxesRenderer {
                             float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
 
-                            animStep = currentDiff / 500f / LABEL_ANIM_STEPS;
+                            animStep = currentDiff / 350f / LABEL_ANIM_STEPS;
 
                             if (targetDiff < currentDiff) {
                                 animDirection = -1f;
@@ -294,6 +296,7 @@ public class AxesRenderer {
                             needUpdateYBuffer = true;
                             isCurrentlyAnimatingLabels = false;
                             toggleAnimation = false;
+                            Log.d("labelanim", "FRAMES = " + framesAnim);
                         } else {
                             autoValuesBufferTab[position].step++;
                             autoValuesYBuff.step++;
@@ -443,9 +446,9 @@ public class AxesRenderer {
 
             linePaintTab[position].setAlpha(255);
 
-            canvas.drawLine(lineX1, contentRectMargins.bottom - Util.dp2px(density, 6), lineX2, contentRectMargins.bottom - Util.dp2px(density, 6), linePaintTab[position]);
+            //canvas.drawLine(lineX1, contentRectMargins.bottom - Util.dp2px(density, 6), lineX2, contentRectMargins.bottom - Util.dp2px(density, 6), linePaintTab[position]);
 
-            int valueToDrawIndex = 1;
+            int valueToDrawIndex = 0;
             linePaintTab[position].setAlpha((int)(255 * autoValuesBufferTab[position].alpha));
 
             for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
@@ -463,7 +466,7 @@ public class AxesRenderer {
 
             if (isCurrentlyAnimatingLabels) {
                 linePaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
-                valueToDrawIndex = 1;
+                valueToDrawIndex = 0;
                 for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                     if (isAxisVertical) {
                         lineY1 = lineY2 = rawValuesTabY[valueToDrawIndex];
@@ -487,13 +490,13 @@ public class AxesRenderer {
         if (LEFT == position) {
             labelX = labelBaselineTab[position];
 
-            labelPaintTab[position].setAlpha(255);
+            //labelPaintTab[position].setAlpha(255);
 
-            canvas.drawText(nillLabel, 0, nillLabel.length, labelX, chartViewrectHandler.getContentRectMinusAxesMargins().bottom - Util.dp2px(density, 8), labelPaintTab[position]);
+            //canvas.drawText(nillLabel, 0, nillLabel.length, labelX, chartViewrectHandler.getContentRectMinusAxesMargins().bottom - Util.dp2px(density, 8), labelPaintTab[position]);
 
             labelPaintTab[position].setAlpha((int)(255 * autoValuesBufferTab[position].alpha));
 
-            for (int valueToDrawIndex = 1; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
+            for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                 int charsNumber = 0;
 
                 final float value = currentValuesYBuff.values[valueToDrawIndex];
@@ -511,7 +514,7 @@ public class AxesRenderer {
             if (isCurrentlyAnimatingLabels) {
                 labelPaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
 
-                for (int valueToDrawIndex = 1; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
+                for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                     int charsNumber = 0;
 
                     final float value = targetValuesYBuff.values[valueToDrawIndex];

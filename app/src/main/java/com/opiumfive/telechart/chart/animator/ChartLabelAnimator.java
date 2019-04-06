@@ -8,7 +8,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartLabelAnimator implements Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
 
-    private final static int FAST_ANIMATION_DURATION = 550;
+    private final static int FAST_ANIMATION_DURATION = 350;
 
     private final IChart chart;
     private ValueAnimator animator;
@@ -22,7 +22,7 @@ public class ChartLabelAnimator implements Animator.AnimatorListener, ValueAnima
         animator.setDuration(FAST_ANIMATION_DURATION);
     }
 
-    public void startAnimation( Viewrect targetViewrect) {
+    public void startAnimation(Viewrect targetViewrect) {
         animator.setDuration(FAST_ANIMATION_DURATION);
         animator.start();
         chart.toggleAxisAnim(targetViewrect);

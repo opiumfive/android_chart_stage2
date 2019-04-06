@@ -7,11 +7,13 @@ public class CalculationThread extends Thread {
     private boolean isRunning = false;
     private long previousTime;
     private LineChartRenderer lineChartRenderer;
+    private AxesRenderer axesRenderer;
     private final int fps = 80;
 
-    public CalculationThread(LineChartRenderer lineChartRenderer) {
+    public CalculationThread(LineChartRenderer lineChartRenderer, AxesRenderer axesRenderer) {
         setPriority(MIN_PRIORITY);
         this.lineChartRenderer = lineChartRenderer;
+        this.axesRenderer = axesRenderer;
         previousTime = System.currentTimeMillis();
     }
 
@@ -30,8 +32,9 @@ public class CalculationThread extends Thread {
             Log.d("theres", this.getId() + "run: " + currentTimeMillis);
 
             try {
-                lineChartRenderer.prepareDrawingData();
-                Thread.sleep(1);
+                //lineChartRenderer.prepareDrawingData();
+
+                Thread.sleep(5);
                 //if (sleepTimeMs > 0) {
                 //    Thread.sleep(sleepTimeMs);
                 //}

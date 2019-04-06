@@ -9,9 +9,10 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.model.Line;
@@ -27,11 +28,13 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
     private List<Line> lines = new ArrayList<>();
     private boolean isUncheckingEnabled = true;
     private boolean isEnabled = true;
+    private Animation shakeAnimation;
 
     public ShowLineAdapter(Context c, List<Line> list, LineCheckListener listener) {
         super(c, 0);
         this.listener = listener;
         lines.addAll(list);
+        shakeAnimation = AnimationUtils.loadAnimation(c, R.anim.shake);
     }
 
     @Override
@@ -98,6 +101,8 @@ public class ShowLineAdapter extends ArrayAdapter<Line> {
                         if (!isChecked && !isUncheckingEnabled) {
                             shouldNotif = false;
                             buttonView.setChecked(true);
+                            buttonView.startAnimation(shakeAnimation);
+
                             shouldNotif = true;
                         } else {
                             if (listener != null) {

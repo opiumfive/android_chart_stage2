@@ -27,9 +27,6 @@ public class AxisValues {
         if (this == obj) return true;
         AxisValues other = (AxisValues) obj;
         float percent = Math.abs(values[values.length - 1] - values[0]) * 0.005f;
-        if (valuesNumber == other.valuesNumber) {
-            Log.d("labelanim", "equals: " + values[values.length - 1] + "  " + other.values[other.values.length - 1]);
-        }
         return valuesNumber == other.valuesNumber && Math.abs(values[values.length - 1] - other.values[other.values.length - 1]) <= percent;
     }
 }
