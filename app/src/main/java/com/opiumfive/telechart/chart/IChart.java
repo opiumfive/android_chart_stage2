@@ -14,6 +14,7 @@ public interface IChart {
     void setCurrentViewrect(Viewrect targetViewrect);
     void setMaximumViewrect(Viewrect maximumViewrect);
     Viewrect getMaximumViewrect();
+    CType getType();
     void setScrollEnabled(boolean isScrollEnabled);
     void toggleAxisAnim(Viewrect targetViewrect);
     void postDrawIfNeeded();

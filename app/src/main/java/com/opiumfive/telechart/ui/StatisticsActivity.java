@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.opiumfive.telechart.R;
+import com.opiumfive.telechart.chart.CType;
 import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.ChartDataParser;
 import com.opiumfive.telechart.data.State;
@@ -55,7 +56,29 @@ public class StatisticsActivity extends ChangeThemeActivity {
             }
 
             ChartData chartData = chartDataList.get(i);
-            ChartWithPreview chartWithPreview = new ChartWithPreview(this, chartData, state);
+
+            CType cType = CType.LINE;
+            switch (i) {
+                case 0:
+                    cType = CType.LINE;
+                    break;
+                case 1:
+                    cType = CType.LINE_2Y;
+                    break;
+                case 2:
+                    cType = CType.STACKED_BAR;
+                    break;
+                case 3:
+                    cType = CType.DAILY_BAR;
+                    break;
+                case 4:
+                    cType = CType.AREA;
+                    break;
+            }
+
+            ChartWithPreview chartWithPreview = new ChartWithPreview(this, chartData, state, cType);
+
+
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin));
             chartWithPreview.setLayoutParams(layoutParams);

@@ -42,10 +42,30 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
             if (line.getAlpha() > 0f && line.getAlpha() < 1f) needRedraw = true;
         }
 
+        Line line = data.getLines().get(0);
+
         if (needRedraw) {
             needRecache = true;
-            for (Line line : data.getLines()) {
-                if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, new LineChartData.Bounds(0, line.getValues().size() - 1));
+
+            switch (chart.getType()) {
+                case LINE:
+                case LINE_2Y:
+                    for (Line l : data.getLines()) {
+                        if (l.isActive() || (!l.isActive() && l.getAlpha() > 0f)) drawPath(canvas, l, new LineChartData.Bounds(0, l.getValues().size() - 1));
+                    }
+                    break;
+                case DAILY_BAR:
+                    drawDailyBar(canvas, data.getLines().get(0), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                    break;
+                case STACKED_BAR:
+                    drawStackedBar(canvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                    break;
+                case AREA:
+                    drawArea(canvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                    break;
+                case PIE:
+                    drawPie(canvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                    break;
             }
         } else {
             if (needRecache) {
@@ -53,14 +73,60 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
 
                 cacheCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                for (Line line : data.getLines()) {
-                    if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(cacheCanvas, line, new LineChartData.Bounds(0, line.getValues().size() - 1));
+                switch (chart.getType()) {
+                    case LINE:
+                    case LINE_2Y:
+                        for (Line l : data.getLines()) {
+                            if (l.isActive() || (!l.isActive() && l.getAlpha() > 0f)) drawPath(cacheCanvas, l, new LineChartData.Bounds(0, l.getValues().size() - 1));
+                        }
+                        break;
+                    case DAILY_BAR:
+                        drawDailyBar(cacheCanvas, data.getLines().get(0), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                        break;
+                    case STACKED_BAR:
+                        drawStackedBar(cacheCanvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                        break;
+                    case AREA:
+                        drawArea(cacheCanvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                        break;
+                    case PIE:
+                        drawPie(cacheCanvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                        break;
                 }
             }
 
             canvas.drawBitmap(cacheBitmap, 0, 0, null);
         }
     }
+
+    /*
+    final LineChartData data = dataProvider.getChartData();
+
+        Viewrect viewrect = getCurrentViewrect();
+
+        LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
+
+        switch (chart.getType()) {
+            case LINE:
+            case LINE_2Y:
+                for (Line line : data.getLines()) {
+                    if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, bounds);
+                }
+                break;
+            case DAILY_BAR:
+                drawDailyBar(canvas, data.getLines().get(0), bounds);
+                break;
+            case STACKED_BAR:
+                drawStackedBar(canvas, data.getLines(), bounds);
+                break;
+            case AREA:
+                drawArea(canvas, data.getLines(), bounds);
+                break;
+            case PIE:
+                drawPie(canvas, data.getLines(), bounds);
+                break;
+        }
+     */
 
     public void onChartSizeChanged() {
         cacheBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight(), Bitmap.Config.ARGB_8888);

@@ -10,7 +10,6 @@ import android.view.View;
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animator.ChartLabelAnimator;
 import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
-import com.opiumfive.telechart.chart.draw.CalculationThread;
 
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
@@ -22,9 +21,10 @@ import com.opiumfive.telechart.chart.draw.AxesRenderer;
 import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 
 
-public class ChartView extends View implements IChart, ChartDataProvider {
+public class LineChartView extends View implements IChart, ChartDataProvider {
 
     protected LineChartData data;
+    protected CType cType = CType.LINE;
 
     protected ChartViewrectHandler chartViewrectHandler;
     protected AxesRenderer axesRenderer;
@@ -32,18 +32,17 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewrectAnimator;
     protected ChartLabelAnimator labelAnimator;
-    protected CalculationThread calculationThread;
 
 
-    public ChartView(Context context) {
+    public LineChartView(Context context) {
         this(context, null, 0);
     }
 
-    public ChartView(Context context, AttributeSet attrs) {
+    public LineChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ChartView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LineChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
         chartViewrectHandler = new ChartViewrectHandler();
@@ -56,32 +55,16 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         setChartData(LineChartData.generateDummyData());
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        calculationThread = new CalculationThread(chartRenderer, axesRenderer);
-        //calculationThread.setRunning(true);
-        //calculationThread.start();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-        boolean retry = true;
-        calculationThread.setRunning(false);
-        while (retry) {
-            try {
-                calculationThread.join();
-                retry = false;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void setOnUpTouchListener(ChartTouchHandler.OnUpTouchListener listener) {
         touchHandler.setOnUpTouchListener(listener);
+    }
+
+    public CType getType() {
+        return cType;
+    }
+
+    public void setType(CType cType) {
+        this.cType = cType;
     }
 
     @Override

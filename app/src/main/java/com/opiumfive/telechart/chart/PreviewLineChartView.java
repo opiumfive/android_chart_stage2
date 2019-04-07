@@ -10,20 +10,20 @@ import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.draw.PreviewLineChartRenderer;
 
 
-public class PreviewChartView extends ChartView {
+public class PreviewLineChartView extends LineChartView {
 
     protected PreviewLineChartRenderer previewChartRenderer;
     protected ChartTouchHandler.OnUpTouchListener onUpTouchListener;
 
-    public PreviewChartView(Context context) {
+    public PreviewLineChartView(Context context) {
         this(context, null, 0);
     }
 
-    public PreviewChartView(Context context, AttributeSet attrs) {
+    public PreviewLineChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PreviewChartView(Context context, AttributeSet attrs, int defStyle) {
+    public PreviewLineChartView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         chartViewrectHandler = new PreviewChartViewrectHandler();
         previewChartRenderer = new PreviewLineChartRenderer(context, this, this);

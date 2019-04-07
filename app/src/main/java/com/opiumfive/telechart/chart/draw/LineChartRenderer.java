@@ -14,6 +14,7 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.util.Log;
 
 import com.opiumfive.telechart.R;
+import com.opiumfive.telechart.chart.CType;
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Line;
@@ -69,10 +70,10 @@ public class LineChartRenderer {
     private Paint linePaint = new Paint();
     private Paint pointPaint = new Paint();
     private Paint innerPointPaint = new Paint();
+    private Paint columnPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
-    float[] allLines;
-    int allSize = 0;
-    private Map<String, Integer> linesSizeMap = new HashMap<>();
+
+    private RectF drawRect = new RectF();
 
 
     protected Viewrect tempMaximumViewrect = new Viewrect();
@@ -117,6 +118,10 @@ public class LineChartRenderer {
         detailsTitleColor = getColorFromAttr(context, R.attr.detailTitleColor);
 
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
+
+        columnPaint.setAntiAlias(true);
+        columnPaint.setStyle(Paint.Style.FILL);
+        columnPaint.setAntiAlias(true);
     }
 
     public void onChartDataChanged() {
@@ -128,17 +133,10 @@ public class LineChartRenderer {
         }
 
         linesMap.clear();
-        linesSizeMap.clear();
-
-        int size = 0;
 
         for (Line line: data.getLines()) {
             linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
-            size += line.getValues().size() * 4;
-            linesSizeMap.put(line.getId(), line.getValues().size() * 4);
         }
-
-        allLines = new float[size];
 
         labelPaint.setColor(data.getValueLabelTextColor());
         labelPaint.setTextSize(Util.sp2px(scaledDensity, data.getValueLabelTextSize()));
@@ -157,135 +155,121 @@ public class LineChartRenderer {
         }
     }
 
-    public void prepareDrawingData() {
-        /*final LineChartData data = dataProvider.getChartData();
-
-        Viewrect viewrect = getCurrentViewrect();
-
-        LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
-
-        for (Line line : data.getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) {
-                int valueIndex = 0;
-                float[] lines = linesMap.get(line.getId());
-                for (int i = bounds.from; i <= bounds.to; i++) {
-                    PointValue pointValue = line.getValues().get(i);
-
-                    final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
-                    final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
-
-                    if (valueIndex == 0) {
-                        lines[valueIndex * 4] = rawX;
-                        lines[valueIndex * 4 + 1] = rawY;
-                    } else {
-                        lines[valueIndex * 4] =  lines[valueIndex * 4 - 2];
-                        lines[valueIndex * 4 + 1] =  lines[valueIndex * 4 - 1];
-                    }
-
-                    lines[valueIndex * 4 + 2] = rawX;
-                    lines[valueIndex * 4 + 3] = rawY;
-
-                    valueIndex++;
-                }
-                linesSizeMap.put(line.getId(), valueIndex);
-            }
-        }*/
-
-        /*final LineChartData data = dataProvider.getChartData();
-
-        Viewrect viewrect = getCurrentViewrect();
-
-        LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
-
-        int valueIndex = 0;
-        boolean fromStart = true;
-        for (Line line : data.getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) {
-
-                if (fromStart) {
-                    for (int i = bounds.from; i <= bounds.to; i++) {
-                        PointValue pointValue = line.getValues().get(i);
-
-                        final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
-                        final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
-
-                        if (valueIndex == 0) {
-                            allLines[valueIndex * 4] = rawX;
-                            allLines[valueIndex * 4 + 1] = rawY;
-                        } else {
-                            allLines[valueIndex * 4] = allLines[valueIndex * 4 - 2];
-                            allLines[valueIndex * 4 + 1] = allLines[valueIndex * 4 - 1];
-                        }
-
-                        allLines[valueIndex * 4 + 2] = rawX;
-                        allLines[valueIndex * 4 + 3] = rawY;
-
-                        valueIndex++;
-                    }
-                } else {
-                    for (int i = bounds.to; i >= bounds.from; i--) {
-                        PointValue pointValue = line.getValues().get(i);
-
-                        final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
-                        final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
-
-                        if (valueIndex == 0) {
-                            allLines[valueIndex * 4] = rawX;
-                            allLines[valueIndex * 4 + 1] = rawY;
-                        } else {
-                            allLines[valueIndex * 4] = allLines[valueIndex * 4 - 2];
-                            allLines[valueIndex * 4 + 1] = allLines[valueIndex * 4 - 1];
-                        }
-
-                        allLines[valueIndex * 4 + 2] = rawX;
-                        allLines[valueIndex * 4 + 3] = rawY;
-
-                        valueIndex++;
-                    }
-                }
-                fromStart = !fromStart;
-            }
-        }
-        allSize = valueIndex;*/
-    }
-
     public void draw(Canvas canvas) {
-        /*final LineChartData data = dataProvider.getChartData();
-
-        for (Line line : data.getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath2(canvas, line);
-        }*/
-
-
         final LineChartData data = dataProvider.getChartData();
 
         Viewrect viewrect = getCurrentViewrect();
 
         LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
 
-        for (Line line : data.getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, bounds);
+        switch (chart.getType()) {
+            case LINE:
+            case LINE_2Y:
+                for (Line line : data.getLines()) {
+                    if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, bounds);
+                }
+                break;
+            case DAILY_BAR:
+                drawDailyBar(canvas, data.getLines().get(0), bounds);
+                break;
+            case STACKED_BAR:
+                drawStackedBar(canvas, data.getLines(), bounds);
+                break;
+            case AREA:
+                drawArea(canvas, data.getLines(), bounds);
+                break;
+            case PIE:
+                drawPie(canvas, data.getLines(), bounds);
+                break;
+        }
+    }
+
+    protected void drawPie(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
+    }
+
+    protected void drawArea(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
+
+    }
+
+    protected void drawStackedBar(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
+        float columnWidth = calculateColumnWidth();
+        final float halfColumnWidth = columnWidth / 2 + 1f;
+
+        for (Line line : lines) {
+            if (!line.isActive() && line.getAlpha() == 0f) continue;
+            columnPaint.setColor(line.getColor());
+            int alpha = (int)(255 * line.getAlpha());
+            columnPaint.setAlpha(alpha);
+
+            for (int i = bounds.from; i <= bounds.to; i++) {
+                PointValue pointValue = line.getValues().get(i);
+
+                final float rawBaseY = chartViewrectHandler.getContentRectMinusAxesMargins().bottom;
+                final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
+                final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+
+                calculateRectToDraw(rawX - halfColumnWidth, rawX + halfColumnWidth, rawBaseY, rawY);
+                canvas.drawRect(drawRect, columnPaint);
+            }
         }
 
-        /*int lines = 0;
-        for (Line line : dataProvider.getChartData().getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) lines++;
+        int linesSize = lines.size();
+
+        for (int p = bounds.from; p < bounds.to; p++) {
+            float currentY = 0;
+            for (int l = 0; l < linesSize; l++) {
+                Line line = lines.get(l);
+                if (!line.isActive() && line.getAlpha() == 0f) break;
+                columnPaint.setColor(line.getColor());
+                int alpha = (int)(255 * line.getAlpha());
+                columnPaint.setAlpha(alpha);
+                PointValue pointValue = line.getValues().get(p);
+
+                final float rawBaseY = chartViewrectHandler.computeRawY(currentY);
+                final float rawY = chartViewrectHandler.computeRawY(currentY + pointValue.getY());
+                currentY += pointValue.getY();
+                final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+
+                calculateRectToDraw(rawX - halfColumnWidth, rawX + halfColumnWidth, rawBaseY, rawY);
+                canvas.drawRect(drawRect, columnPaint);
+            }
         }
+    }
 
-        int[] rainbow = new int[lines];
+    protected void drawDailyBar(Canvas canvas, Line line, LineChartData.Bounds bounds) {
+        columnPaint.setColor(line.getColor());
 
-        int ind = 0;
-        for (Line line : dataProvider.getChartData().getLines()) {
-            if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) rainbow[ind++] = line.getColor();
+        float columnWidth = calculateColumnWidth();
+
+        final float halfColumnWidth = columnWidth / 2 + 1f;
+
+        for (int i = bounds.from; i <= bounds.to; i++) {
+            PointValue pointValue = line.getValues().get(i);
+
+            final float rawBaseY = chartViewrectHandler.getContentRectMinusAxesMargins().bottom;
+            final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
+            final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+
+            calculateRectToDraw(rawX - halfColumnWidth, rawX + halfColumnWidth, rawBaseY, rawY);
+            canvas.drawRect(drawRect, columnPaint);
         }
+    }
 
-        Shader shader = new LinearGradient(0, 0, 0, 200, rainbow, null, Shader.TileMode.REPEAT);
-        Matrix matrix = new Matrix();
-        //matrix.setRotate(90);
-        shader.setLocalMatrix(matrix);
-        linePaint.setShader(shader);
+    private float calculateColumnWidth() {
+        float width = chartViewrectHandler.getVisibleViewport().width();
+        float day = width / 1000 / 60 / 60 / 24;
+        float columnWidth = chartViewrectHandler.getContentRectMinusAllMargins().width() / day;
+        if (columnWidth < 2) {
+            columnWidth = 2;
+        }
+        return columnWidth;
+    }
 
-        canvas.drawLines(allLines, 0, allSize * 4, linePaint);*/
+    private void calculateRectToDraw(float left, float right, float rawBaseY, float rawY) {
+        drawRect.left = left;
+        drawRect.right = right;
+        drawRect.top = rawY;
+        drawRect.bottom = rawBaseY;
     }
 
     public void drawSelectedValues(Canvas canvas) {
@@ -371,17 +355,35 @@ public class LineChartRenderer {
         tempMaximumViewrect.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, 0);
         LineChartData data = dataProvider.getChartData();
 
-        for (Line line : data.getLines()) {
-            if (!line.isActive()) continue;
-            for (PointValue pointValue : line.getValues()) {
-                if (pointValue.getX() < tempMaximumViewrect.left) {
-                    tempMaximumViewrect.left = pointValue.getX();
+        if (chart.getType().equals(CType.STACKED_BAR)) {
+            int points = data.getLines().get(0).getValues().size();
+            int lines = data.getLines().size();
+            
+            for (int p = 0; p < points; p++) {
+                float localSum = 0f;
+                for (int l = 0; l < lines; l++) {
+                    localSum += data.getLines().get(l).getValues().get(p).getY();
                 }
-                if (pointValue.getX() > tempMaximumViewrect.right) {
-                    tempMaximumViewrect.right = pointValue.getX();
+                if (localSum > tempMaximumViewrect.top) {
+                    tempMaximumViewrect.top = localSum;
                 }
-                if (pointValue.getY() > tempMaximumViewrect.top) {
-                    tempMaximumViewrect.top = pointValue.getY();
+            }
+
+            tempMaximumViewrect.left = data.getLines().get(0).getValues().get(0).getX();
+            tempMaximumViewrect.right = data.getLines().get(0).getValues().get(points - 1).getX();
+        } else {
+            for (Line line : data.getLines()) {
+                if (!line.isActive()) continue;
+                for (PointValue pointValue : line.getValues()) {
+                    if (pointValue.getX() < tempMaximumViewrect.left) {
+                        tempMaximumViewrect.left = pointValue.getX();
+                    }
+                    if (pointValue.getX() > tempMaximumViewrect.right) {
+                        tempMaximumViewrect.right = pointValue.getX();
+                    }
+                    if (pointValue.getY() > tempMaximumViewrect.top) {
+                        tempMaximumViewrect.top = pointValue.getY();
+                    }
                 }
             }
         }
@@ -391,24 +393,48 @@ public class LineChartRenderer {
         Viewrect adjustedViewrect = new Viewrect(target.left, Float.MIN_VALUE, target.right, Float.MAX_VALUE);
         LineChartData data = dataProvider.getChartData();
 
-        for (Line line : data.getLines()) {
-            if (!line.isActive()) continue;
-            for (PointValue pointValue : line.getValues()) {
-                if (pointValue.getX() >= target.left && pointValue.getX() <= target.right) {
-                    if (pointValue.getY() > adjustedViewrect.top) {
-                        adjustedViewrect.top = pointValue.getY();
+        if (chart.getType().equals(CType.STACKED_BAR)) {
+            int points = data.getLines().get(0).getValues().size();
+            int lines = data.getLines().size();
+
+            for (int p = 0; p < points; p++) {
+                float localSum = 0f;
+                for (int l = 0; l < lines; l++) {
+                    Line line = data.getLines().get(l);
+                    if (!line.isActive()) continue;
+                    PointValue pointValue = line.getValues().get(p);
+                    if (pointValue.getX() >= target.left && pointValue.getX() <= target.right) {
+                        localSum += data.getLines().get(l).getValues().get(p).getY();
                     }
-                    if (pointValue.getY() < adjustedViewrect.bottom) {
-                        adjustedViewrect.bottom = pointValue.getY();
+                }
+                if (localSum > adjustedViewrect.top) {
+                    adjustedViewrect.top = localSum;
+                }
+                adjustedViewrect.bottom = 0;
+            }
+
+            float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
+            adjustedViewrect.top = adjustedViewrect.top + diff;
+        } else {
+            for (Line line : data.getLines()) {
+                if (!line.isActive()) continue;
+                for (PointValue pointValue : line.getValues()) {
+                    if (pointValue.getX() >= target.left && pointValue.getX() <= target.right) {
+                        if (pointValue.getY() > adjustedViewrect.top) {
+                            adjustedViewrect.top = pointValue.getY();
+                        }
+                        if (pointValue.getY() < adjustedViewrect.bottom) {
+                            adjustedViewrect.bottom = pointValue.getY();
+                        }
                     }
                 }
             }
-        }
 
-        //additional offset 7.5%
-        float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
-        adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
-        adjustedViewrect.top = adjustedViewrect.top + diff;
+            //additional offset 7.5%
+            float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
+            adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
+            adjustedViewrect.top = adjustedViewrect.top + diff;
+        }
 
         return adjustedViewrect;
     }
@@ -453,12 +479,6 @@ public class LineChartRenderer {
         }
 
         canvas.drawLines(lines, 0, valueIndex * 4, linePaint);
-    }
-
-    protected void drawPath2(Canvas canvas, final Line line) {
-        prepareLinePaint(line);
-        float[] lines = linesMap.get(line.getId());
-        canvas.drawLines(lines, 0, linesSizeMap.get(line.getId()) * 4, linePaint);
     }
 
     private void prepareLinePaint(final Line line) {

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:orientation="horizontal"
     android:background="?attr/itemBackground"
+    android:animateLayoutChanges="true"
     android:paddingTop="@dimen/margin"
     android:layout_height="wrap_content">
 
@@ -24,7 +25,7 @@
             android:layout_marginBottom="@dimen/half_margin"
             android:layout_height="wrap_content" />
 
-        <com.opiumfive.telechart.chart.ChartView
+        <com.opiumfive.telechart.chart.LineChartView
             android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/margin"
@@ -53,7 +54,7 @@
             android:dividerHeight="@dimen/divider_height"
             android:layout_height="wrap_content"/>
 
-        <com.opiumfive.telechart.chart.PreviewChartView
+        <com.opiumfive.telechart.chart.PreviewLineChartView
             android:id="@+id/chart_preview"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/half_margin"

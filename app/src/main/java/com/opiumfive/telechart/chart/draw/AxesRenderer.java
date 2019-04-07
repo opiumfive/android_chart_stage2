@@ -526,9 +526,9 @@ public class AxesRenderer {
                         labelX = rawValuesTabY[valueToDrawIndex];
                     }
 
-                    if (labelY < chartViewrectHandler.getContentRectMinusAxesMargins().bottom + Util.dp2px(density, 4)) {
+                    //if (labelY < chartViewrectHandler.getContentRectMinusAxesMargins().bottom + Util.dp2px(density, 4)) {
                         canvas.drawText(labelBuffer, labelBuffer.length - charsNumber, charsNumber, labelX, labelY, labelPaintTab[position]);
-                    }
+                    //}
                 }
             }
         } else if (BOTTOM == position) {

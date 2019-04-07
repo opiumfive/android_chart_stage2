@@ -6,8 +6,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.opiumfive.telechart.R;
-import com.opiumfive.telechart.chart.ChartView;
-import com.opiumfive.telechart.chart.PreviewChartView;
+import com.opiumfive.telechart.chart.CType;
+import com.opiumfive.telechart.chart.LineChartView;
+import com.opiumfive.telechart.chart.PreviewLineChartView;
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
@@ -24,8 +25,8 @@ import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 public class ChartWithPreview extends LinearLayout {
 
-    private ChartView chart;
-    private PreviewChartView previewChart;
+    private LineChartView chart;
+    private PreviewLineChartView previewChart;
     private ListView checkboxList;
     private LineChartData data;
     private LineChartData previewData;
@@ -60,13 +61,18 @@ public class ChartWithPreview extends LinearLayout {
         }
     };
 
-    public ChartWithPreview(Context context, ChartData chartData, State state) {
+    public ChartWithPreview(Context context, ChartData chartData, State state, CType cType) {
         super(context);
         inflate(context, R.layout.chart_with_preview, this);
 
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
+        chart.setType(cType);
+        previewChart.setType(cType);
+        if (cType.equals(CType.DAILY_BAR)) {
+            checkboxList.setVisibility(GONE);
+        }
         setChartData(chartData, state);
     }
 
