@@ -27,10 +27,9 @@ public class ChartWithPreview extends LinearLayout {
 
     private LineChartView chart;
     private PreviewLineChartView previewChart;
-    private ListView checkboxList;
+    private CheckerList checkboxList;
     private LineChartData data;
     private LineChartData previewData;
-    private ShowLineAdapter showLineAdapter;
     private boolean shouldAnimateRect = false;
     private boolean isAnimatingPreview = true;
 
@@ -48,13 +47,13 @@ public class ChartWithPreview extends LinearLayout {
         @Override
         public void onAnimationStarted() {
             isAnimatingPreview = false;
-            showLineAdapter.setEnabled(false);
+            checkboxList.setEnabled(false);
         }
 
         @Override
         public void onAnimationFinished() {
             isAnimatingPreview = true;
-            showLineAdapter.setEnabled(true);
+            checkboxList.setEnabled(true);
 
             //chart.postDrawIfNeeded();
             //chart.toggleAxisAnim();
@@ -135,7 +134,7 @@ public class ChartWithPreview extends LinearLayout {
             previewChart.setCurrentViewrect(tempViewrect);
         }
 
-        showLineAdapter = new ShowLineAdapter(getContext(), data.getLines(), pos -> {
+        checkboxList.setData(data.getLines(), pos -> {
             Line line = data.getLines().get(pos);
 
             line.setActive(!line.isActive());
@@ -144,7 +143,7 @@ public class ChartWithPreview extends LinearLayout {
             for (Line l : data.getLines()) if (l.isActive()) activeLines++;
 
             // prevent unchecking all
-            showLineAdapter.setUncheckingEnabled(activeLines > 1);
+            checkboxList.setUncheckingEnabled(activeLines > 1);
 
             chart.onChartDataChange();
             previewChart.onChartDataChange();
@@ -163,14 +162,7 @@ public class ChartWithPreview extends LinearLayout {
 
         int active = 0;
         for (Line l : data.getLines()) if (l.isActive()) active++;
-        showLineAdapter.setUncheckingEnabled(active > 1);
-
-        ViewGroup.LayoutParams layoutParams = checkboxList.getLayoutParams();
-        layoutParams.height = (int) (getContext().getResources().getDimension(R.dimen.checkbox_height) * data.getLines().size() +
-                getContext().getResources().getDimension(R.dimen.divider_height) * (data.getLines().size() - 1));
-        checkboxList.setLayoutParams(layoutParams);
-
-        checkboxList.setAdapter(showLineAdapter);
+        checkboxList.setUncheckingEnabled(active > 1);
     }
 
     public State getState() {

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" 
+    android:layout_width="wrap_content"
+    android:animateLayoutChanges="true"
+    android:gravity="center"
+    android:background="@drawable/checkbox"
+    android:layout_marginLeft="@dimen/half_margin"
+    android:layout_marginStart="@dimen/half_margin"
+    android:paddingLeft="@dimen/margin"
+    android:paddingRight="@dimen/margin"
+    android:minWidth="70dp"
+    android:layout_height="40dp">
+    
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginEnd="3dp"
+        android:src="@drawable/check" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:includeFontPadding="false"
+        android:textStyle="bold"
+        android:textSize="13sp"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

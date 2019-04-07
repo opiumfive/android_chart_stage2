@@ -195,34 +195,15 @@ public class LineChartRenderer {
         float columnWidth = calculateColumnWidth();
         final float halfColumnWidth = columnWidth / 2 + 1f;
 
-        for (Line line : lines) {
-            if (!line.isActive() && line.getAlpha() == 0f) continue;
-            columnPaint.setColor(line.getColor());
-            int alpha = (int)(255 * line.getAlpha());
-            columnPaint.setAlpha(alpha);
-
-            for (int i = bounds.from; i <= bounds.to; i++) {
-                PointValue pointValue = line.getValues().get(i);
-
-                final float rawBaseY = chartViewrectHandler.getContentRectMinusAxesMargins().bottom;
-                final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
-                final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
-
-                calculateRectToDraw(rawX - halfColumnWidth, rawX + halfColumnWidth, rawBaseY, rawY);
-                canvas.drawRect(drawRect, columnPaint);
-            }
-        }
-
         int linesSize = lines.size();
 
         for (int p = bounds.from; p < bounds.to; p++) {
             float currentY = 0;
             for (int l = 0; l < linesSize; l++) {
                 Line line = lines.get(l);
-                if (!line.isActive() && line.getAlpha() == 0f) break;
+                if (!line.isActive()) continue;
                 columnPaint.setColor(line.getColor());
-                int alpha = (int)(255 * line.getAlpha());
-                columnPaint.setAlpha(alpha);
+
                 PointValue pointValue = line.getValues().get(p);
 
                 final float rawBaseY = chartViewrectHandler.computeRawY(currentY);

@@ -42,22 +42,19 @@
         android:gravity="bottom"
         android:layout_height="match_parent">
 
-        <ListView
+        <com.opiumfive.telechart.ui.CheckerList
             android:id="@+id/checkboxList"
             android:layout_width="match_parent"
-            android:overScrollMode="never"
-            android:paddingLeft="@dimen/margin"
-            android:paddingStart="@dimen/margin"
-            android:divider="@drawable/line_divider"
+            android:paddingLeft="@dimen/half_margin"
+            android:paddingStart="@dimen/half_margin"
             android:clipToPadding="false"
             android:clipChildren="false"
-            android:dividerHeight="@dimen/divider_height"
             android:layout_height="wrap_content"/>
 
         <com.opiumfive.telechart.chart.PreviewLineChartView
             android:id="@+id/chart_preview"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/half_margin"
+            android:layout_marginTop="@dimen/margin"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
             android:layout_marginBottom="@dimen/half_margin"
