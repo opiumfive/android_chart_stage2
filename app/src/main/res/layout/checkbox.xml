@@ -9,6 +9,7 @@
     android:background="@drawable/checkbox"
     android:layout_marginLeft="@dimen/half_margin"
     android:layout_marginStart="@dimen/half_margin"
+    android:layout_marginTop="@dimen/half_margin"
     android:paddingLeft="@dimen/margin"
     android:paddingRight="@dimen/margin"
     android:minWidth="70dp"

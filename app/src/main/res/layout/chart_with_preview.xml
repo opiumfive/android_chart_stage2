@@ -38,7 +38,7 @@
     <com.opiumfive.telechart.ui.CheckerList
         android:id="@+id/checkboxList"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:paddingLeft="@dimen/half_margin"
         android:paddingStart="@dimen/half_margin"
         android:clipToPadding="false"

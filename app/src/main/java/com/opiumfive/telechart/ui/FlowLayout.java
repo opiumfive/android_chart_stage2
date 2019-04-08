@@ -12,13 +12,13 @@ public class FlowLayout extends ViewGroup {
 
     public static class LayoutParams extends ViewGroup.LayoutParams {
 
-        public int horizontal_spacing;
-        public int vertical_spacing;
+        public int horizontalSpacing;
+        public int verticalSpacing;
 
-        public LayoutParams(int horizontal_spacing, int vertical_spacing) {
+        public LayoutParams(int horizontalSpacing, int verticalSpacing) {
             super(0, 0);
-            this.horizontal_spacing = horizontal_spacing;
-            this.vertical_spacing = vertical_spacing;
+            this.horizontalSpacing = horizontalSpacing;
+            this.verticalSpacing = verticalSpacing;
         }
     }
 
@@ -32,8 +32,6 @@ public class FlowLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        assert (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED);
-
         final int width = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
         int height = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
         final int count = getChildCount();
@@ -56,14 +54,14 @@ public class FlowLayout extends ViewGroup {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 child.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), childHeightMeasureSpec);
                 final int childw = child.getMeasuredWidth();
-                line_height_space = Math.max(line_height_space, child.getMeasuredHeight() + lp.vertical_spacing);
+                line_height_space = Math.max(line_height_space, child.getMeasuredHeight() + lp.verticalSpacing);
 
                 if (xpos + childw > width) {
                     xpos = getPaddingLeft();
                     ypos += line_height_space;
                 }
 
-                xpos += childw + lp.horizontal_spacing;
+                xpos += childw + lp.horizontalSpacing;
             }
         }
         this.line_height_space = line_height_space;
@@ -86,10 +84,7 @@ public class FlowLayout extends ViewGroup {
 
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        if (p instanceof LayoutParams) {
-            return true;
-        }
-        return false;
+        return p instanceof LayoutParams;
     }
 
     @Override
@@ -110,7 +105,7 @@ public class FlowLayout extends ViewGroup {
                     ypos += line_height_space;
                 }
                 child.layout(xpos, ypos, xpos + childw, ypos + childh);
-                xpos += childw + lp.horizontal_spacing;
+                xpos += childw + lp.horizontalSpacing;
             }
         }
     }
