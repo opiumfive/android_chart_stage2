@@ -25,6 +25,7 @@ public class CheckerList extends FrameLayout {
         if (isEnabled) {
             if (!isChecked && !isUncheckingEnabled) {
                 checkbox.setChecked(true);
+                shakeAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
                 checkbox.startAnimation(shakeAnimation);
             } else {
                 if (lineCheckListener != null) {
@@ -49,10 +50,6 @@ public class CheckerList extends FrameLayout {
 
         inflate(context, R.layout.checker_list, this);
         flowLayout = findViewById(R.id.flow);
-
-        shakeAnimation = AnimationUtils.loadAnimation(context, R.anim.shake);
-
-
     }
 
     public void setUncheckingEnabled(boolean uncheckingEnabled) {
