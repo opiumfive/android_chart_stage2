@@ -70,7 +70,6 @@ public class LineChartRenderer {
     private Paint linePaint = new Paint();
     private Paint pointPaint = new Paint();
     private Paint innerPointPaint = new Paint();
-    private Paint columnPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
 
     private RectF drawRect = new RectF();
@@ -118,10 +117,6 @@ public class LineChartRenderer {
         detailsTitleColor = getColorFromAttr(context, R.attr.detailTitleColor);
 
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
-
-        columnPaint.setAntiAlias(true);
-        columnPaint.setStyle(Paint.Style.FILL);
-        columnPaint.setAntiAlias(true);
     }
 
     public void onChartDataChanged() {
@@ -193,16 +188,16 @@ public class LineChartRenderer {
 
     protected void drawStackedBar(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
         float columnWidth = calculateColumnWidth();
-        final float halfColumnWidth = columnWidth / 2 + 1f;
 
         int linesSize = lines.size();
+
+        int valueIndex = 0;
 
         for (int p = bounds.from; p < bounds.to; p++) {
             float currentY = 0;
             for (int l = 0; l < linesSize; l++) {
                 Line line = lines.get(l);
                 if (!line.isActive()) continue;
-                columnPaint.setColor(line.getColor());
 
                 PointValue pointValue = line.getValues().get(p);
 
@@ -211,18 +206,34 @@ public class LineChartRenderer {
                 currentY += pointValue.getY();
                 final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
 
-                calculateRectToDraw(rawX - halfColumnWidth, rawX + halfColumnWidth, rawBaseY, rawY);
-                canvas.drawRect(drawRect, columnPaint);
+                float[] lineArray = linesMap.get(line.getId());
+                lineArray[valueIndex * 4] = rawX;
+                lineArray[valueIndex * 4 + 1] = rawY;
+                lineArray[valueIndex * 4 + 2] = rawX;
+                lineArray[valueIndex * 4 + 3] = rawBaseY;
             }
+
+            valueIndex++;
         }
+
+        linePaint.setStrokeWidth(columnWidth + 1);
+
+
+        for (Line l : lines) {
+            linePaint.setColor(l.getColor());
+            canvas.drawLines(linesMap.get(l.getId()), 0, valueIndex * 4, linePaint);
+        }
+
     }
 
     protected void drawDailyBar(Canvas canvas, Line line, LineChartData.Bounds bounds) {
-        columnPaint.setColor(line.getColor());
+        float columnWidth = calculateColumnWidth() + 1f;
+        linePaint.setStrokeWidth(columnWidth);
+        linePaint.setColor(line.getColor());
+        float[] lines = linesMap.get(line.getId());
 
-        float columnWidth = calculateColumnWidth();
+        int valueIndex = 0;
 
-        final float halfColumnWidth = columnWidth / 2 + 1f;
 
         for (int i = bounds.from; i <= bounds.to; i++) {
             PointValue pointValue = line.getValues().get(i);
@@ -231,9 +242,16 @@ public class LineChartRenderer {
             final float rawY = chartViewrectHandler.computeRawY(pointValue.getY());
             final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
 
-            calculateRectToDraw(rawX - halfColumnWidth, rawX + halfColumnWidth, rawBaseY, rawY);
-            canvas.drawRect(drawRect, columnPaint);
+
+            lines[valueIndex * 4] = rawX;
+            lines[valueIndex * 4 + 1] = rawY;
+            lines[valueIndex * 4 + 2] = rawX;
+            lines[valueIndex * 4 + 3] = rawBaseY;
+
+            valueIndex++;
         }
+
+        canvas.drawLines(lines, 0, valueIndex * 4, linePaint);
     }
 
     private float calculateColumnWidth() {
