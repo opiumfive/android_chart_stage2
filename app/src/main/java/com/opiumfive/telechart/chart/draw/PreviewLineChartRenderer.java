@@ -99,35 +99,6 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
         }
     }
 
-    /*
-    final LineChartData data = dataProvider.getChartData();
-
-        Viewrect viewrect = getCurrentViewrect();
-
-        LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
-
-        switch (chart.getType()) {
-            case LINE:
-            case LINE_2Y:
-                for (Line line : data.getLines()) {
-                    if (line.isActive() || (!line.isActive() && line.getAlpha() > 0f)) drawPath(canvas, line, bounds);
-                }
-                break;
-            case DAILY_BAR:
-                drawDailyBar(canvas, data.getLines().get(0), bounds);
-                break;
-            case STACKED_BAR:
-                drawStackedBar(canvas, data.getLines(), bounds);
-                break;
-            case AREA:
-                drawArea(canvas, data.getLines(), bounds);
-                break;
-            case PIE:
-                drawPie(canvas, data.getLines(), bounds);
-                break;
-        }
-     */
-
     public void onChartSizeChanged() {
         cacheBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight(), Bitmap.Config.ARGB_8888);
         cacheCanvas.setBitmap(cacheBitmap);
