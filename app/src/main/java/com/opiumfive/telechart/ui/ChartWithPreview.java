@@ -80,7 +80,7 @@ public class ChartWithPreview extends LinearLayout {
         data.setAxisYLeft(
                 new Axis()
                         .setHasLines(true)
-                        .setLineColor(getColorFromAttr(getContext(), R.attr.dividerColor))
+                        .setLineColor(getColorFromAttr(getContext(), R.attr.gridColor))
                         .setTextColor(getColorFromAttr(getContext(), R.attr.labelColor))
         );
         data.setAxisXBottom(
@@ -134,10 +134,10 @@ public class ChartWithPreview extends LinearLayout {
             previewChart.setCurrentViewrect(tempViewrect);
         }
 
-        checkboxList.setData(data.getLines(), pos -> {
+        checkboxList.setData(data.getLines(), (pos, checked) -> {
             Line line = data.getLines().get(pos);
 
-            line.setActive(!line.isActive());
+            line.setActive(checked);
 
             int activeLines = 0;
             for (Line l : data.getLines()) if (l.isActive()) activeLines++;
@@ -157,7 +157,6 @@ public class ChartWithPreview extends LinearLayout {
 
             chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
             previewChart.setCurrentViewrectAnimated(target);
-
         });
 
         int active = 0;

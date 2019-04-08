@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#517da2</color>
-    <color name="colorPrimaryDark">#426382</color>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#FFFFFF</color>
     <color name="windowBackground">#f0f0f0</color>
-    <color name="titleColor">#3896d4</color>
+    <color name="titleColor">#000000</color>
     <color name="textColor">#222222</color>
     <color name="labelColor">#96a2aa</color>
-    <color name="previewBackColor">#99f0f0f0</color>
-    <color name="previewFrameColor">#ccdbe7f0</color>
+    <color name="previewBackColor">#96E2EEF9</color>
+    <color name="previewFrameColor">#7f86A9C4</color>
     <color name="itemBackground">#ffffff</color>
-    <color name="dividerColor">#e7e7e7</color>
+    <color name="gridColor">#19182D3B</color>
     <color name="detailTitleColor">#222222</color>
 
-    <color name="colorPrimary_Dark">#212d3b</color>
-    <color name="colorPrimaryDark_Dark">#1a242e</color>
+    <color name="colorPrimary_Dark">#242f3e</color>
+    <color name="colorPrimaryDark_Dark">#242f3e</color>
     <color name="colorAccent_Dark">#FFFFFF</color>
     <color name="windowBackground_Dark">#151e27</color>
-    <color name="titleColor_Dark">#7bc4fb</color>
+    <color name="titleColor_Dark">#ffffff</color>
     <color name="textColor_Dark">#FFFFFF</color>
     <color name="labelColor_Dark">#506372</color>
-    <color name="previewBackColor_Dark">#99151e27</color>
-    <color name="previewFrameColor_Dark">#cc2b4256</color>
+    <color name="previewBackColor_Dark">#96304259</color>
+    <color name="previewFrameColor_Dark">#7f6F899E</color>
     <color name="itemBackground_Dark">#1d2733</color>
-    <color name="dividerColor_Dark">#0f1823</color>
+    <color name="gridColor_Dark">#19FFFFFF</color>
     <color name="detailTitleColor_Dark">#dbe5eb</color>
 </resources>

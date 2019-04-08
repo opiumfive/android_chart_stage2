@@ -40,6 +40,15 @@ public class Checkbox extends LinearLayout implements Checkable {
             }
         });
 
+        setLongClickable(true);
+
+        setOnLongClickListener((v -> {
+            if (onCheckedChangeListener != null) {
+                onCheckedChangeListener.onLongTap(this);
+            }
+            return true;
+        }));
+
         fill();
     }
 
@@ -77,5 +86,6 @@ public class Checkbox extends LinearLayout implements Checkable {
 
     public interface OnCheckedListener {
         void onChecked(Checkbox checkbox, boolean isChecked);
+        void onLongTap(Checkbox checkbox);
     }
 }

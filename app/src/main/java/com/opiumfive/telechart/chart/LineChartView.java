@@ -97,18 +97,14 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (isEnabled()) {
-            axesRenderer.drawInBackground(canvas);
-            int clipRestoreCount = canvas.save();
-            canvas.clipRect(chartViewrectHandler.getContentRectMinusAllMargins());
-            chartRenderer.draw(canvas);
-            canvas.restoreToCount(clipRestoreCount);
-
-            axesRenderer.drawInForeground(canvas);
-            chartRenderer.drawSelectedValues(canvas);
-        } else {
-            canvas.drawColor(Util.DEFAULT_COLOR);
-        }
+        //axesRenderer.drawInBackground(canvas);
+        //int clipRestoreCount = canvas.save();
+        //canvas.clipRect(chartViewrectHandler.getContentRectMinusAllMargins());
+        chartRenderer.draw(canvas);
+        //canvas.restoreToCount(clipRestoreCount);
+        axesRenderer.drawInBackground(canvas);
+        axesRenderer.drawInForeground(canvas);
+        chartRenderer.drawSelectedValues(canvas);
     }
 
     public void toggleAxisAnim(Viewrect targetViewrect) {

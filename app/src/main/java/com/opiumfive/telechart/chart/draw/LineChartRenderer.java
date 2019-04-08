@@ -3,16 +3,12 @@ package com.opiumfive.telechart.chart.draw;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.NinePatchDrawable;
-import android.util.Log;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.CType;
@@ -33,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.opiumfive.telechart.Settings.SELECTED_VALUES_DATE_FORMAT;
-import static com.opiumfive.telechart.chart.Util.formatFloat;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 import static com.opiumfive.telechart.chart.Util.getDrawableFromAttr;
 
@@ -112,7 +107,7 @@ public class LineChartRenderer {
 
         touchLinePaint.setAntiAlias(true);
         touchLinePaint.setStyle(Paint.Style.FILL);
-        touchLinePaint.setColor(getColorFromAttr(context, R.attr.dividerColor));
+        touchLinePaint.setColor(getColorFromAttr(context, R.attr.gridColor));
         touchLinePaint.setStrokeWidth(Util.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP) / 2f);
 
         detailsTitleColor = getColorFromAttr(context, R.attr.detailTitleColor);
@@ -132,7 +127,11 @@ public class LineChartRenderer {
         pathMap.clear();
 
         for (Line line: data.getLines()) {
-            linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
+            if (chart.getType().equals(CType.AREA)) {
+                linesMap.put(line.getId(), new float[15000 * 4]);
+            } else {
+                linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
+            }
             pathMap.put(line.getId(), new Path());
         }
 
@@ -188,18 +187,16 @@ public class LineChartRenderer {
     }
 
     protected void drawArea(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
-
-        long time = System.nanoTime();
         int linesSize = lines.size();
         for (int p = bounds.from; p < bounds.to; p++) {
             float sum = 0;
             for (int l = 0; l < linesSize; l++) {
                 Line line = lines.get(l);
-                if (!line.isActive()) continue;
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
 
                 PointValue pointValue = line.getValues().get(p);
 
-                sum += pointValue.getY();
+                sum += pointValue.getY() * line.getAlpha();
             }
             maximums[p] = sum;
         }
@@ -210,14 +207,18 @@ public class LineChartRenderer {
             float currentY = 0;
             for (int l = 0; l < linesSize; l++) {
                 Line line = lines.get(l);
-                if (!line.isActive()) continue;
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
 
                 PointValue pointValue = line.getValues().get(p);
 
                 final float rawBaseY = chartViewrectHandler.computeRawY(currentY / maximums[p]);
-                float percent = (currentY + pointValue.getY()) / maximums[p] * 100f;
+                float y = pointValue.getY();
+                if (line.getAlpha() != 1f) {
+                    y = y * line.getAlpha();
+                }
+                float percent = (currentY + y) / maximums[p] * 100f;
                 final float rawY = chartViewrectHandler.computeRawY(percent);
-                currentY += pointValue.getY();
+                currentY += y;
                 final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
 
                 Path path = pathMap.get(line.getId());
@@ -241,10 +242,9 @@ public class LineChartRenderer {
 
         for (int l = 0; l < linesSize; l++) {
             Line line = lines.get(l);
-            if (!line.isActive()) continue;
+            if (!line.isActive() && line.getAlpha() == 0f) continue;
             Path path = pathMap.get(line.getId());
             Rect contentRect = chartViewrectHandler.getContentRectMinusAxesMargins();
-            path.lineTo(contentRect.right, contentRect.bottom);
             path.lineTo(contentRect.right, contentRect.bottom);
             path.lineTo(contentRect.left, contentRect.bottom);
             path.close();
@@ -252,15 +252,21 @@ public class LineChartRenderer {
 
         linePaint.setStyle(Paint.Style.FILL);
 
+        boolean drawnFirstWithoutPath = false;
+
         for (int l = linesSize - 1; l >= 0; l--) {
             Line line = lines.get(l);
-            if (!line.isActive()) continue;
+            if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+            if (!drawnFirstWithoutPath) {
+                drawnFirstWithoutPath = true;
+                canvas.drawColor(line.getColor());
+                continue;
+            }
             linePaint.setColor(line.getColor());
             canvas.drawPath(pathMap.get(line.getId()), linePaint);
             pathMap.get(line.getId()).reset();
         }
-
-        Log.d("area_time", "drawArea: " + (System.nanoTime() - time));
     }
 
     protected void drawStackedBar(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
@@ -274,13 +280,17 @@ public class LineChartRenderer {
             float currentY = 0;
             for (int l = 0; l < linesSize; l++) {
                 Line line = lines.get(l);
-                if (!line.isActive()) continue;
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
 
                 PointValue pointValue = line.getValues().get(p);
 
                 final float rawBaseY = chartViewrectHandler.computeRawY(currentY);
-                final float rawY = chartViewrectHandler.computeRawY(currentY + pointValue.getY());
-                currentY += pointValue.getY();
+                float y = pointValue.getY();
+                if (line.getAlpha() != 1f) {
+                    y = y * line.getAlpha();
+                }
+                final float rawY = chartViewrectHandler.computeRawY(currentY + y);
+                currentY += y;
                 final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
 
                 float[] lineArray = linesMap.get(line.getId());
@@ -296,11 +306,10 @@ public class LineChartRenderer {
         linePaint.setStrokeWidth(columnWidth + 1);
 
         for (Line l : lines) {
-            if (!l.isActive()) continue;
+            if (!l.isActive() && l.getAlpha() == 0f) continue;
             linePaint.setColor(l.getColor());
             canvas.drawLines(linesMap.get(l.getId()), 0, valueIndex * 4, linePaint);
         }
-
     }
 
     protected void drawDailyBar(Canvas canvas, Line line, LineChartData.Bounds bounds) {

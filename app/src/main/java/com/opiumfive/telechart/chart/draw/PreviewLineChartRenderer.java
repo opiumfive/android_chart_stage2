@@ -18,7 +18,7 @@ import com.opiumfive.telechart.chart.ChartDataProvider;
 public class PreviewLineChartRenderer extends LineChartRenderer {
 
     private static final int DEFAULT_PREVIEW_STROKE_WIDTH_DP = 1;
-    private static final int DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP = 4;
+    private static final int DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP = 7;
 
     private int backrgroundColor;
     private int previewColor;

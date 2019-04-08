@@ -13,7 +13,7 @@
     </style>
 
     <style name="ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">?attr/titleColor</item>
     </style>
 
     <style name="Checkbox">
@@ -30,7 +30,7 @@
         <item name="previewBackColor">@color/previewBackColor</item>
         <item name="previewFrameColor">@color/previewFrameColor</item>
         <item name="itemBackground">@color/itemBackground</item>
-        <item name="dividerColor">@color/dividerColor</item>
+        <item name="gridColor">@color/gridColor</item>
         <item name="detailTitleColor">@color/detailTitleColor</item>
         <item name="detailBackground">@drawable/shadow_light</item>
     </style>
@@ -45,8 +45,8 @@
         <item name="previewBackColor">@color/previewBackColor_Dark</item>
         <item name="previewFrameColor">@color/previewFrameColor_Dark</item>
         <item name="itemBackground">@color/itemBackground_Dark</item>
-        <item name="dividerColor">@color/dividerColor_Dark</item>
         <item name="detailTitleColor">@color/detailTitleColor_Dark</item>
+        <item name="gridColor">@color/gridColor_Dark</item>
         <item name="detailBackground">@drawable/shadow_dark</item>
     </style>
 
@@ -59,8 +59,8 @@
     <attr name="previewBackColor" format="color"/>
     <attr name="previewFrameColor" format="color"/>
     <attr name="itemBackground" format="color"/>
-    <attr name="dividerColor" format="color"/>
     <attr name="detailTitleColor" format="color"/>
+    <attr name="gridColor" format="color"/>
     <attr name="detailBackground" format="reference"/>
 
 </resources>

@@ -21,19 +21,39 @@ public class CheckerList extends FrameLayout {
     private boolean isEnabled = true;
     private Animation shakeAnimation;
 
-    private Checkbox.OnCheckedListener onCheckedListener = (checkbox, isChecked) -> {
-        if (isEnabled) {
-            if (!isChecked && !isUncheckingEnabled) {
-                checkbox.setChecked(true);
-                shakeAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
-                checkbox.startAnimation(shakeAnimation);
+    private Checkbox.OnCheckedListener onCheckedListener = new Checkbox.OnCheckedListener() {
+        @Override
+        public void onChecked(Checkbox checkbox, boolean isChecked) {
+            if (isEnabled) {
+                if (!isChecked && !isUncheckingEnabled) {
+                    checkbox.setChecked(true);
+                    shakeAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
+                    checkbox.startAnimation(shakeAnimation);
+                } else {
+                    if (lineCheckListener != null) {
+                        lineCheckListener.onLineToggle(checkboxes.indexOf(checkbox), isChecked);
+                    }
+                }
             } else {
-                if (lineCheckListener != null) {
-                    lineCheckListener.onLineCheck(checkboxes.indexOf(checkbox));
+                checkbox.setChecked(!isChecked);
+            }
+        }
+
+        @Override
+        public void onLongTap(Checkbox checkbox) {
+            for (Checkbox c : checkboxes) {
+                if (!c.equals(checkbox)) {
+                    c.setChecked(false);
+                    if (lineCheckListener != null) {
+                        lineCheckListener.onLineToggle(checkboxes.indexOf(c), false);
+                    }
+                } else {
+                    c.setChecked(true);
+                    if (lineCheckListener != null) {
+                        lineCheckListener.onLineToggle(checkboxes.indexOf(c), true);
+                    }
                 }
             }
-        } else {
-            checkbox.setChecked(!isChecked);
         }
     };
 
@@ -74,6 +94,6 @@ public class CheckerList extends FrameLayout {
     }
 
     interface LineCheckListener {
-        void onLineCheck(int pos);
+        void onLineToggle(int pos, boolean checked);
     }
 }
