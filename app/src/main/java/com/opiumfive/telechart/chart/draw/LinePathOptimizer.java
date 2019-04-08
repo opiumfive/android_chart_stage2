@@ -18,7 +18,7 @@ public class LinePathOptimizer {
     }
 
     public List<PointValue> optimizeLine(List<PointValue> values, float maxAngleVariation) {
-        if (values.size() > 150) {
+        if (values.size() > 1000) {
 
             float minX = values.get(0).getX();
             float maxX = values.get(values.size() - 1).getX();
