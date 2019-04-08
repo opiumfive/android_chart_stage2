@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.util.Log;
 
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Line;
@@ -11,7 +12,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 
 public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateListener {
 
-    private final static int FAST_ANIMATION_DURATION = 300;
+    private final static int FAST_ANIMATION_DURATION = 350;
 
     private final IChart chart;
     private ValueAnimator animator;
@@ -45,6 +46,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         animatingLine = line;
         animator.setDuration(FAST_ANIMATION_DURATION);
         animator.start();
+        chart.toggleAxisAnim(targetViewrect);
     }
 
     public void cancelAnimation() {
@@ -80,6 +82,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
             maxViewrect.bottom = newViewrect.bottom;
             maxViewrect.top = newViewrect.top;
         }
+
         chart.setCurrentViewrect(newViewrect);
     }
 

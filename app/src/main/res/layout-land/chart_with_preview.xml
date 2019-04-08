@@ -1,63 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="horizontal"
-    android:layout_height="match_parent"
     android:background="?attr/itemBackground"
-    tools:context=".ui.StatisticsActivity">
+    android:animateLayoutChanges="true"
+    android:paddingTop="@dimen/margin"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="3"
         android:orientation="vertical"
-        android:paddingTop="@dimen/margin"
-        android:paddingBottom="@dimen/half_margin"
-        android:layout_marginLeft="@dimen/margin"
-        android:layout_marginRight="@dimen/margin"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
             android:layout_width="match_parent"
             android:text="@string/followers"
             android:textColor="?attr/titleColor"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginRight="@dimen/margin"
             android:textStyle="bold"
             android:textSize="15sp"
             android:layout_marginBottom="@dimen/half_margin"
             android:layout_height="wrap_content" />
 
-        <com.opiumfive.telechart.chart.ChartView
+        <com.opiumfive.telechart.chart.LineChartView
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_marginRight="@dimen/margin"
+            android:layout_height="@dimen/chart_height" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:orientation="vertical"
         android:gravity="bottom"
         android:layout_height="match_parent">
 
-        <ListView
+        <com.opiumfive.telechart.ui.CheckerList
             android:id="@+id/checkboxList"
             android:layout_width="match_parent"
-            android:overScrollMode="never"
-            android:paddingLeft="@dimen/margin"
-            android:paddingStart="@dimen/margin"
-            android:divider="@drawable/line_divider"
-            android:dividerHeight="1dp"
+            android:paddingLeft="@dimen/half_margin"
+            android:paddingStart="@dimen/half_margin"
+            android:clipToPadding="false"
+            android:clipChildren="false"
             android:layout_height="wrap_content"/>
 
-        <com.opiumfive.telechart.chart.PreviewChartView
+        <com.opiumfive.telechart.chart.PreviewLineChartView
             android:id="@+id/chart_preview"
             android:layout_width="match_parent"
-            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_marginTop="@dimen/margin"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
-            android:layout_height="70dp" />
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_height="@dimen/preview_height" />
 
     </LinearLayout>
 

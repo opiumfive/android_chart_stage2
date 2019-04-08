@@ -1,56 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.opiumfive.telechart.ui.SlopScrollView
+    android:id="@+id/scrollContainer"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent"
-    android:background="?attr/windowBackground"
-    tools:context=".ui.StatisticsActivity">
+    android:overScrollMode="never"
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:background="?attr/itemBackground"
-        android:paddingTop="@dimen/margin"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?attr/windowBackground" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:text="@string/followers"
-            android:textColor="?attr/titleColor"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginRight="@dimen/margin"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:layout_marginBottom="@dimen/half_margin"
-            android:layout_height="wrap_content" />
-
-        <com.opiumfive.telechart.chart.ChartView
-            android:id="@+id/chart"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="@dimen/margin"
-            android:layout_marginRight="@dimen/margin"
-            android:layout_height="@dimen/chart_height" />
-
-        <com.opiumfive.telechart.chart.PreviewChartView
-            android:id="@+id/chart_preview"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/half_margin"
-            android:paddingLeft="@dimen/margin"
-            android:paddingRight="@dimen/margin"
-            android:layout_height="@dimen/preview_height" />
-
-        <ListView
-            android:id="@+id/checkboxList"
-            android:layout_width="match_parent"
-            android:overScrollMode="never"
-            android:paddingLeft="@dimen/margin"
-            android:paddingStart="@dimen/margin"
-            android:divider="@drawable/line_divider"
-            android:dividerHeight="1dp"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-
-</LinearLayout>
+</com.opiumfive.telechart.ui.SlopScrollView>

@@ -184,6 +184,14 @@ public class ChartViewrectHandler {
         this.viewrectChangeListener = viewrectChangeListener;
     }
 
+    public int getChartWidth() {
+        return chartWidth;
+    }
+
+    public int getChartHeight() {
+        return chartHeight;
+    }
+
     private void computeMinimumWidthAndHeight() {
         minViewportWidth = this.maxViewrect.width() / MAXIMUM_ZOOM;
         minViewportHeight = this.maxViewrect.height() / MAXIMUM_ZOOM;

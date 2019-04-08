@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.opiumfive.telechart.chart.Util;
-import com.opiumfive.telechart.chart.valueFormat.LineChartValueFormatter;
-import com.opiumfive.telechart.chart.valueFormat.SimpleLineChartValueFormatter;
 
 
 public class Line {

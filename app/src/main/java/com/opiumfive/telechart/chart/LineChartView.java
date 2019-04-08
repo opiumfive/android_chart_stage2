@@ -2,13 +2,15 @@ package com.opiumfive.telechart.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
+import com.opiumfive.telechart.chart.animator.ChartLabelAnimator;
 import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
+
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
@@ -19,31 +21,35 @@ import com.opiumfive.telechart.chart.draw.AxesRenderer;
 import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 
 
-public class ChartView extends View implements IChart, ChartDataProvider {
+public class LineChartView extends View implements IChart, ChartDataProvider {
 
     protected LineChartData data;
+    protected CType cType = CType.LINE;
 
     protected ChartViewrectHandler chartViewrectHandler;
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewrectAnimator;
+    protected ChartLabelAnimator labelAnimator;
 
-    public ChartView(Context context) {
+
+    public LineChartView(Context context) {
         this(context, null, 0);
     }
 
-    public ChartView(Context context, AttributeSet attrs) {
+    public LineChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ChartView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LineChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
         chartViewrectHandler = new ChartViewrectHandler();
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
         this.viewrectAnimator = new ChartViewrectAnimator(this);
+        this.labelAnimator = new ChartLabelAnimator(this);
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setChartData(LineChartData.generateDummyData());
@@ -51,6 +57,14 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
     public void setOnUpTouchListener(ChartTouchHandler.OnUpTouchListener listener) {
         touchHandler.setOnUpTouchListener(listener);
+    }
+
+    public CType getType() {
+        return cType;
+    }
+
+    public void setType(CType cType) {
+        this.cType = cType;
     }
 
     @Override
@@ -92,21 +106,17 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
             axesRenderer.drawInForeground(canvas);
             chartRenderer.drawSelectedValues(canvas);
-
-            postDrawIfNeeded();
         } else {
             canvas.drawColor(Util.DEFAULT_COLOR);
         }
     }
 
-    public void toggleAxisAnim() {
-        axesRenderer.setToggleAnimation();
+    public void toggleAxisAnim(Viewrect targetViewrect) {
+        axesRenderer.setToggleAnimation(targetViewrect);
     }
 
     public void postDrawIfNeeded() {
-        if (axesRenderer.isCurrentlyAnimatingLabels()) {
-            postInvalidate();
-        }
+        postInvalidateOnAnimation();
     }
 
     @Override
@@ -116,17 +126,17 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         boolean needInvalidate = touchHandler.handleTouchEvent(event);
 
         if (needInvalidate) {
-            ViewCompat.postInvalidateOnAnimation(this);
+            postInvalidateOnAnimation();
         }
 
-        return true;
+        return needInvalidate;
     }
 
     @Override
     public void computeScroll() {
         super.computeScroll();
         if (touchHandler.computeScroll()) {
-            ViewCompat.postInvalidateOnAnimation(this);
+            postInvalidateOnAnimation();
         }
     }
 
@@ -145,7 +155,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
     public void setChartRenderer(LineChartRenderer renderer) {
         chartRenderer = renderer;
         resetRendererAndTouchHandler();
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public ChartViewrectHandler getChartViewrectHandler() {
@@ -166,7 +176,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
 
     public void setMaximumViewrect(Viewrect maxViewrect) {
         chartRenderer.setMaximumViewrect(maxViewrect);
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setCurrentViewrectAnimated(Viewrect targetViewrect) {
@@ -176,7 +186,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             Viewrect current = getCurrentViewrect();
             viewrectAnimator.startAnimation(current, targetViewrect);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, Line line) {
@@ -187,7 +197,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
             viewrectAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, line);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public Viewrect getCurrentViewrect() {
@@ -199,7 +209,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         if (null != targetViewrect) {
             chartRenderer.setCurrentViewrect(targetViewrect);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setCurrentViewrectAdjustingRect(Viewrect targetViewrect, boolean useFilter, float distanceX) {
@@ -212,8 +222,18 @@ public class ChartView extends View implements IChart, ChartDataProvider {
                 chartViewrectHandler.filterSmooth(current, targetAdjustedViewrect, distanceX);
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
+
+            if (axesRenderer.getCurrentLabelViewrect() != null) {
+                float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.05f;
+
+                if (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
+                        (Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetAdjustedViewrect.top) >= diff)) {
+                    labelAnimator.startAnimation(targetAdjustedViewrect);
+                    Log.d("labelanim", "startAnimation");
+                }
+            }
         }
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     public void setViewrectRecalculation(boolean isEnabled) {
@@ -228,7 +248,7 @@ public class ChartView extends View implements IChart, ChartDataProvider {
         chartViewrectHandler.resetContentRect();
         chartRenderer.onChartDataChanged();
         axesRenderer.onChartDataChanged();
-        ViewCompat.postInvalidateOnAnimation(this);
+        postInvalidateOnAnimation();
     }
 
     protected void resetRendererAndTouchHandler() {

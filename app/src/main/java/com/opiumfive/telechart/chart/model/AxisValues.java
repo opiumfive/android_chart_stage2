@@ -1,7 +1,6 @@
 package com.opiumfive.telechart.chart.model;
 
-
-import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.Arrays;
 
@@ -23,10 +22,11 @@ public class AxisValues {
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null) return false;
         if (this == obj) return true;
         AxisValues other = (AxisValues) obj;
-        return valuesNumber == other.valuesNumber && Arrays.equals(values, other.values);
+        float percent = Math.abs(values[values.length - 1] - values[0]) * 0.005f;
+        return valuesNumber == other.valuesNumber && Math.abs(values[values.length - 1] - other.values[other.values.length - 1]) <= percent;
     }
 }

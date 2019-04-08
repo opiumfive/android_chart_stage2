@@ -29,7 +29,6 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
             debuggable false
             minifyEnabled true
             shrinkResources true
@@ -37,8 +36,4 @@ android {
             signingConfig signingConfigs.signing
         }
     }
-}
-
-dependencies {
-    implementation 'com.android.support:support-core-ui:28.0.0'
 }

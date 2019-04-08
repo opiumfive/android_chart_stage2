@@ -12,6 +12,7 @@ public class PointValue {
     private int color;
     private int pointRadius;
     private String line;
+    private float approxY;
 
     public PointValue() {
         set(0, 0);
@@ -37,6 +38,14 @@ public class PointValue {
 
     public float getX() {
         return this.x;
+    }
+
+    public float getApproxY() {
+        return approxY;
+    }
+
+    public void setApproxY(float approxY) {
+        this.approxY = approxY;
     }
 
     public float getY() {
