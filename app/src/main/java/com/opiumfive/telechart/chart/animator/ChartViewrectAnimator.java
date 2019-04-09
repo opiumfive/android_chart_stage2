@@ -5,6 +5,11 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.util.Log;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.opiumfive.telechart.chart.CType;
 import com.opiumfive.telechart.chart.IChart;
@@ -29,6 +34,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.addListener(this);
         animator.addUpdateListener(this);
+        animator.setInterpolator(new AnticipateOvershootInterpolator());
         animator.setDuration(FAST_ANIMATION_DURATION);
     }
 
