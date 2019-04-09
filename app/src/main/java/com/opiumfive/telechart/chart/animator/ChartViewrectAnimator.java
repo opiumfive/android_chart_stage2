@@ -5,13 +5,8 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
-import android.util.Log;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AnticipateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 
 import com.opiumfive.telechart.chart.CType;
 import com.opiumfive.telechart.chart.IChart;
