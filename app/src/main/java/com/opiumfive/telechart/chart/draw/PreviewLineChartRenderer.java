@@ -4,9 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
+import android.graphics.Xfermode;
 
+import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Line;
@@ -18,13 +23,22 @@ import com.opiumfive.telechart.chart.ChartDataProvider;
 public class PreviewLineChartRenderer extends LineChartRenderer {
 
     private static final int DEFAULT_PREVIEW_STROKE_WIDTH_DP = 1;
-    private static final int DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP = 7;
+    private static final int DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP = 10;
+    private static final int DEFAULT_CHEVRON_WIDTH_DP = 2;
+    private static final int DEFAULT_CHEVRON_HEIGHT_DP = 12;
 
-    private int backrgroundColor;
+    private int backgroundColor;
     private int previewColor;
     private Bitmap cacheBitmap;
     private Canvas cacheCanvas;
+    private Bitmap overlayBitmap;
+    private Canvas overlayCanvas;
+    private Bitmap boundsBitmap;
+    private Canvas boundsCanvas;
     private boolean needRecache = true;
+    private RectF rect = new RectF();
+    private Paint clearPaint = new Paint();
+    private int clearCornersColor;
 
     private Paint previewPaint = new Paint();
 
@@ -32,6 +46,18 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
         super(context, chart, dataProvider);
         previewPaint.setAntiAlias(false);
         cacheCanvas = new Canvas();
+        overlayCanvas = new Canvas();
+        boundsCanvas = new Canvas();
+        clearPaint.setColor(context.getResources().getColor(android.R.color.transparent));
+        clearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        clearCornersColor = Util.getColorFromAttr(context, R.attr.itemBackground);
+    }
+
+    protected void prepareLinePaint(final Line line) {
+        linePaint.setStrokeWidth(Util.dp2px(density, line.getStrokeWidth() / 2f));
+        linePaint.setColor(line.getColor());
+        int alpha = (int)(255 * line.getAlpha());
+        linePaint.setAlpha(alpha);
     }
 
     public void draw(Canvas canvas) {
@@ -102,11 +128,16 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     public void onChartSizeChanged() {
         cacheBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight(), Bitmap.Config.ARGB_8888);
         cacheCanvas.setBitmap(cacheBitmap);
+        overlayBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight(), Bitmap.Config.ARGB_8888);
+        overlayCanvas.setBitmap(overlayBitmap);
+        boundsBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight(), Bitmap.Config.ARGB_8888);
+        boundsCanvas.setBitmap(boundsBitmap);
     }
 
     @Override
     public void drawSelectedValues(Canvas canvas) {
         super.drawSelectedValues(canvas);
+
         final Viewrect currentViewrect = chartViewrectHandler.getCurrentViewrect();
         final Viewrect maxViewrect = chartViewrectHandler.getMaximumViewport();
         final float left = chartViewrectHandler.computeRawX(currentViewrect.left);
@@ -115,21 +146,52 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
         final float bottom = chartViewrectHandler.computeRawY(currentViewrect.bottom);
         final float start = chartViewrectHandler.computeRawX(maxViewrect.left);
         final float end = chartViewrectHandler.computeRawX(maxViewrect.right);
-        previewPaint.setColor(backrgroundColor);
-        previewPaint.setStyle(Paint.Style.FILL);
-        canvas.drawRect(start, top, left - DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, bottom, previewPaint);
-        canvas.drawRect(right + DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP, top, end, bottom, previewPaint);
 
-        previewPaint.setStrokeWidth(Util.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP));
+        int strokeWidth = Util.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP);
+        int strokeHeight = Util.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP);
+
+
+        previewPaint.setStyle(Paint.Style.FILL);
+
+        previewPaint.setColor(clearCornersColor);
+        boundsCanvas.drawPaint(previewPaint);
+        rect.set(start, top, end, bottom);
+        boundsCanvas.drawRoundRect(rect, strokeWidth / 2f, strokeWidth / 2f, clearPaint);
+
+        if (boundsBitmap != null) {
+            canvas.drawBitmap(boundsBitmap, 0, 0, null);
+        }
+
+        previewPaint.setColor(backgroundColor);
+        rect.set(start, top, end, bottom);
+
+        overlayCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
+        overlayCanvas.drawRoundRect(rect, strokeWidth / 2f, strokeWidth / 2f, previewPaint);
+
         previewPaint.setColor(previewColor);
-        previewPaint.setStyle(Paint.Style.STROKE);
-        int halfStrokeWidth = Util.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP) / 2;
-        int halfStrokeHeight = Util.dp2px(density, DEFAULT_PREVIEW_STROKE_WIDTH_DP) / 2;
-        canvas.drawLine(left + halfStrokeWidth, top, right - halfStrokeWidth, top, previewPaint);
-        canvas.drawLine(left + halfStrokeWidth, bottom, right - halfStrokeWidth, bottom, previewPaint);
-        previewPaint.setStrokeWidth(Util.dp2px(density, DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP));
-        canvas.drawLine(left, top - halfStrokeHeight, left, bottom + halfStrokeHeight, previewPaint);
-        canvas.drawLine(right, top - halfStrokeHeight, right, bottom + halfStrokeHeight, previewPaint);
+
+        rect.set(left, top, right, bottom);
+
+        overlayCanvas.drawRoundRect(rect, strokeWidth / 2f, strokeWidth / 2f, previewPaint);
+        overlayCanvas.drawRect(left + strokeWidth, top + strokeHeight,
+                right - strokeWidth, bottom - strokeHeight, clearPaint);
+
+        if (overlayBitmap != null) {
+            canvas.drawBitmap(overlayBitmap, 0, 0, null);
+        }
+
+        previewPaint.setColor(Color.WHITE);
+
+        int chevronWidth = Util.dp2px(density, DEFAULT_CHEVRON_WIDTH_DP);
+        int chevronHeight = Util.dp2px(density, DEFAULT_CHEVRON_HEIGHT_DP);
+
+        rect.set(left + strokeWidth / 2f - chevronWidth / 2f, top - (top - bottom) / 2f - chevronHeight / 2f,
+                left + strokeWidth / 2f + chevronWidth / 2f, bottom + (top - bottom) / 2f + chevronHeight / 2f);
+        canvas.drawRoundRect(rect, strokeWidth / 2f, strokeWidth / 2f, previewPaint);
+        rect.set(right - strokeWidth / 2f - chevronWidth / 2f, top - (top - bottom) / 2f - chevronHeight / 2f,
+                right - strokeWidth / 2f + chevronWidth / 2f, bottom + (top - bottom) / 2f + chevronHeight / 2f);
+        canvas.drawRoundRect(rect, strokeWidth / 2f, strokeWidth / 2f, previewPaint);
     }
 
     public void recalculateMax() {
@@ -142,6 +204,6 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
     }
 
     public void setBackgroundColor(int color) {
-        backrgroundColor = color;
+        backgroundColor = color;
     }
 }

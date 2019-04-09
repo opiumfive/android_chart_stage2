@@ -66,7 +66,7 @@ public class LineChartRenderer {
     private float detailCornerRadius;
 
     private int touchToleranceMargin;
-    private Paint linePaint = new Paint();
+    protected Paint linePaint = new Paint();
     private Paint pointPaint = new Paint();
     private Paint innerPointPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
@@ -622,7 +622,7 @@ public class LineChartRenderer {
         canvas.drawLines(lines, 0, valueIndex * 4, linePaint);
     }
 
-    private void prepareLinePaint(final Line line) {
+    protected void prepareLinePaint(final Line line) {
         linePaint.setStrokeWidth(Util.dp2px(density, line.getStrokeWidth()));
         linePaint.setColor(line.getColor());
         int alpha = (int)(255 * line.getAlpha());
