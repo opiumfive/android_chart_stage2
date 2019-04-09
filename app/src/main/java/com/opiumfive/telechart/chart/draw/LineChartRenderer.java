@@ -42,6 +42,7 @@ public class LineChartRenderer {
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
     private static final int DEFAULT_LABEL_MARGIN_DP = 2;
+    private static final float BITMAP_SCALE_FACTOR = 0.66f;
 
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
@@ -162,7 +163,8 @@ public class LineChartRenderer {
     }
 
     public void onChartSizeChanged() {
-        cacheBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth() / 2, chartViewrectHandler.getChartHeight() / 2, Bitmap.Config.ARGB_8888);
+        cacheBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
+                (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
         cacheCanvas.setBitmap(cacheBitmap);
         destinationRect.set(0, 0, chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight());
     }
@@ -240,14 +242,14 @@ public class LineChartRenderer {
                 float rawY = chartViewrectHandler.computeRawY(percent);
 
                 if (thruBitmap) {
-                    rawY = rawY / 2f;
+                    rawY = rawY * BITMAP_SCALE_FACTOR;
                 }
 
                 currentY += y;
                 float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
 
                 if (thruBitmap) {
-                    rawX = rawX / 2f;
+                    rawX = rawX * BITMAP_SCALE_FACTOR;
                 }
 
                 Path path = pathMap.get(line.getId());
