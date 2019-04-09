@@ -1,10 +1,12 @@
 package com.opiumfive.telechart.chart.draw;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -69,6 +71,10 @@ public class LineChartRenderer {
     private Map<String, float[]> linesMap = new HashMap<>();
     private float[] maximums;
     private Map<String, Path> pathMap = new HashMap<>();
+    private Bitmap cacheBitmap;
+    private Canvas cacheCanvas;
+    private Paint bitmapPaint;
+    private RectF destinationRect = new RectF();
 
 
     protected Viewrect tempMaximumViewrect = new Viewrect();
@@ -113,6 +119,11 @@ public class LineChartRenderer {
         detailsTitleColor = getColorFromAttr(context, R.attr.detailTitleColor);
 
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
+        cacheCanvas = new Canvas();
+        bitmapPaint = new Paint();
+        bitmapPaint.setAntiAlias(true);
+        bitmapPaint.setFilterBitmap(true);
+        bitmapPaint.setDither(true);
     }
 
     public void onChartDataChanged() {
@@ -141,9 +152,19 @@ public class LineChartRenderer {
         labelPaint.setTextSize(Util.sp2px(scaledDensity, data.getValueLabelTextSize()));
         labelPaint.getFontMetricsInt(fontMetrics);
 
+        if (chart.getType().equals(CType.AREA)) {
+            linePaint.setStyle(Paint.Style.FILL);
+        }
+
         selectedValues.clear();
 
         onChartViewportChanged();
+    }
+
+    public void onChartSizeChanged() {
+        cacheBitmap = Bitmap.createBitmap(chartViewrectHandler.getChartWidth() / 2, chartViewrectHandler.getChartHeight() / 2, Bitmap.Config.ARGB_8888);
+        cacheCanvas.setBitmap(cacheBitmap);
+        destinationRect.set(0, 0, chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight());
     }
 
     public void onChartViewportChanged() {
@@ -175,7 +196,7 @@ public class LineChartRenderer {
                 drawStackedBar(canvas, data.getLines(), bounds);
                 break;
             case AREA:
-                drawArea(canvas, data.getLines(), bounds);
+                drawArea(canvas, data.getLines(), bounds, true);
                 break;
             case PIE:
                 drawPie(canvas, data.getLines(), bounds);
@@ -186,7 +207,7 @@ public class LineChartRenderer {
     protected void drawPie(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
     }
 
-    protected void drawArea(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
+    protected void drawArea(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds, boolean thruBitmap) {
         int linesSize = lines.size();
         for (int p = bounds.from; p < bounds.to; p++) {
             float sum = 0;
@@ -211,15 +232,23 @@ public class LineChartRenderer {
 
                 PointValue pointValue = line.getValues().get(p);
 
-                final float rawBaseY = chartViewrectHandler.computeRawY(currentY / maximums[p]);
                 float y = pointValue.getY();
                 if (line.getAlpha() != 1f) {
                     y = y * line.getAlpha();
                 }
                 float percent = (currentY + y) / maximums[p] * 100f;
-                final float rawY = chartViewrectHandler.computeRawY(percent);
+                float rawY = chartViewrectHandler.computeRawY(percent);
+
+                if (thruBitmap) {
+                    rawY = rawY / 2f;
+                }
+
                 currentY += y;
-                final float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+                float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+
+                if (thruBitmap) {
+                    rawX = rawX / 2f;
+                }
 
                 Path path = pathMap.get(line.getId());
 
@@ -250,22 +279,41 @@ public class LineChartRenderer {
             path.close();
         }
 
-        linePaint.setStyle(Paint.Style.FILL);
-
         boolean drawnFirstWithoutPath = false;
 
-        for (int l = linesSize - 1; l >= 0; l--) {
-            Line line = lines.get(l);
-            if (!line.isActive() && line.getAlpha() == 0f) continue;
+        if (thruBitmap) {
+            cacheCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-            if (!drawnFirstWithoutPath) {
-                drawnFirstWithoutPath = true;
-                canvas.drawColor(line.getColor());
-                continue;
+            for (int l = linesSize - 1; l >= 0; l--) {
+                Line line = lines.get(l);
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+                if (!drawnFirstWithoutPath) {
+                    drawnFirstWithoutPath = true;
+                    canvas.drawColor(line.getColor());
+                    continue;
+                }
+                linePaint.setColor(line.getColor());
+                cacheCanvas.drawPath(pathMap.get(line.getId()), linePaint);
+                pathMap.get(line.getId()).reset();
             }
-            linePaint.setColor(line.getColor());
-            canvas.drawPath(pathMap.get(line.getId()), linePaint);
-            pathMap.get(line.getId()).reset();
+            if (cacheBitmap != null) {
+                canvas.drawBitmap(cacheBitmap, null, destinationRect, bitmapPaint);
+            }
+        } else {
+            for (int l = linesSize - 1; l >= 0; l--) {
+                Line line = lines.get(l);
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+                if (!drawnFirstWithoutPath) {
+                    drawnFirstWithoutPath = true;
+                    canvas.drawColor(line.getColor());
+                    continue;
+                }
+                linePaint.setColor(line.getColor());
+                canvas.drawPath(pathMap.get(line.getId()), linePaint);
+                pathMap.get(line.getId()).reset();
+            }
         }
     }
 

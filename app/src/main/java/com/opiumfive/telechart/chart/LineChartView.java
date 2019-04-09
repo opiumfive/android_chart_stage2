@@ -92,6 +92,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
         chartViewrectHandler.setContentRect(getWidth(), getHeight(), getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         axesRenderer.onChartSizeChanged();
+        chartRenderer.onChartSizeChanged();
     }
 
     @Override

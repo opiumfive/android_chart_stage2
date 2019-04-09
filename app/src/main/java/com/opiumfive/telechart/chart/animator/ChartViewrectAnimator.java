@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.util.Log;
 
+import com.opiumfive.telechart.chart.CType;
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.Viewrect;
@@ -57,16 +58,31 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         float scale = animation.getAnimatedFraction();
-        float dLeft = targetViewrect.left - startViewrect.left;
-        float dRight = targetViewrect.right - startViewrect.right;
-        float dTop = targetViewrect.top - startViewrect.top;
-        float dBot = targetViewrect.bottom - startViewrect.bottom;
-        float diffLeft = dLeft != 0f ? dLeft * scale : 1f;
-        float diffTop = dTop != 0f ? dTop * scale : 1f;
-        float diffRight = dRight != 0f ? dRight * scale : 1f;
-        float diffBottom = dBot != 0f ? dBot * scale : 1f;
 
-        newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
+        if (chart.getType().equals(CType.AREA)) {
+            chart.postDrawIfNeeded();
+        } else {
+
+            float dLeft = targetViewrect.left - startViewrect.left;
+            float dRight = targetViewrect.right - startViewrect.right;
+            float dTop = targetViewrect.top - startViewrect.top;
+            float dBot = targetViewrect.bottom - startViewrect.bottom;
+            float diffLeft = dLeft != 0f ? dLeft * scale : 1f;
+            float diffTop = dTop != 0f ? dTop * scale : 1f;
+            float diffRight = dRight != 0f ? dRight * scale : 1f;
+            float diffBottom = dBot != 0f ? dBot * scale : 1f;
+
+            newViewrect.set(startViewrect.left + diffLeft, startViewrect.top + diffTop, startViewrect.right + diffRight, startViewrect.bottom + diffBottom);
+
+            if (animateMaxToo) {
+                Viewrect maxViewrect = chart.getMaximumViewrect();
+                maxViewrect.bottom = newViewrect.bottom;
+                maxViewrect.top = newViewrect.top;
+            }
+
+            chart.setCurrentViewrect(newViewrect);
+        }
+
         if (animatingLine != null) {
             float alpha = 0f;
             if (animatingLine.isActive()) {
@@ -77,13 +93,6 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
 
             animatingLine.setAlpha(alpha);
         }
-        if (animateMaxToo) {
-            Viewrect maxViewrect = chart.getMaximumViewrect();
-            maxViewrect.bottom = newViewrect.bottom;
-            maxViewrect.top = newViewrect.top;
-        }
-
-        chart.setCurrentViewrect(newViewrect);
     }
 
     @Override

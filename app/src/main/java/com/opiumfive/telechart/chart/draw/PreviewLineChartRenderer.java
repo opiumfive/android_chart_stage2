@@ -61,7 +61,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
                     drawStackedBar(canvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
                     break;
                 case AREA:
-                    drawArea(canvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                    drawArea(canvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1), false);
                     break;
                 case PIE:
                     drawPie(canvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
@@ -87,7 +87,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
                         drawStackedBar(cacheCanvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
                         break;
                     case AREA:
-                        drawArea(cacheCanvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
+                        drawArea(cacheCanvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1), false);
                         break;
                     case PIE:
                         drawPie(cacheCanvas, data.getLines(), new LineChartData.Bounds(0, line.getValues().size() - 1));
