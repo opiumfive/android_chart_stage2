@@ -58,25 +58,31 @@ public class StatisticsActivity extends ChangeThemeActivity {
             ChartData chartData = chartDataList.get(i);
 
             CType cType = CType.LINE;
+            String name = "";
             switch (i) {
                 case 0:
                     cType = CType.LINE;
+                    name = "Followers";
                     break;
                 case 1:
                     cType = CType.LINE_2Y;
+                    name = "Interactions";
                     break;
                 case 2:
                     cType = CType.STACKED_BAR;
+                    name = "Fruits";
                     break;
                 case 3:
                     cType = CType.DAILY_BAR;
+                    name = "Views";
                     break;
                 case 4:
                     cType = CType.AREA;
+                    name = "Fruits";
                     break;
             }
 
-            ChartWithPreview chartWithPreview = new ChartWithPreview(this, chartData, state, cType);
+            ChartWithPreview chartWithPreview = new ChartWithPreview(this, chartData, name, state, cType);
 
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

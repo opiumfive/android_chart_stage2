@@ -9,7 +9,7 @@ import com.opiumfive.telechart.chart.Util;
 
 public class Line {
 
-    private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 1;
+    private static final float DEFAULT_LINE_STROKE_WIDTH_DP = 1.2f;
     private static final int DEFAULT_POINT_RADIUS_DP = 1;
     public static final int UNINITIALIZED = 0;
 
@@ -19,7 +19,7 @@ public class Line {
     private String title;
     private float alpha = 1f;
 
-    private int strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
+    private float strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
 
     private List<PointValue> values = new ArrayList<>();
@@ -64,7 +64,7 @@ public class Line {
         return this;
     }
 
-    public int getStrokeWidth() {
+    public float getStrokeWidth() {
         return strokeWidth;
     }
 

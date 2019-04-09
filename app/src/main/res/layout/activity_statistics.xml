@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.opiumfive.telechart.ui.SlopScrollView
-    android:id="@+id/scrollContainer"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:overScrollMode="never"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/container"
+    <com.opiumfive.telechart.ui.SlopScrollView
+        android:id="@+id/scrollContainer"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:background="?attr/windowBackground" />
+        android:overScrollMode="never"
+        android:layout_height="match_parent">
 
-</com.opiumfive.telechart.ui.SlopScrollView>
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/double_margin"
+            android:paddingBottom="@dimen/margin"
+            android:background="?attr/windowBackground" />
+
+    </com.opiumfive.telechart.ui.SlopScrollView>
+
+    <View
+        android:id="@+id/shadow_view"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@drawable/drop_shadow" />
+
+</FrameLayout>

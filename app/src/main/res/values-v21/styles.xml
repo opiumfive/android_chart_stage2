@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="AppTheme" parent="@android:style/Theme.Material.Light">
         <item name="android:actionBarStyle">@style/ActionBar.Transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:colorPrimaryDark">?attr/colorPrimaryDark</item>
         <item name="android:colorPrimary">?attr/colorPrimary</item>
         <item name="android:navigationBarColor">#000000</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+    </style>
+
+    <style name="ActionBar.Transparent" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:logo">@drawable/transparent</item>
+        <item name="android:title">""</item>
+        <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>
     </style>
 </resources>

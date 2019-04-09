@@ -1,48 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/itemBackground"
-    android:animateLayoutChanges="true"
-    android:paddingTop="@dimen/margin"
-    android:paddingBottom="@dimen/margin"
     android:layout_height="wrap_content">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:text="@string/followers"
-        android:textColor="?attr/titleColor"
-        android:layout_marginLeft="@dimen/margin"
-        android:layout_marginRight="@dimen/margin"
-        android:textStyle="bold"
-        android:textSize="15sp"
-        android:layout_marginBottom="@dimen/half_margin"
-        android:layout_height="wrap_content" />
+        android:orientation="vertical"
+        android:background="?attr/itemBackground"
+        android:animateLayoutChanges="true"
+        android:paddingTop="@dimen/margin"
+        android:paddingBottom="@dimen/margin"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_height="wrap_content">
 
-    <com.opiumfive.telechart.chart.LineChartView
-        android:id="@+id/chart"
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:text="@string/followers"
+            android:textColor="?attr/titleColor"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginRight="@dimen/margin"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_height="wrap_content" />
+
+        <com.opiumfive.telechart.chart.LineChartView
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_marginRight="@dimen/margin"
+            android:layout_height="@dimen/chart_height" />
+
+        <com.opiumfive.telechart.chart.PreviewLineChartView
+            android:id="@+id/chart_preview"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin"
+            android:paddingLeft="@dimen/margin"
+            android:paddingRight="@dimen/margin"
+            android:layout_height="@dimen/preview_height" />
+
+        <com.opiumfive.telechart.ui.CheckerList
+            android:id="@+id/checkboxList"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/half_margin"
+            android:paddingLeft="@dimen/half_margin"
+            android:paddingStart="@dimen/half_margin"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_marginLeft="@dimen/margin"
-        android:layout_marginRight="@dimen/margin"
-        android:layout_height="@dimen/chart_height" />
+        android:layout_height="2dp"
+        android:background="@drawable/drop_shadow_top" />
 
-    <com.opiumfive.telechart.chart.PreviewLineChartView
-        android:id="@+id/chart_preview"
+    <View
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin"
-        android:paddingLeft="@dimen/margin"
-        android:paddingRight="@dimen/margin"
-        android:layout_height="@dimen/preview_height" />
+        android:layout_height="5dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/drop_shadow" />
 
-    <com.opiumfive.telechart.ui.CheckerList
-        android:id="@+id/checkboxList"
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/half_margin"
-        android:paddingLeft="@dimen/half_margin"
-        android:paddingStart="@dimen/half_margin"
-        android:clipToPadding="false"
-        android:clipChildren="false"
-        android:layout_height="wrap_content"/>
-
-</LinearLayout>
+</FrameLayout>

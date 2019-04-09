@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.CType;
@@ -30,6 +31,7 @@ public class ChartWithPreview extends LinearLayout {
     private CheckerList checkboxList;
     private LineChartData data;
     private LineChartData previewData;
+    private TextView name;
     private boolean shouldAnimateRect = false;
     private boolean isAnimatingPreview = true;
 
@@ -60,15 +62,17 @@ public class ChartWithPreview extends LinearLayout {
         }
     };
 
-    public ChartWithPreview(Context context, ChartData chartData, State state, CType cType) {
+    public ChartWithPreview(Context context, ChartData chartData, String title, State state, CType cType) {
         super(context);
         inflate(context, R.layout.chart_with_preview, this);
 
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
+        name = findViewById(R.id.name);
         chart.setType(cType);
         previewChart.setType(cType);
+        name.setText(title);
         if (cType.equals(CType.DAILY_BAR)) {
             checkboxList.setVisibility(GONE);
         }

@@ -96,6 +96,7 @@ public class AxesRenderer {
             labelPaintTab[position].setStyle(Paint.Style.FILL);
             labelPaintTab[position].setAntiAlias(true);
             linePaintTab[position].setStyle(Paint.Style.STROKE);
+            linePaintTab[position].setStrokeWidth(Util.dp2px(density, 1));
             linePaintTab[position].setAntiAlias(true);
         }
     }
@@ -444,12 +445,12 @@ public class AxesRenderer {
 
         if (axis.hasLines()) {
 
-            linePaintTab[position].setAlpha(255);
+            linePaintTab[position].setAlpha(255 / 10);
 
             //canvas.drawLine(lineX1, contentRectMargins.bottom - Util.dp2px(density, 6), lineX2, contentRectMargins.bottom - Util.dp2px(density, 6), linePaintTab[position]);
 
             int valueToDrawIndex = 0;
-            linePaintTab[position].setAlpha((int)(255 * autoValuesBufferTab[position].alpha));
+            linePaintTab[position].setAlpha((int)(255 / 10f * autoValuesBufferTab[position].alpha));
 
             for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                 if (isAxisVertical) {
@@ -465,7 +466,7 @@ public class AxesRenderer {
             canvas.drawLines(linesDrawBufferTab[position], 0, valueToDrawIndex * 4, linePaintTab[position]);
 
             if (isCurrentlyAnimatingLabels) {
-                linePaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
+                linePaintTab[position].setAlpha((int) (255 / 10f * autoValuesYBuff.alpha));
                 valueToDrawIndex = 0;
                 for (; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
                     if (isAxisVertical) {

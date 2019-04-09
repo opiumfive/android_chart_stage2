@@ -6,7 +6,7 @@
     </style>
 
     <style name="ActionBar.Transparent" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary_Dark</item>
         <item name="android:logo">@drawable/transparent</item>
         <item name="android:title">""</item>
         <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>

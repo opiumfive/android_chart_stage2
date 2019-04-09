@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="double_margin">32dp</dimen>
     <dimen name="margin">16dp</dimen>
     <dimen name="half_margin">8dp</dimen>
     <dimen name="divider_margin">32dp</dimen>

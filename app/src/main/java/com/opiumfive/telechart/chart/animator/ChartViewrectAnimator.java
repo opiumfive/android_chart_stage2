@@ -2,6 +2,7 @@ package com.opiumfive.telechart.chart.animator;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.opiumfive.telechart.chart.CType;
@@ -28,13 +30,14 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     private ChartAnimationListener animationListener;
     private Line animatingLine;
     private boolean animateMaxToo = false;
+    private TimeInterpolator areaInterpolator = new AnticipateOvershootInterpolator();
+    private TimeInterpolator lineInterpolator = new DecelerateInterpolator();
 
     public ChartViewrectAnimator(IChart chart) {
         this.chart = chart;
         animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.addListener(this);
         animator.addUpdateListener(this);
-        animator.setInterpolator(new AnticipateOvershootInterpolator());
         animator.setDuration(FAST_ANIMATION_DURATION);
     }
 
@@ -44,12 +47,18 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
 
     public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean animateMaxToo) {
         this.animateMaxToo = animateMaxToo;
+
         startAnimationWithToggleLine(startViewrect, targetViewrect, null);
     }
 
     public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, Line line) {
         this.startViewrect.set(startViewrect);
         this.targetViewrect.set(targetViewrect);
+        if (chart.getType().equals(CType.AREA)) {
+            animator.setInterpolator(areaInterpolator);
+        } else {
+            animator.setInterpolator(lineInterpolator);
+        }
         animatingLine = line;
         animator.setDuration(FAST_ANIMATION_DURATION);
         animator.start();

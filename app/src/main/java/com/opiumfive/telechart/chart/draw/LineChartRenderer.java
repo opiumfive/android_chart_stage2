@@ -569,7 +569,11 @@ public class LineChartRenderer {
 
             //additional offset 7.5%
             float diff = ADDITIONAL_VIEWRECT_OFFSET * (adjustedViewrect.top - adjustedViewrect.bottom);
-            adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
+            if (chart.getType().equals(CType.DAILY_BAR)) {
+                adjustedViewrect.bottom = 0;
+            } else {
+                adjustedViewrect.bottom = adjustedViewrect.bottom - diff * 2;
+            }
             adjustedViewrect.top = adjustedViewrect.top + diff;
         }
 

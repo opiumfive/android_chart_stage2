@@ -58,6 +58,13 @@ public class Util {
 
     }
 
+    public static float dp2px(float density, float dp) {
+        if (dp == 0) {
+            return 0;
+        }
+        return dp * density + 0.5f;
+    }
+
     public static int sp2px(float scaledDensity, int sp) {
         if (sp == 0) {
             return 0;
