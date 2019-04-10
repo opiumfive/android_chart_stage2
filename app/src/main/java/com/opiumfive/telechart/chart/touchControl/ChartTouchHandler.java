@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.ViewParent;
 
+import com.opiumfive.telechart.chart.CType;
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.touchControl.ChartScroller.ScrollResult;
@@ -59,9 +60,16 @@ public class ChartTouchHandler {
         boolean needInvalidate = false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                boolean isTouched = checkTouch(event.getX());
-                if (isTouched) {
-                    needInvalidate = true;
+                boolean isTouched = false;
+                if (chart.getType().equals(CType.AREA)) {
+                    chart.startMorphling(CType.PIE);
+                } else if (chart.getType().equals(CType.PIE)) {
+                    chart.startMorphling(CType.AREA);
+                } {
+                    isTouched = checkTouch(event.getX());
+                    if (isTouched) {
+                        needInvalidate = true;
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:

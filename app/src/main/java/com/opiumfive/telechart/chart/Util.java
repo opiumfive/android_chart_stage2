@@ -11,11 +11,19 @@ import android.widget.CompoundButton;
 import com.opiumfive.telechart.chart.model.AxisValues;
 
 import java.lang.reflect.Field;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Util {
 
     public static final int DEFAULT_COLOR = Color.parseColor("#DFDFDF");
 
+    private static NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+
+    static {
+        numberFormat.setMinimumFractionDigits(1);
+        numberFormat.setMaximumFractionDigits(1);
+    }
 
     public static int getColorFromAttr(Context context,  int resId) {
         TypedValue typedValue = new TypedValue();
@@ -28,26 +36,6 @@ public class Util {
         TypedArray a = context.getTheme().obtainStyledAttributes(new int[] { resId });
         int attributeResourceId = a.getResourceId(0, 0);
         return context.getResources().getDrawable(attributeResourceId);
-    }
-
-    public static Drawable getButtonDrawable(CompoundButton button) {
-        Field sButtonDrawableField = null;
-
-        try {
-            sButtonDrawableField = CompoundButton.class.getDeclaredField("mButtonDrawable");
-            sButtonDrawableField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-
-        if (sButtonDrawableField != null) {
-            try {
-                return (Drawable) sButtonDrawableField.get(button);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
     }
 
     public static int dp2px(float density, int dp) {
@@ -95,14 +83,23 @@ public class Util {
             return 1;
         }
 
-        long lval = Math.round(value);
-        int index = endIndex - 1;
         int charsNumber = 0;
-        while (lval != 0) {
-            int digit = (int) (lval % 10);
-            lval = lval / 10;
-            formattedValue[index--] = (char) (digit + '0');
-            charsNumber++;
+        long lval = Math.round(value);
+        if (lval < 10000) {
+            int index = endIndex - 1;
+            while (lval != 0) {
+                int digit = (int) (lval % 10);
+                lval = lval / 10;
+                formattedValue[index--] = (char) (digit + '0');
+                charsNumber++;
+            }
+        } else {
+            int exp = Math.min(2, (int) (Math.log(lval) / Math.log(1000)));
+            String numberStr = numberFormat.format(lval / Math.pow(1000, exp));
+            char character = "kM".charAt(exp - 1);
+            String formatted = String.format(Locale.US, "%s%c", numberStr, character);
+            System.arraycopy(formatted.toCharArray(), 0, formattedValue, formattedValue.length - formatted.length(), formatted.length());
+            charsNumber = formatted.length();
         }
 
         return charsNumber;

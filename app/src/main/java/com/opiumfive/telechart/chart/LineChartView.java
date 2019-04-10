@@ -2,6 +2,7 @@ package com.opiumfive.telechart.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -9,6 +10,7 @@ import android.view.View;
 
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animator.ChartLabelAnimator;
+import com.opiumfive.telechart.chart.animator.ChartMorphAnimator;
 import com.opiumfive.telechart.chart.animator.ChartViewrectAnimator;
 
 import com.opiumfive.telechart.chart.model.Line;
@@ -25,6 +27,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
 
     protected LineChartData data;
     protected CType cType = CType.LINE;
+    protected CType targetType = CType.LINE;
 
     protected ChartViewrectHandler chartViewrectHandler;
     protected AxesRenderer axesRenderer;
@@ -32,6 +35,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     protected LineChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewrectAnimator;
     protected ChartLabelAnimator labelAnimator;
+    protected ChartMorphAnimator morphAnimator;
 
 
     public LineChartView(Context context) {
@@ -50,6 +54,19 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         axesRenderer = new AxesRenderer(context, this);
         this.viewrectAnimator = new ChartViewrectAnimator(this);
         this.labelAnimator = new ChartLabelAnimator(this);
+        this.morphAnimator = new ChartMorphAnimator(this);
+        this.morphAnimator.setChartAnimationListener(new ChartAnimationListener() {
+            @Override
+            public void onAnimationStarted() {
+            }
+
+            @Override
+            public void onAnimationFinished() {
+                cType = targetType;
+                chartRenderer.setMorphFactor(0f);
+                postInvalidateOnAnimation();
+            }
+        });
 
         setChartRenderer(new LineChartRenderer(context, this, this));
         setChartData(LineChartData.generateDummyData());
@@ -63,8 +80,13 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         return cType;
     }
 
+    public CType getTargetType() {
+        return targetType;
+    }
+
     public void setType(CType cType) {
         this.cType = cType;
+        this.targetType = cType;
     }
 
     @Override
@@ -103,8 +125,10 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         //canvas.clipRect(chartViewrectHandler.getContentRectMinusAllMargins());
         chartRenderer.draw(canvas);
         //canvas.restoreToCount(clipRestoreCount);
-        axesRenderer.drawInBackground(canvas);
-        axesRenderer.drawInForeground(canvas);
+        if (!getType().equals(CType.PIE)) {
+            axesRenderer.drawInBackground(canvas);
+            axesRenderer.drawInForeground(canvas);
+        }
         chartRenderer.drawSelectedValues(canvas);
     }
 
@@ -113,6 +137,12 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     }
 
     public void postDrawIfNeeded() {
+        postInvalidateOnAnimation();
+    }
+
+    @Override
+    public void postDrawWithMorphFactor(float factor) {
+        chartRenderer.setMorphFactor(factor);
         postInvalidateOnAnimation();
     }
 
@@ -184,6 +214,14 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
             viewrectAnimator.startAnimation(current, targetViewrect);
         }
         postInvalidateOnAnimation();
+    }
+
+    @Override
+    public void startMorphling(CType cType) {
+        if (cType.equals(this.cType)) return;
+        targetType = cType;
+        morphAnimator.cancelAnimation();
+        morphAnimator.startAnimation();
     }
 
     public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, Line line) {

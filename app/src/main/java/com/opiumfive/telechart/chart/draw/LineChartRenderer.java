@@ -4,13 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.NinePatchDrawable;
+import android.util.FloatMath;
+import android.util.Log;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.CType;
@@ -29,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import static com.opiumfive.telechart.Settings.SELECTED_VALUES_DATE_FORMAT;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
@@ -43,6 +48,11 @@ public class LineChartRenderer {
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
     private static final int DEFAULT_LABEL_MARGIN_DP = 2;
     private static final float BITMAP_SCALE_FACTOR = 0.66f;
+
+    //TODO rename
+    private static final int WIDTH = 20;
+    private static final int HEIGHT = 20;
+    private static final int COUNT = (WIDTH + 1) * (HEIGHT + 1);
 
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
@@ -71,11 +81,31 @@ public class LineChartRenderer {
     private Paint innerPointPaint = new Paint();
     private Map<String, float[]> linesMap = new HashMap<>();
     private float[] maximums;
+    private Map<String, Float> lineSlice = new HashMap<>();
     private Map<String, Path> pathMap = new HashMap<>();
     private Bitmap cacheBitmap;
     private Canvas cacheCanvas;
+    private Bitmap cacheBitmapPie;
+    private Canvas cacheCanvasPie;
     private Paint bitmapPaint;
     private RectF destinationRect = new RectF();
+    private int rotation = 0;
+    private PointF sliceVector = new PointF();
+    private RectF drawCircleOval = new RectF();
+    private RectF originCircleOval = new RectF();
+    private float morphFactor = 0.0f;
+
+    //TODO rename
+    private final float[] mVerts = new float[COUNT*2];
+    private final float[] mOrig = new float[COUNT*2];
+
+    private final Matrix mMatrix = new Matrix();
+    private final Matrix mInverse = new Matrix();
+
+    private static void setXY(float[] array, int index, float x, float y) {
+        array[index*2 + 0] = x;
+        array[index*2 + 1] = y;
+    }
 
 
     protected Viewrect tempMaximumViewrect = new Viewrect();
@@ -121,6 +151,7 @@ public class LineChartRenderer {
 
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
         cacheCanvas = new Canvas();
+        cacheCanvasPie = new Canvas();
         bitmapPaint = new Paint();
         bitmapPaint.setAntiAlias(true);
         bitmapPaint.setFilterBitmap(true);
@@ -137,14 +168,12 @@ public class LineChartRenderer {
 
         linesMap.clear();
         pathMap.clear();
+        lineSlice.clear();
 
         for (Line line: data.getLines()) {
-            if (chart.getType().equals(CType.AREA)) {
-                linesMap.put(line.getId(), new float[15000 * 4]);
-            } else {
-                linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
-            }
+            linesMap.put(line.getId(), new float[line.getValues().size() * 4]);
             pathMap.put(line.getId(), new Path());
+            lineSlice.put(line.getId(), 0f);
         }
 
         maximums = new float[data.getLines().get(0).getValues().size()];
@@ -153,20 +182,49 @@ public class LineChartRenderer {
         labelPaint.setTextSize(Util.sp2px(scaledDensity, data.getValueLabelTextSize()));
         labelPaint.getFontMetricsInt(fontMetrics);
 
-        if (chart.getType().equals(CType.AREA)) {
+        if (chart.getType().equals(CType.AREA) || chart.getType().equals(CType.PIE)) {
             linePaint.setStyle(Paint.Style.FILL);
         }
 
         selectedValues.clear();
 
         onChartViewportChanged();
+
     }
+
+    public void setMorphFactor(float factor) {
+        morphFactor = factor;
+        calculateCircleOval();
+    }
+
+
 
     public void onChartSizeChanged() {
         cacheBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
         cacheCanvas.setBitmap(cacheBitmap);
+        cacheBitmapPie = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
+                (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
+        cacheCanvasPie.setBitmap(cacheBitmapPie);
         destinationRect.set(0, 0, chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight());
+        calculateCircleOval();
+
+        float w = cacheBitmap.getWidth();
+        float h = cacheBitmap.getHeight();
+        // construct our mesh
+        int index = 0;
+        for (int y = 0; y <= HEIGHT; y++) {
+            float fy = h * y / HEIGHT;
+            for (int x = 0; x <= WIDTH; x++) {
+                float fx = w * x / WIDTH;
+                setXY(mVerts, index, fx, fy);
+                setXY(mOrig, index, fx, fy);
+                index += 1;
+            }
+        }
+
+        mMatrix.setTranslate(10, 10);
+        mMatrix.invert(mInverse);
     }
 
     public void onChartViewportChanged() {
@@ -184,6 +242,8 @@ public class LineChartRenderer {
 
         LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
 
+
+
         switch (chart.getType()) {
             case LINE:
             case LINE_2Y:
@@ -198,18 +258,124 @@ public class LineChartRenderer {
                 drawStackedBar(canvas, data.getLines(), bounds);
                 break;
             case AREA:
-                drawArea(canvas, data.getLines(), bounds, true);
+                drawArea(canvas, data.getLines(), bounds, true, 1f - morphFactor);
                 break;
             case PIE:
-                drawPie(canvas, data.getLines(), bounds);
+                drawPie(canvas, data.getLines(), bounds, 1f);
                 break;
+        }
+
+        if (!chart.getType().equals(chart.getTargetType())) {
+            switch (chart.getTargetType()) {
+                case AREA:
+                    drawArea(canvas, data.getLines(), bounds, true, morphFactor);
+                    break;
+                case PIE:
+                    drawPie(canvas, data.getLines(), bounds, morphFactor);
+                    break;
+            }
         }
     }
 
-    protected void drawPie(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds) {
+    private void warp(float cx, float cy) {
+        final float K = 10000;
+        float[] src = mOrig;
+        float[] dst = mVerts;
+        for (int i = 0; i < COUNT*2; i += 2) {
+            float x = src[i+0];
+            float y = src[i+1];
+            float dx = cx - x;
+            float dy = cy - y;
+            float dd = dx*dx + dy*dy;
+            float d = (float) Math.sqrt(dd);
+            float pull = K / (dd + 0.000001f);
+
+            pull /= (d + 0.000001f);
+
+            if (pull >= 1) {
+                dst[i+0] = cx;
+                dst[i+1] = cy;
+            } else {
+                dst[i+0] = x + dx * pull;
+                dst[i+1] = y + dy * pull;
+            }
+        }
     }
 
-    protected void drawArea(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds, boolean thruBitmap) {
+    protected void drawPie(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds, float alpha) {
+        int linesSize = lines.size();
+
+        for (int l = 0; l < linesSize; l++) {
+            Line line = lines.get(l);
+            if (!line.isActive() && line.getAlpha() == 0f) continue;
+            lineSlice.put(line.getId(), 0f);
+        }
+
+        float allMaximum = 0f;
+        for (int p = bounds.from; p < bounds.to; p++) {
+            float sum = 0;
+            for (int l = 0; l < linesSize; l++) {
+                Line line = lines.get(l);
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+                PointValue pointValue = line.getValues().get(p);
+
+                allMaximum += pointValue.getY() * line.getAlpha();
+                lineSlice.put(line.getId(), lineSlice.get(line.getId()) + pointValue.getY() * line.getAlpha());
+                sum += pointValue.getY() * line.getAlpha();
+            }
+            maximums[p] = sum;
+        }
+
+        final float sliceScale = 360f / allMaximum;
+
+        float lastAngle = rotation;
+        Log.d("asdasd", "drawPie: " + alpha);
+        bitmapPaint.setAlpha((int)(255 * alpha));
+
+        cacheCanvasPie.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
+        for (int l = 0; l < linesSize; l++) {
+            Line line = lines.get(l);
+            if (!line.isActive() && line.getAlpha() == 0f) continue;
+            float angle = lineSlice.get(line.getId()) * sliceScale;
+
+            sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle + angle / 2))),
+                    (float) (Math.sin(Math.toRadians(lastAngle + angle / 2))));
+            normalizeVector(sliceVector);
+            drawCircleOval.set(originCircleOval);
+
+            linePaint.setColor(line.getColor());
+            cacheCanvasPie.drawArc(drawCircleOval, lastAngle, angle, true, linePaint);
+
+            lastAngle += angle;
+        }
+
+        if (cacheBitmap != null) {
+            canvas.drawBitmap(cacheBitmapPie, null, destinationRect, bitmapPaint);
+        }
+    }
+
+    private void calculateCircleOval() {
+        Rect contentRect = chartViewrectHandler.getContentRectMinusAllMargins();
+        final float circleRadius = Math.min(contentRect.width() / 2f * BITMAP_SCALE_FACTOR, contentRect.height() / 2f * BITMAP_SCALE_FACTOR);
+        final float centerX = contentRect.centerX() * BITMAP_SCALE_FACTOR;
+        final float centerY = contentRect.centerY() * BITMAP_SCALE_FACTOR;
+        final float left = centerX - circleRadius;
+        final float top = centerY - circleRadius;
+        final float right = centerX + circleRadius;
+        final float bottom = centerY + circleRadius;
+        originCircleOval.set(left, top, right, bottom);
+        final float inest = 0.5f * originCircleOval.width() * (1.0f - 1.0f);
+        originCircleOval.inset(inest, inest);
+    }
+
+    private void normalizeVector(PointF point) {
+        final float abs = point.length();
+        point.set(point.x / abs, point.y / abs);
+    }
+
+    protected void drawArea(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds, boolean thruBitmap, float alpha) {
         int linesSize = lines.size();
         for (int p = bounds.from; p < bounds.to; p++) {
             float sum = 0;
@@ -225,6 +391,16 @@ public class LineChartRenderer {
         }
 
         int valueIndex = 0;
+
+
+        Log.d("asdasd", "drawArea: " + alpha);
+
+        if (thruBitmap) {
+            bitmapPaint.setAlpha((int)(255 * alpha));
+            float[] pt = {new Random().nextFloat() * cacheBitmap.getWidth(), new Random().nextFloat() * cacheBitmap.getHeight() };
+            mInverse.mapPoints(pt);
+            warp(pt[0], pt[1]);
+        }
 
         for (int p = bounds.from; p < bounds.to; p++) {
             float currentY = 0;
@@ -263,7 +439,7 @@ public class LineChartRenderer {
                     }
 
                     if (p == bounds.to - 1) {
-                        path.lineTo(chartViewrectHandler.getContentRectMinusAllMargins().right, rawY);
+                        path.lineTo(chartViewrectHandler.getContentRectMinusAxesMargins().right, rawY);
                     }
                 }
             }
@@ -290,29 +466,35 @@ public class LineChartRenderer {
                 Line line = lines.get(l);
                 if (!line.isActive() && line.getAlpha() == 0f) continue;
 
+                linePaint.setColor(line.getColor());
                 if (!drawnFirstWithoutPath) {
                     drawnFirstWithoutPath = true;
-                    canvas.drawColor(line.getColor());
+                    Rect contentRect = chartViewrectHandler.getContentRectMinusAxesMargins();
+                    cacheCanvas.drawRect(contentRect, linePaint);
                     continue;
                 }
-                linePaint.setColor(line.getColor());
+
                 cacheCanvas.drawPath(pathMap.get(line.getId()), linePaint);
                 pathMap.get(line.getId()).reset();
             }
             if (cacheBitmap != null) {
-                canvas.drawBitmap(cacheBitmap, null, destinationRect, bitmapPaint);
+                //canvas.drawBitmap(cacheBitmap, null, destinationRect, bitmapPaint);
+
+                canvas.concat(mMatrix);
+                canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, mVerts, 0,
+                        null, 0, bitmapPaint);
             }
         } else {
             for (int l = linesSize - 1; l >= 0; l--) {
                 Line line = lines.get(l);
                 if (!line.isActive() && line.getAlpha() == 0f) continue;
-
+                linePaint.setColor(line.getColor());
                 if (!drawnFirstWithoutPath) {
                     drawnFirstWithoutPath = true;
-                    canvas.drawColor(line.getColor());
+                    Rect contentRect = chartViewrectHandler.getContentRectMinusAxesMargins();
+                    canvas.drawRect(contentRect, linePaint);
                     continue;
                 }
-                linePaint.setColor(line.getColor());
                 canvas.drawPath(pathMap.get(line.getId()), linePaint);
                 pathMap.get(line.getId()).reset();
             }

@@ -70,6 +70,7 @@ public class ChartWithPreview extends LinearLayout {
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
         name = findViewById(R.id.name);
+
         chart.setType(cType);
         previewChart.setType(cType);
         name.setText(title);
