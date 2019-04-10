@@ -1,23 +1,30 @@
 package com.opiumfive.telechart.chart.animator;
 
 import android.animation.Animator;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 
 import com.opiumfive.telechart.chart.IChart;
 
 public class ChartMorphAnimator implements Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
 
-    private final static int FAST_ANIMATION_DURATION = 1500;
+    private final static int FAST_ANIMATION_DURATION = 350;
 
     private final IChart chart;
     private ValueAnimator animator;
     private ChartAnimationListener animationListener;
+    private TimeInterpolator lineInterpolator = new LinearInterpolator();
 
     public ChartMorphAnimator(IChart chart) {
         this.chart = chart;
         animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.addListener(this);
         animator.addUpdateListener(this);
+        animator.setInterpolator(lineInterpolator);
         animator.setDuration(FAST_ANIMATION_DURATION);
     }
 

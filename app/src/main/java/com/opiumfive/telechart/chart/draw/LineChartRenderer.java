@@ -9,11 +9,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.NinePatchDrawable;
-import android.util.FloatMath;
 import android.util.Log;
 
 import com.opiumfive.telechart.R;
@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 
 import static com.opiumfive.telechart.Settings.SELECTED_VALUES_DATE_FORMAT;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
@@ -87,17 +86,25 @@ public class LineChartRenderer {
     private Canvas cacheCanvas;
     private Bitmap cacheBitmapPie;
     private Canvas cacheCanvasPie;
+    private Bitmap morphBitmap;
+    private Canvas morphCanvas;
     private Paint bitmapPaint;
+    private Paint clearPaint = new Paint();
+    private Paint bitmapMorphPaint;
     private RectF destinationRect = new RectF();
     private int rotation = 0;
     private PointF sliceVector = new PointF();
     private RectF drawCircleOval = new RectF();
     private RectF originCircleOval = new RectF();
     private float morphFactor = 0.0f;
+    private RectF morphCornersRect = new RectF();
+    private int clearCornersColor;
+    private Bitmap boundsBitmap;
+    private Canvas boundsCanvas;
 
     //TODO rename
-    private final float[] mVerts = new float[COUNT*2];
-    private final float[] mOrig = new float[COUNT*2];
+    private final float[] mVerts = new float[COUNT * 2];
+    private final float[] mOrig = new float[COUNT * 2];
 
     private final Matrix mMatrix = new Matrix();
     private final Matrix mInverse = new Matrix();
@@ -152,10 +159,21 @@ public class LineChartRenderer {
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
         cacheCanvas = new Canvas();
         cacheCanvasPie = new Canvas();
+        morphCanvas = new Canvas();
+        boundsCanvas = new Canvas();
         bitmapPaint = new Paint();
         bitmapPaint.setAntiAlias(true);
         bitmapPaint.setFilterBitmap(true);
         bitmapPaint.setDither(true);
+        bitmapMorphPaint = new Paint();
+        bitmapMorphPaint.setAntiAlias(true);
+        bitmapMorphPaint.setFilterBitmap(true);
+        bitmapMorphPaint.setDither(true);
+        bitmapMorphPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        clearCornersColor = Util.getColorFromAttr(context, R.attr.itemBackground);
+
+        clearPaint.setColor(context.getResources().getColor(android.R.color.transparent));
+        clearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
     }
 
     public void onChartDataChanged() {
@@ -203,15 +221,24 @@ public class LineChartRenderer {
         cacheBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
         cacheCanvas.setBitmap(cacheBitmap);
+
+        morphBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
+                (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
+        morphCanvas.setBitmap(morphBitmap);
+
+        boundsBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
+                (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
+        boundsCanvas.setBitmap(boundsBitmap);
+
         cacheBitmapPie = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
         cacheCanvasPie.setBitmap(cacheBitmapPie);
         destinationRect.set(0, 0, chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight());
         calculateCircleOval();
 
-        float w = cacheBitmap.getWidth();
-        float h = cacheBitmap.getHeight();
-        // construct our mesh
+        float w = morphBitmap.getWidth();
+        float h = morphBitmap.getHeight();
+
         int index = 0;
         for (int y = 0; y <= HEIGHT; y++) {
             float fy = h * y / HEIGHT;
@@ -277,28 +304,29 @@ public class LineChartRenderer {
         }
     }
 
-    private void warp(float cx, float cy) {
-        final float K = 10000;
+    private void swirl(float cx, float cy, float radius, float twists) {
         float[] src = mOrig;
         float[] dst = mVerts;
-        for (int i = 0; i < COUNT*2; i += 2) {
-            float x = src[i+0];
-            float y = src[i+1];
-            float dx = cx - x;
-            float dy = cy - y;
-            float dd = dx*dx + dy*dy;
-            float d = (float) Math.sqrt(dd);
-            float pull = K / (dd + 0.000001f);
 
-            pull /= (d + 0.000001f);
+        for (int i = 0; i < COUNT * 2; i += 2) {
+            float x = src[i+0] - cx;
+            float y = src[i+1] - cy;
 
-            if (pull >= 1) {
-                dst[i+0] = cx;
-                dst[i+1] = cy;
-            } else {
-                dst[i+0] = x + dx * pull;
-                dst[i+1] = y + dy * pull;
+            float pixelDistance = (float) Math.sqrt((x * x) + (y * y));
+            float pixelAngle = (float) Math.atan2(y, x);
+
+            float swirlAmount = 1.0f - (pixelDistance / radius);
+
+            if (swirlAmount > 0.0f) {
+                float twistAngle = (float) (twists * swirlAmount * Math.PI * 2.0f);
+
+                pixelAngle += twistAngle;
+                x = (float) Math.cos(pixelAngle) * pixelDistance;
+                y = (float) Math.sin(pixelAngle) * pixelDistance;
             }
+
+            dst[i+0] = x + cx;
+            dst[i+1] = y + cy;
         }
     }
 
@@ -330,8 +358,13 @@ public class LineChartRenderer {
         final float sliceScale = 360f / allMaximum;
 
         float lastAngle = rotation;
-        Log.d("asdasd", "drawPie: " + alpha);
-        bitmapPaint.setAlpha((int)(255 * alpha));
+
+        if (alpha < 0.55f) {
+            bitmapPaint.setAlpha((int) (255 * 0f));
+        } else {
+            float alph = (alpha - 0.55f) / (1f - 0.55f);
+            bitmapPaint.setAlpha((int) (255 * alph));
+        }
 
         cacheCanvasPie.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
@@ -392,14 +425,16 @@ public class LineChartRenderer {
 
         int valueIndex = 0;
 
-
-        Log.d("asdasd", "drawArea: " + alpha);
-
         if (thruBitmap) {
-            bitmapPaint.setAlpha((int)(255 * alpha));
-            float[] pt = {new Random().nextFloat() * cacheBitmap.getWidth(), new Random().nextFloat() * cacheBitmap.getHeight() };
-            mInverse.mapPoints(pt);
-            warp(pt[0], pt[1]);
+
+            bitmapPaint.setAlpha((int) (255 * 1f));
+
+            if (morphFactor > 0f) {
+                float[] pt = {morphBitmap.getWidth() / 2f, morphBitmap.getHeight() / 2f};
+
+                mInverse.mapPoints(pt);
+                swirl(pt[0], pt[1], morphBitmap.getHeight() / 2f, morphFactor  / 2f);
+            }
         }
 
         for (int p = bounds.from; p < bounds.to; p++) {
@@ -478,11 +513,32 @@ public class LineChartRenderer {
                 pathMap.get(line.getId()).reset();
             }
             if (cacheBitmap != null) {
-                //canvas.drawBitmap(cacheBitmap, null, destinationRect, bitmapPaint);
+                if (morphFactor > 0f) {
+                    morphCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    //morphCanvas.concat(mMatrix);
+                    morphCanvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, mVerts, 0, null, 0, bitmapPaint);
 
-                canvas.concat(mMatrix);
-                canvas.drawBitmapMesh(cacheBitmap, WIDTH, HEIGHT, mVerts, 0,
-                        null, 0, bitmapPaint);
+                    if (morphBitmap.getHeight() * morphFactor >= morphBitmap.getHeight() * 0.5f) {
+                        morphCornersRect.set(-morphBitmap.getHeight() * (0.5f - morphFactor)* 0.4f, 0,
+                                boundsBitmap.getWidth() + morphBitmap.getHeight() * (0.5f - morphFactor) * 0.4f, boundsBitmap.getHeight());
+                    } else {
+                        morphCornersRect.set(0, 0, boundsBitmap.getWidth(), boundsBitmap.getHeight());
+                    }
+                    boundsCanvas.drawColor(clearCornersColor);
+
+                    boundsCanvas.drawRoundRect(morphCornersRect, morphBitmap.getHeight() * morphFactor, morphBitmap.getHeight() * morphFactor, clearPaint);
+                    if (morphBitmap.getHeight() * morphFactor >= morphBitmap.getHeight() / 2f) {
+                        float radius = morphBitmap.getHeight() - (morphBitmap.getHeight() - morphBitmap.getHeight() / 2f) * morphFactor;
+                        //boundsCanvas.drawCircle(morphBitmap.getWidth() / 2f, boundsBitmap.getHeight() / 2f, radius, clearPaint);
+                    }
+
+
+                    morphCanvas.drawBitmap(boundsBitmap, 0 ,0, null);
+
+                    canvas.drawBitmap(morphBitmap, null, destinationRect, bitmapPaint);
+                } else {
+                    canvas.drawBitmap(cacheBitmap, null, destinationRect, bitmapPaint);
+                }
             }
         } else {
             for (int l = linesSize - 1; l >= 0; l--) {
