@@ -82,12 +82,7 @@ public class ChartWithPreview extends LinearLayout {
 
     public void setChartData(ChartData chartData, State state) {
         data = DataMapper.mapFromPlainData(chartData);
-        data.setAxisYLeft(
-                new Axis()
-                        .setHasLines(true)
-                        .setLineColor(getColorFromAttr(getContext(), R.attr.gridColor))
-                        .setTextColor(getColorFromAttr(getContext(), R.attr.labelColor))
-        );
+
         data.setAxisXBottom(
                 new Axis()
                         .setHasLines(false)
@@ -106,9 +101,35 @@ public class ChartWithPreview extends LinearLayout {
             }
         }
 
+        if (chart.getType().equals(CType.LINE_2Y)) {
+            data.setAxisYRight(
+                    new Axis()
+                            .setHasLines(false)
+                            .setLineColor(getColorFromAttr(getContext(), R.attr.gridColor))
+                            .setTextColor(data.getLines().get(1).getColor())
+            );
+
+            data.setAxisYLeft(
+                    new Axis()
+                            .setHasLines(true)
+                            .setLineColor(getColorFromAttr(getContext(), R.attr.gridColor))
+                            .setTextColor(data.getLines().get(0).getColor())
+            );
+
+            data.prepare2YType();
+        } else {
+            data.setAxisYLeft(
+                    new Axis()
+                            .setHasLines(true)
+                            .setLineColor(getColorFromAttr(getContext(), R.attr.gridColor))
+                            .setTextColor(getColorFromAttr(getContext(), R.attr.labelColor))
+            );
+        }
+
         previewData = new LineChartData(data);
         previewData.setAxisYLeft(null);
         previewData.setAxisXBottom(null);
+        previewData.setAxisYRight(null);
 
         chart.setChartData(data);
         chart.setScrollEnabled(false);

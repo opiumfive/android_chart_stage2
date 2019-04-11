@@ -1,6 +1,5 @@
 package com.opiumfive.telechart.chart.model;
 
-import android.util.Log;
 
 import java.util.Arrays;
 

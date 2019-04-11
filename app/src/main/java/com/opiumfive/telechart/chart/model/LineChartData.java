@@ -13,11 +13,11 @@ public class LineChartData {
 
     protected Axis axisXBottom;
     protected Axis axisYLeft;
+    protected Axis axisYRight;
 
 
     protected int valueLabelTextColor = Color.WHITE;
     protected int valueLabelTextSize = DEFAULT_TEXT_SIZE_SP;
-    protected Typeface valueLabelTypeface;
 
     private List<Line> lines = new ArrayList<>();
 
@@ -38,7 +38,6 @@ public class LineChartData {
         }
         this.valueLabelTextColor = data.valueLabelTextColor;
         this.valueLabelTextSize = data.valueLabelTextSize;
-        this.valueLabelTypeface = data.valueLabelTypeface;
         this.lines = data.lines;
     }
 
@@ -92,7 +91,7 @@ public class LineChartData {
                 return mid;
             }
         }
-        // lo == hi + 1
+
         return (a.get(lo).getX() - value) < (value - a.get(hi).getX()) ? lo : hi;
     }
 
@@ -117,8 +116,16 @@ public class LineChartData {
         return axisYLeft;
     }
 
+    public Axis getAxisYRight() {
+        return axisYRight;
+    }
+
     public void setAxisYLeft(Axis axisY) {
         this.axisYLeft = axisY;
+    }
+
+    public void setAxisYRight(Axis axisY) {
+        this.axisYRight = axisY;
     }
 
     public int getValueLabelTextColor() {
@@ -137,8 +144,53 @@ public class LineChartData {
         this.valueLabelTextSize = valueLabelTextSize;
     }
 
-    public Typeface getValueLabelTypeface() {
-        return valueLabelTypeface;
+    public void prepare2YType() {
+        if (lines.size() == 2) {
+            float min1 = Float.MAX_VALUE;
+            float max1 = Float.MIN_VALUE;
+            float min2 = Float.MAX_VALUE;
+            float max2 = Float.MIN_VALUE;
+
+            int size = lines.get(0).getValues().size();
+
+            for (int i = 0; i < size; i++) {
+                float line1value = lines.get(0).getValues().get(i).getY();
+                float line2value = lines.get(1).getValues().get(i).getY();
+                if (line1value >= max1) max1 = line1value;
+                if (line2value >= max2) max2 = line2value;
+                if (line1value <= min1) min1 = line1value;
+                if (line2value <= min2) min2 = line2value;
+            }
+
+            float offset = 0f;
+            float scale = 1f;
+
+            if (max1 > max2) {
+                offset = min1 - min2;
+                scale = (max1 - min1) / (max2 - min2);
+                lines.get(1).setOffset(offset);
+                lines.get(1).setScale(scale);
+                lines.get(1).setMinY(min2);
+
+                for (int i = 0; i < size; i++) {
+                    float currY = lines.get(1).getValues().get(i).getY();
+                    float newY = (currY - min2) * scale + offset;
+                    lines.get(1).getValues().get(i).setY(newY);
+                }
+            } else {
+                offset = min2 - min1;
+                scale = (max2 - min2) / (max1 - min1);
+                lines.get(0).setOffset(offset);
+                lines.get(0).setScale(scale);
+                lines.get(0).setMinY(min1);
+
+                for (int i = 0; i < size; i++) {
+                    float currY = lines.get(0).getValues().get(i).getY();
+                    float newY = (currY - min1) * scale + offset;
+                    lines.get(0).getValues().get(i).setY(newY);
+                }
+            }
+        }
     }
 
     public static class Bounds {

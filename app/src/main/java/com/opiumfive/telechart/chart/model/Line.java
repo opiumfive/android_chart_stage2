@@ -18,6 +18,9 @@ public class Line {
     private boolean isActive = true;
     private String title;
     private float alpha = 1f;
+    private float offset = 0f;
+    private float scale = 1f;
+    private float minY = 0f;
 
     private float strokeWidth = DEFAULT_LINE_STROKE_WIDTH_DP;
     private int pointRadius = DEFAULT_POINT_RADIUS_DP;
@@ -108,5 +111,29 @@ public class Line {
 
     public void setAlpha(float alpha) {
         this.alpha = alpha;
+    }
+
+    public float getOffset() {
+        return offset;
+    }
+
+    public void setOffset(float offset) {
+        this.offset = offset;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+
+    public float getMinY() {
+        return minY;
+    }
+
+    public void setMinY(float minY) {
+        this.minY = minY;
     }
 }
