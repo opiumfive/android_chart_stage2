@@ -3,9 +3,9 @@ package com.opiumfive.telechart.chart.animator;
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.opiumfive.telechart.chart.IChart;
@@ -17,7 +17,7 @@ public class ChartMorphAnimator implements Animator.AnimatorListener, ValueAnima
     private final IChart chart;
     private ValueAnimator animator;
     private ChartAnimationListener animationListener;
-    private TimeInterpolator lineInterpolator = new LinearInterpolator();
+    private TimeInterpolator lineInterpolator = new AccelerateInterpolator();
 
     public ChartMorphAnimator(IChart chart) {
         this.chart = chart;

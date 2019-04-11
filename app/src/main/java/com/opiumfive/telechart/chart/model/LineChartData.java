@@ -9,7 +9,7 @@ import java.util.List;
 
 public class LineChartData {
 
-    public static final int DEFAULT_TEXT_SIZE_SP = 14;
+    public static final int DEFAULT_TEXT_SIZE_SP = 11;
 
     protected Axis axisXBottom;
     protected Axis axisYLeft;
