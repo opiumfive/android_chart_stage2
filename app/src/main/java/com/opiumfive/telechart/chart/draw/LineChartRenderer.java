@@ -771,7 +771,7 @@ public class LineChartRenderer {
         tempMaximumViewrect.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, 0);
         LineChartData data = dataProvider.getChartData();
 
-        if (chart.getType().equals(CType.AREA)) {
+        if (chart.getType().equals(CType.AREA) || chart.getType().equals(CType.PIE)) {
             int points = data.getLines().get(0).getValues().size();
             tempMaximumViewrect.left = data.getLines().get(0).getValues().get(0).getX();
             tempMaximumViewrect.right = data.getLines().get(0).getValues().get(points - 1).getX();
@@ -815,7 +815,7 @@ public class LineChartRenderer {
         Viewrect adjustedViewrect = new Viewrect(target.left, Float.MIN_VALUE, target.right, Float.MAX_VALUE);
         LineChartData data = dataProvider.getChartData();
 
-        if (chart.getType().equals(CType.AREA)) {
+        if (chart.getType().equals(CType.AREA) || chart.getType().equals(CType.PIE)) {
             adjustedViewrect.top = 100f;
             adjustedViewrect.bottom = 0f;
         } else if (chart.getType().equals(CType.STACKED_BAR)) {
