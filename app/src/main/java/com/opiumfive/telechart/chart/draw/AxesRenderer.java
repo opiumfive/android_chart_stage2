@@ -271,6 +271,7 @@ public class AxesRenderer {
                         autoValuesY2Buff = new AxisValues(targetValuesY2Buff);
                     }
                 }
+
                 if (!targetValuesYBuff.equals(currentValuesYBuff) || isCurrentlyAnimatingLabels) {
                     Log.d("labelanim", "!targetValuesYBuff.equals " + framesAnim);
                     if (currentValuesYBuff.valuesNumber == 0) {
