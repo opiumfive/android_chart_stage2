@@ -60,8 +60,11 @@ public class AxesRenderer {
     private AxisValues[] autoValuesBufferTab = new AxisValues[]{new AxisValues(), new AxisValues(), new AxisValues()};
 
     private AxisValues autoValuesYBuff = new AxisValues();
+    private AxisValues autoValuesY2Buff = new AxisValues();
     private AxisValues targetValuesYBuff = new AxisValues();
+    private AxisValues targetValuesY2Buff = new AxisValues();
     private AxisValues currentValuesYBuff = new AxisValues();
+    private AxisValues currentValuesY2Buff = new AxisValues();
     private float[] linesDrawBufferTabY = new float[] {};
     private float[] rawValuesTabY = new float[] {};
     private float[] autoValuesToDrawTabY = new float[] {};
@@ -132,7 +135,7 @@ public class AxesRenderer {
 
     private void initAxisAttributes(Axis axis, int position) {
         initAxisPaints(axis, position);
-        initAxisTextAlignment(axis, position);
+        initAxisTextAlignment( position);
         initAxisDimension(position);
     }
 
@@ -148,7 +151,7 @@ public class AxesRenderer {
         labelWidthTab[position] = (int) labelPaintTab[position].measureText(labelWidthChars, 0, Axis.DEFAULT_MAX_AXIS_LABEL_CHARS);
     }
 
-    private void initAxisTextAlignment(Axis axis, int position) {
+    private void initAxisTextAlignment(int position) {
         if (BOTTOM == position) {
             labelPaintTab[position].setTextAlign(Align.CENTER);
         } else if (LEFT == position) {
@@ -257,12 +260,27 @@ public class AxesRenderer {
                     autoValuesYBuff = new AxisValues(targetValuesYBuff);
                     autoValuesYBuff.step = 0;
                     needUpdateYBuffer = false;
+
+                    if (chart.getType().equals(CType.LINE_2Y)) {
+                        float scale = chart.getChartData().getLines().get(1).getScale();
+                        float offset = chart.getChartData().getLines().get(1).getOffset();
+                        float min = chart.getChartData().getLines().get(1).getMinY();
+                        targetStart = (targetViewrect.bottom - offset) / scale + min;
+                        targetStop = (targetViewrect.top - offset) / scale + min;
+                        Util.generatedVerticalAxisValues(targetStart, targetStop, 6, targetValuesY2Buff);
+                        autoValuesY2Buff = new AxisValues(targetValuesY2Buff);
+                    }
                 }
                 if (!targetValuesYBuff.equals(currentValuesYBuff) || isCurrentlyAnimatingLabels) {
                     Log.d("labelanim", "!targetValuesYBuff.equals " + framesAnim);
                     if (currentValuesYBuff.valuesNumber == 0) {
                         currentValuesYBuff = new AxisValues(autoValuesYBuff);
                         autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
+
+                        if (chart.getType().equals(CType.LINE_2Y)) {
+                            currentValuesY2Buff = new AxisValues(autoValuesY2Buff);
+                        }
+
                         needUpdateYBuffer = true;
                     } else {
 
@@ -294,6 +312,11 @@ public class AxesRenderer {
                         if (autoValuesBufferTab[position].step >= LABEL_ANIM_STEPS - 1) {
                             currentValuesYBuff = new AxisValues(targetValuesYBuff);
                             autoValuesBufferTab[position] = new AxisValues(targetValuesYBuff);
+
+                            if (chart.getType().equals(CType.LINE_2Y)) {
+                                currentValuesY2Buff = new AxisValues(targetValuesY2Buff);
+                            }
+
                             needUpdateYBuffer = true;
                             isCurrentlyAnimatingLabels = false;
                             toggleAnimation = false;
@@ -321,6 +344,22 @@ public class AxesRenderer {
                     needUpdateYBuffer = true;
                 }
             } else {
+                if (chart.getType().equals(CType.LINE_2Y)) {
+
+                    float scale = chart.getChartData().getLines().get(1).getScale();
+                    float offset = chart.getChartData().getLines().get(1).getOffset();
+                    float min = chart.getChartData().getLines().get(1).getMinY();
+                    float targetStart = (start - offset) / scale + min;
+                    float targetStop = (stop - offset) / scale + min;
+
+                    Util.generatedVerticalAxisValues(targetStart, targetStop, 6, targetValuesY2Buff);
+
+                    autoValuesY2Buff = new AxisValues(targetValuesY2Buff);
+                    if (initialLabelAddition) {
+                        currentValuesY2Buff = new AxisValues(autoValuesY2Buff);
+                    }
+                }
+
                 Util.generatedVerticalAxisValues(start, stop, 6, targetValuesYBuff);
 
                 autoValuesYBuff = new AxisValues(targetValuesYBuff);
@@ -549,7 +588,7 @@ public class AxesRenderer {
             for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[LEFT]; ++valueToDrawIndex) {
                 int charsNumber = 0;
 
-                final float value = currentValuesYBuff.values[valueToDrawIndex];
+                final float value = currentValuesY2Buff.values[valueToDrawIndex];
                 charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
 
                 labelY = rawValuesTab[LEFT][valueToDrawIndex] - Util.dp2px(density, 4);
@@ -560,15 +599,15 @@ public class AxesRenderer {
             if (isCurrentlyAnimatingLabels) {
                 labelPaintTab[position].setAlpha((int) (255 * autoValuesYBuff.alpha));
 
-                for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[position]; ++valueToDrawIndex) {
+                for (int valueToDrawIndex = 0; valueToDrawIndex < valuesToDrawNumTab[LEFT]; ++valueToDrawIndex) {
                     int charsNumber = 0;
 
-                    final float value = targetValuesYBuff.values[valueToDrawIndex];
+                    final float value = targetValuesY2Buff.values[valueToDrawIndex];
                     charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
 
-                    labelY = rawValuesTabY[valueToDrawIndex] - Util.dp2px(density, 4);
+                    labelY = rawValuesTabY[LEFT] - Util.dp2px(density, 4);
 
-                    canvas.drawText(labelBuffer, labelBuffer.length - charsNumber, charsNumber, labelX, labelY, labelPaintTab[LEFT]);
+                    canvas.drawText(labelBuffer, labelBuffer.length - charsNumber, charsNumber, labelX, labelY, labelPaintTab[position]);
                 }
             }
         }
