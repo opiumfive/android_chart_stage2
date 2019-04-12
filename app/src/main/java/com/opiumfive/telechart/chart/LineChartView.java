@@ -2,7 +2,6 @@ package com.opiumfive.telechart.chart;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -120,15 +119,14 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //axesRenderer.drawInBackground(canvas);
-        //int clipRestoreCount = canvas.save();
-        //canvas.clipRect(chartViewrectHandler.getContentRectMinusAllMargins());
+
         chartRenderer.draw(canvas);
-        //canvas.restoreToCount(clipRestoreCount);
+
         if (!getType().equals(CType.PIE)) {
             axesRenderer.drawInBackground(canvas);
             axesRenderer.drawInForeground(canvas);
         }
+
         chartRenderer.drawSelectedValues(canvas);
     }
 

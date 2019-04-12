@@ -331,34 +331,6 @@ public class LineChartRenderer {
     }
 
     protected void drawPie(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds, float alpha) {
-        int linesSize = lines.size();
-
-        for (int l = 0; l < linesSize; l++) {
-            Line line = lines.get(l);
-            if (!line.isActive() && line.getAlpha() == 0f) continue;
-            lineSlice.put(line.getId(), 0f);
-        }
-
-        float allMaximum = 0f;
-        for (int p = bounds.from; p < bounds.to; p++) {
-            float sum = 0;
-            for (int l = 0; l < linesSize; l++) {
-                Line line = lines.get(l);
-                if (!line.isActive() && line.getAlpha() == 0f) continue;
-
-                PointValue pointValue = line.getValues().get(p);
-
-                allMaximum += pointValue.getY() * line.getAlpha();
-                lineSlice.put(line.getId(), lineSlice.get(line.getId()) + pointValue.getY() * line.getAlpha());
-                sum += pointValue.getY() * line.getAlpha();
-            }
-            maximums[p] = sum;
-        }
-
-        final float sliceScale = 360f / allMaximum;
-
-        float lastAngle = rotation;
-
         if (alpha < 0.55f) {
             bitmapPaint.setAlpha((int) (255 * 0f));
         } else {
@@ -366,7 +338,36 @@ public class LineChartRenderer {
             bitmapPaint.setAlpha((int) (255 * alph));
         }
 
+        // prevent calculations and drawing while swirling
         if (morphFactor == 0f || (morphFactor > 0f && !isCachedPieBitmapForMorph)) {
+
+            int linesSize = lines.size();
+
+            for (int l = 0; l < linesSize; l++) {
+                Line line = lines.get(l);
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
+                lineSlice.put(line.getId(), 0f);
+            }
+
+            float allMaximum = 0f;
+            for (int p = bounds.from; p < bounds.to; p++) {
+                float sum = 0;
+                for (int l = 0; l < linesSize; l++) {
+                    Line line = lines.get(l);
+                    if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+                    PointValue pointValue = line.getValues().get(p);
+
+                    allMaximum += pointValue.getY() * line.getAlpha();
+                    lineSlice.put(line.getId(), lineSlice.get(line.getId()) + pointValue.getY() * line.getAlpha());
+                    sum += pointValue.getY() * line.getAlpha();
+                }
+                maximums[p] = sum;
+            }
+
+            final float sliceScale = 360f / allMaximum;
+
+            float lastAngle = rotation;
 
             cacheCanvasPie.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
@@ -441,24 +442,8 @@ public class LineChartRenderer {
     }
 
     protected void drawArea(Canvas canvas, List<Line> lines, LineChartData.Bounds bounds, boolean thruBitmap) {
-        int linesSize = lines.size();
-        for (int p = bounds.from; p < bounds.to; p++) {
-            float sum = 0;
-            for (int l = 0; l < linesSize; l++) {
-                Line line = lines.get(l);
-                if (!line.isActive() && line.getAlpha() == 0f) continue;
-
-                PointValue pointValue = line.getValues().get(p);
-
-                sum += pointValue.getY() * line.getAlpha();
-            }
-            maximums[p] = sum;
-        }
-
-        int valueIndex = 0;
 
         if (thruBitmap) {
-
             bitmapPaint.setAlpha((int) (255 * 1f));
 
             if (morphFactor > 0f) {
@@ -477,64 +462,86 @@ public class LineChartRenderer {
             }
         }
 
-        for (int p = bounds.from; p < bounds.to; p++) {
-            float currentY = 0;
+        int linesSize = lines.size();
+
+        // prevent calculations while swirling
+        if (!thruBitmap || ((morphFactor == 0f || (morphFactor > 0f && !isCachedAreaBitmapForMorph)))) {
+
+            for (int p = bounds.from; p < bounds.to; p++) {
+                float sum = 0;
+                for (int l = 0; l < linesSize; l++) {
+                    Line line = lines.get(l);
+                    if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+                    PointValue pointValue = line.getValues().get(p);
+
+                    sum += pointValue.getY() * line.getAlpha();
+                }
+                maximums[p] = sum;
+            }
+
+            int valueIndex = 0;
+
+            for (int p = bounds.from; p < bounds.to; p++) {
+                float currentY = 0;
+                for (int l = 0; l < linesSize; l++) {
+                    Line line = lines.get(l);
+                    if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+                    PointValue pointValue = line.getValues().get(p);
+
+                    float y = pointValue.getY();
+                    if (line.getAlpha() != 1f) {
+                        y = y * line.getAlpha();
+                    }
+                    float percent = (currentY + y) / maximums[p] * 100f;
+                    float rawY = chartViewrectHandler.computeRawY(percent);
+
+                    if (thruBitmap) {
+                        rawY = rawY * BITMAP_SCALE_FACTOR;
+                    }
+
+                    currentY += y;
+                    float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
+
+                    if (thruBitmap) {
+                        rawX = rawX * BITMAP_SCALE_FACTOR;
+                    }
+
+                    Path path = pathMap.get(line.getId());
+
+                    if (path != null) {
+                        if (valueIndex == 0) {
+                            path.moveTo(chartViewrectHandler.getContentRectMinusAxesMargins().left, rawY);
+                            path.lineTo(rawX, rawY);
+                        } else {
+                            path.lineTo(rawX, rawY);
+                        }
+
+                        if (p == bounds.to - 1) {
+                            path.lineTo(chartViewrectHandler.getContentRectMinusAxesMargins().right, rawY);
+                        }
+                    }
+                }
+
+                valueIndex++;
+            }
+
             for (int l = 0; l < linesSize; l++) {
                 Line line = lines.get(l);
                 if (!line.isActive() && line.getAlpha() == 0f) continue;
-
-                PointValue pointValue = line.getValues().get(p);
-
-                float y = pointValue.getY();
-                if (line.getAlpha() != 1f) {
-                    y = y * line.getAlpha();
-                }
-                float percent = (currentY + y) / maximums[p] * 100f;
-                float rawY = chartViewrectHandler.computeRawY(percent);
-
-                if (thruBitmap) {
-                    rawY = rawY * BITMAP_SCALE_FACTOR;
-                }
-
-                currentY += y;
-                float rawX = chartViewrectHandler.computeRawX(pointValue.getX());
-
-                if (thruBitmap) {
-                    rawX = rawX * BITMAP_SCALE_FACTOR;
-                }
-
                 Path path = pathMap.get(line.getId());
-
-                if (path != null) {
-                    if (valueIndex == 0) {
-                        path.moveTo(chartViewrectHandler.getContentRectMinusAxesMargins().left, rawY);
-                        path.lineTo(rawX, rawY);
-                    } else {
-                        path.lineTo(rawX, rawY);
-                    }
-
-                    if (p == bounds.to - 1) {
-                        path.lineTo(chartViewrectHandler.getContentRectMinusAxesMargins().right, rawY);
-                    }
-                }
+                Rect contentRect = chartViewrectHandler.getContentRectMinusAxesMargins();
+                path.lineTo(contentRect.right, contentRect.bottom);
+                path.lineTo(contentRect.left, contentRect.bottom);
+                path.close();
             }
-
-            valueIndex++;
-        }
-
-        for (int l = 0; l < linesSize; l++) {
-            Line line = lines.get(l);
-            if (!line.isActive() && line.getAlpha() == 0f) continue;
-            Path path = pathMap.get(line.getId());
-            Rect contentRect = chartViewrectHandler.getContentRectMinusAxesMargins();
-            path.lineTo(contentRect.right, contentRect.bottom);
-            path.lineTo(contentRect.left, contentRect.bottom);
-            path.close();
         }
 
         boolean drawnFirstWithoutPath = false;
 
         if (thruBitmap) {
+            // prevent drawing path while swirling
             if (morphFactor == 0f || (morphFactor > 0f && !isCachedAreaBitmapForMorph)) {
                 cacheCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
