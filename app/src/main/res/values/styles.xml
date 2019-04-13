@@ -26,6 +26,16 @@
         <item name="android:textSize">13sp</item>
     </style>
 
+    <style name="TitleTextView">
+        <item name="android:textColor">?attr/titleColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ZoomOutTextVuew" parent="TitleTextView">
+        <item name="android:textColor">?attr/zoomOutColor</item>
+    </style>
+
     <style name="LightTheme" parent="AppTheme">
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -38,6 +48,7 @@
         <item name="itemBackground">@color/itemBackground</item>
         <item name="gridColor">@color/gridColor</item>
         <item name="detailTitleColor">@color/detailTitleColor</item>
+        <item name="zoomOutColor">@color/zoomOutColor</item>
         <item name="detailBackground">@drawable/shadow_light</item>
     </style>
 
@@ -53,6 +64,7 @@
         <item name="itemBackground">@color/itemBackground_Dark</item>
         <item name="detailTitleColor">@color/detailTitleColor_Dark</item>
         <item name="gridColor">@color/gridColor_Dark</item>
+        <item name="zoomOutColor">@color/zoomOutColor_Dark</item>
         <item name="detailBackground">@drawable/shadow_dark</item>
     </style>
 
@@ -67,6 +79,7 @@
     <attr name="itemBackground" format="color"/>
     <attr name="detailTitleColor" format="color"/>
     <attr name="gridColor" format="color"/>
+    <attr name="zoomOutColor" format="color"/>
     <attr name="detailBackground" format="reference"/>
 
 </resources>

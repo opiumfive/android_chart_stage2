@@ -2,7 +2,6 @@ package com.opiumfive.telechart.ui;
 
 import android.content.Context;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -39,10 +38,12 @@ public class ChartWithPreview extends LinearLayout {
     private CheckerList checkboxList;
     private LineChartData data;
     private LineChartData previewData;
-    private TextView name;
+    private TextSwitcher name;
     private TextSwitcher dates;
     private boolean shouldAnimateRect = false;
     private boolean isAnimatingPreview = true;
+    private String chartTitle;
+    private boolean zoomState = false;
     private SimpleDateFormat dateFormat = new SimpleDateFormat(TOP_RECT_DATE_FORMAT, Locale.ENGLISH);
 
     private ViewrectChangeListener previewRectListener = new ViewrectChangeListener() {
@@ -79,6 +80,8 @@ public class ChartWithPreview extends LinearLayout {
         super(context);
         inflate(context, R.layout.chart_with_preview, this);
 
+        chartTitle = title;
+
         chart = findViewById(R.id.chart);
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
@@ -92,14 +95,45 @@ public class ChartWithPreview extends LinearLayout {
         });
         dates.setInAnimation(context, R.anim.text_fade_in);
         dates.setOutAnimation(context, R.anim.text_fade_out);
-        dates.setAnimateFirstView(true);
+        dates.setAnimateFirstView(false);
 
-        //dates.setInAnimation(context, android.R.anim.slide_in_left);
-        //dates.setOutAnimation(context, android.R.anim.slide_out_right);
+        name.setFactory(new ViewSwitcher.ViewFactory() {
 
+            boolean titleInitiated = false;
+
+            @Override
+            public View makeView() {
+                TextView textView = new TextView(getContext());
+                textView.setTextAppearance(getContext(), titleInitiated ? R.style.TitleTextView : R.style.ZoomOutTextVuew);
+                if (!titleInitiated) {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.search_icon, 0, 0, 0);
+                    textView.setCompoundDrawablePadding(context.getResources().getDimensionPixelSize(R.dimen.half_margin));
+                }
+                titleInitiated = true;
+                return textView;
+            }
+        });
+
+        name.setInAnimation(context, R.anim.zoom_fade_in);
+        name.setOutAnimation(context, R.anim.zoom_fade_out);
+        name.setAnimateFirstView(false);
+
+        name.setOnClickListener((v) -> {
+            if (chart.getType().equals(CType.PIE)) {
+                chart.startMorphling(CType.AREA);
+            }
+        });
 
         chart.setType(cType);
         chart.setSelectionOnHover(!cType.equals(CType.AREA));
+
+        chart.setZoomInListener(zoomState -> {
+            this.zoomState = zoomState;
+            name.setText(zoomState ? context.getString(R.string.zoom_out) : chartTitle);
+            String date = dateFormat.format((long) chart.getCurrentViewrect().left) + " - " + dateFormat.format((long) chart.getCurrentViewrect().right);
+            setDatesTextAnimated(date);
+        });
+
         previewChart.setType(cType);
         name.setText(title);
         if (cType.equals(CType.DAILY_BAR)) {

@@ -2,4 +2,5 @@
     <string name="app_name">TeleChart</string>
     <string name="statistics">Statistics</string>
     <string name="change_theme">Change theme</string>
+    <string name="zoom_out">Zoom out</string>
 </resources>

@@ -29,6 +29,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     protected LineChartData data;
     protected CType cType = CType.LINE;
     protected CType targetType = CType.LINE;
+    protected CType originType = CType.LINE;
 
     protected ChartViewrectHandler chartViewrectHandler;
     protected AxesRenderer axesRenderer;
@@ -38,6 +39,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     protected ChartLabelAnimator labelAnimator;
     protected ChartMorphAnimator morphAnimator;
     protected boolean isSelectionOnHover = true;
+    protected ZoomInListener zoomInListener;
 
 
     public LineChartView(Context context) {
@@ -88,7 +90,12 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
 
     public void setType(CType cType) {
         this.cType = cType;
+        this.originType = cType;
         this.targetType = cType;
+    }
+
+    public void setZoomInListener(ZoomInListener zoomInListener) {
+        this.zoomInListener = zoomInListener;
     }
 
     @Override
@@ -230,6 +237,11 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     public void startMorphling(CType cType) {
         if (cType.equals(this.cType)) return;
         targetType = cType;
+
+        if (zoomInListener != null) {
+            zoomInListener.zoomed(!cType.equals(originType));
+        }
+
         morphAnimator.cancelAnimation();
         morphAnimator.startAnimation();
     }
@@ -311,5 +323,9 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         } else {
             return currentViewrect.right < maximumViewrect.right;
         }
+    }
+
+    public interface ZoomInListener {
+        void zoomed(boolean zoomState);
     }
 }

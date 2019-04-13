@@ -18,14 +18,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <TextSwitcher
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
-                android:textColor="?attr/titleColor"
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
-                android:textStyle="bold"
-                android:textSize="16sp"
                 android:layout_marginBottom="@dimen/half_margin"
                 android:layout_height="wrap_content" />
 
