@@ -190,12 +190,12 @@ public class ChartWithPreview extends LinearLayout {
 
         checkboxList.setData(data.getLines(), (list, checked) -> {
 
-            List<Line> linesToAimate = new ArrayList<>();
+            List<Line> linesToAnimate = new ArrayList<>();
 
             for (int pos = 0; pos < list.length; pos++) {
                 Line line = data.getLines().get(list[pos]);
                 line.setActive(checked[pos]);
-                linesToAimate.add(line);
+                linesToAnimate.add(line);
             }
 
             int activeLines = 0;
@@ -214,7 +214,7 @@ public class ChartWithPreview extends LinearLayout {
             target.left = current.left;
             target.right = current.right;
 
-            chart.setCurrentViewrectAnimatedAdjustingMax(target, linesToAimate);
+            chart.setCurrentViewrectAnimatedAdjustingMax(target, linesToAnimate);
             previewChart.setCurrentViewrectAnimated(target);
         });
 

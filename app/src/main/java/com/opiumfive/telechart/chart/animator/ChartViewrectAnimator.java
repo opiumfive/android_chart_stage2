@@ -75,10 +75,22 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     public void onAnimationUpdate(ValueAnimator animation) {
         float scale = animation.getAnimatedFraction();
 
+        if (animatingLine != null) {
+            float alpha = 0f;
+            for (Line line : animatingLine) {
+                if (line.isActive()) {
+                    alpha = scale;
+                } else {
+                    alpha = 1f - scale;
+                }
+
+                line.setAlpha(alpha);
+            }
+        }
+
         if (chart.getType().equals(CType.AREA)) {
             chart.postDrawIfNeeded();
         } else {
-
             float dLeft = targetViewrect.left - startViewrect.left;
             float dRight = targetViewrect.right - startViewrect.right;
             float dTop = targetViewrect.top - startViewrect.top;
@@ -99,18 +111,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
             chart.setCurrentViewrect(newViewrect);
         }
 
-        if (animatingLine != null) {
-            float alpha = 0f;
-            for (Line line : animatingLine) {
-                if (line.isActive()) {
-                    alpha = scale;
-                } else {
-                    alpha = 1f - scale;
-                }
 
-                line.setAlpha(alpha);
-            }
-        }
     }
 
     @Override

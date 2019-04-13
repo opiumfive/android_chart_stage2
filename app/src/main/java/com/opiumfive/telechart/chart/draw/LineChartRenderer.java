@@ -821,6 +821,7 @@ public class LineChartRenderer {
             for (int p = 0; p < points; p++) {
                 float localSum = 0f;
                 for (int l = 0; l < lines; l++) {
+                    if (!data.getLines().get(l).isActive()) continue;
                     localSum += data.getLines().get(l).getValues().get(p).getY();
                 }
                 if (localSum > tempMaximumViewrect.top) {

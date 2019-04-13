@@ -269,6 +269,7 @@ public class AxesRenderer {
                         targetStop = (targetViewrect.top - offset) / scale + min;
                         Util.generatedVerticalAxisValues(targetStart, targetStop, 6, targetValuesY2Buff);
                         autoValuesY2Buff = new AxisValues(targetValuesY2Buff);
+                        autoValuesY2Buff.step = 0;
                     }
                 }
 
@@ -290,6 +291,10 @@ public class AxesRenderer {
                             autoValuesYBuff = new AxisValues(targetValuesYBuff);
                             autoValuesBufferTab[position] = new AxisValues(currentValuesYBuff);
 
+                            if (chart.getType().equals(CType.LINE_2Y)) {
+                                autoValuesY2Buff = new AxisValues(targetValuesY2Buff);
+                            }
+
                             float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
 
@@ -305,6 +310,14 @@ public class AxesRenderer {
                                 autoValuesYBuff.values[i] -= calcYAnimOffsetFactor(LABEL_ANIM_STEPS, i, animStep) * animDirection;
                             }
                             autoValuesYBuff.alpha = 0f;
+
+                            if (chart.getType().equals(CType.LINE_2Y)) {
+                                for (int i = 0; i < autoValuesY2Buff.values.length; i++) {
+                                    autoValuesY2Buff.values[i] -= calcYAnimOffsetFactor(LABEL_ANIM_STEPS, i, animStep) * animDirection;
+                                }
+                                autoValuesY2Buff.alpha = 0f;
+                            }
+
                             autoValuesBufferTab[position].alpha = 1f;
                             isCurrentlyAnimatingLabels = true;
                         }
@@ -338,6 +351,17 @@ public class AxesRenderer {
 
                             for (int i = 0; i < autoValuesYBuff.values.length; i++) {
                                 autoValuesYBuff.values[i] = targetValuesYBuff.values[i] + calcYAnimOffsetFactor(LABEL_ANIM_STEPS - autoValuesYBuff.step, i, animStep) * animDirection;
+                            }
+
+                            if (chart.getType().equals(CType.LINE_2Y)) {
+                                autoValuesY2Buff.step++;
+
+                                autoValuesY2Buff.alpha += 1.0f / LABEL_ANIM_STEPS;
+                                if (autoValuesY2Buff.alpha > 1f) autoValuesY2Buff.alpha = 1f;
+
+                                for (int i = 0; i < autoValuesY2Buff.values.length; i++) {
+                                    autoValuesY2Buff.values[i] = targetValuesY2Buff.values[i] + calcYAnimOffsetFactor(LABEL_ANIM_STEPS - autoValuesY2Buff.step, i, animStep) * animDirection;
+                                }
                             }
                         }
                     }
@@ -612,8 +636,6 @@ public class AxesRenderer {
                 }
             }
         }
-
-
     }
 
     private boolean isAxisVertical(int position) {
