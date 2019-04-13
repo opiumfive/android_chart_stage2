@@ -78,7 +78,7 @@ public class StatisticsActivity extends ChangeThemeActivity {
                     break;
                 case 4:
                     cType = CType.AREA;
-                    name = "Fruits";
+                    name = "Fruits + Bonus";
                     break;
             }
 

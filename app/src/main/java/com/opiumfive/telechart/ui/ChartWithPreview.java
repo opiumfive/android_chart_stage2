@@ -1,9 +1,7 @@
 package com.opiumfive.telechart.ui;
 
 import android.content.Context;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.opiumfive.telechart.R;
@@ -21,7 +19,14 @@ import com.opiumfive.telechart.data.ChartData;
 import com.opiumfive.telechart.data.DataMapper;
 import com.opiumfive.telechart.data.State;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import static com.opiumfive.telechart.Settings.INITIAL_PREVIEW_SCALE;
+import static com.opiumfive.telechart.Settings.TOP_RECT_DATE_FORMAT;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 public class ChartWithPreview extends LinearLayout {
@@ -32,15 +37,21 @@ public class ChartWithPreview extends LinearLayout {
     private LineChartData data;
     private LineChartData previewData;
     private TextView name;
+    private TextView dates;
     private boolean shouldAnimateRect = false;
     private boolean isAnimatingPreview = true;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat(TOP_RECT_DATE_FORMAT, Locale.ENGLISH);
 
     private ViewrectChangeListener previewRectListener = new ViewrectChangeListener() {
         @Override
-        public void onViewportChanged(Viewrect newViewrect, float distanceX) {
+        public void onViewrectChanged(Viewrect newViewrect, float distanceX) {
             if (isAnimatingPreview) {
                 chart.setCurrentViewrectAdjustingRect(newViewrect, shouldAnimateRect, distanceX);
                 shouldAnimateRect = true;
+
+                String date = dateFormat.format((long) newViewrect.left) + " - " + dateFormat.format((long) newViewrect.right);
+
+                dates.setText(date);
             }
         }
     };
@@ -70,6 +81,7 @@ public class ChartWithPreview extends LinearLayout {
         previewChart = findViewById(R.id.chart_preview);
         checkboxList = findViewById(R.id.checkboxList);
         name = findViewById(R.id.name);
+        dates = findViewById(R.id.dates);
 
         chart.setType(cType);
         previewChart.setType(cType);
@@ -160,10 +172,15 @@ public class ChartWithPreview extends LinearLayout {
             previewChart.setCurrentViewrect(tempViewrect);
         }
 
-        checkboxList.setData(data.getLines(), (pos, checked) -> {
-            Line line = data.getLines().get(pos);
+        checkboxList.setData(data.getLines(), (list, checked) -> {
 
-            line.setActive(checked);
+            List<Line> linesToAimate = new ArrayList<>();
+
+            for (int pos = 0; pos < list.length; pos++) {
+                Line line = data.getLines().get(list[pos]);
+                line.setActive(checked[pos]);
+                linesToAimate.add(line);
+            }
 
             int activeLines = 0;
             for (Line l : data.getLines()) if (l.isActive()) activeLines++;
@@ -181,7 +198,7 @@ public class ChartWithPreview extends LinearLayout {
             target.left = current.left;
             target.right = current.right;
 
-            chart.setCurrentViewrectAnimatedAdjustingMax(target, line);
+            chart.setCurrentViewrectAnimatedAdjustingMax(target, linesToAimate);
             previewChart.setCurrentViewrectAnimated(target);
         });
 

@@ -2,6 +2,7 @@
 <resources>
     <dimen name="double_margin">32dp</dimen>
     <dimen name="margin">16dp</dimen>
+    <dimen name="dates_margin">3dp</dimen>
     <dimen name="half_margin">8dp</dimen>
     <dimen name="divider_margin">32dp</dimen>
     <dimen name="checkbox_height">50dp</dimen>

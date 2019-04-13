@@ -83,7 +83,7 @@ public class ChartViewrectHandler {
         currentViewrect.bottom = bottom;
 
         if (viewrectChangeListener != null) {
-            viewrectChangeListener.onViewportChanged(currentViewrect, distanceX);
+            viewrectChangeListener.onViewrectChanged(currentViewrect, distanceX);
         }
     }
 

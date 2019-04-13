@@ -13,6 +13,8 @@ import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.model.Line;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
+import java.util.List;
+
 public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateListener {
 
     private final static int FAST_ANIMATION_DURATION = 350;
@@ -23,7 +25,7 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     private Viewrect targetViewrect = new Viewrect();
     private Viewrect newViewrect = new Viewrect();
     private ChartAnimationListener animationListener;
-    private Line animatingLine;
+    private List<Line> animatingLine;
     private boolean animateMaxToo = false;
     private TimeInterpolator areaInterpolator = new AnticipateOvershootInterpolator();
     private TimeInterpolator lineInterpolator = new DecelerateInterpolator();
@@ -46,15 +48,19 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         startAnimationWithToggleLine(startViewrect, targetViewrect, null);
     }
 
-    public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, Line line) {
+    public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, List<Line> lines) {
         this.startViewrect.set(startViewrect);
         this.targetViewrect.set(targetViewrect);
-        if (chart.getType().equals(CType.AREA)) {
+
+        int activeLines = 0;
+        for (Line l : chart.getChartData().getLines()) if (l.isActive()) activeLines++;
+
+        if (chart.getType().equals(CType.AREA) && activeLines > 1) {
             animator.setInterpolator(areaInterpolator);
         } else {
             animator.setInterpolator(lineInterpolator);
         }
-        animatingLine = line;
+        animatingLine = lines;
         animator.setDuration(FAST_ANIMATION_DURATION);
         animator.start();
         chart.toggleAxisAnim(targetViewrect);
@@ -95,13 +101,15 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
 
         if (animatingLine != null) {
             float alpha = 0f;
-            if (animatingLine.isActive()) {
-                alpha = scale;
-            } else {
-                alpha = 1f - scale;
-            }
+            for (Line line : animatingLine) {
+                if (line.isActive()) {
+                    alpha = scale;
+                } else {
+                    alpha = 1f - scale;
+                }
 
-            animatingLine.setAlpha(alpha);
+                line.setAlpha(alpha);
+            }
         }
     }
 

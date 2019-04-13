@@ -31,7 +31,7 @@ public class CheckerList extends FrameLayout {
                     checkbox.startAnimation(shakeAnimation);
                 } else {
                     if (lineCheckListener != null) {
-                        lineCheckListener.onLineToggle(checkboxes.indexOf(checkbox), isChecked);
+                        lineCheckListener.onLineToggle(new int[] {checkboxes.indexOf(checkbox)}, new boolean[] {isChecked});
                     }
                 }
             } else {
@@ -41,18 +41,24 @@ public class CheckerList extends FrameLayout {
 
         @Override
         public void onLongTap(Checkbox checkbox) {
-            for (Checkbox c : checkboxes) {
-                if (!c.equals(checkbox)) {
-                    c.setChecked(false);
-                    if (lineCheckListener != null) {
-                        lineCheckListener.onLineToggle(checkboxes.indexOf(c), false);
-                    }
-                } else {
-                    c.setChecked(true);
-                    if (lineCheckListener != null) {
-                        lineCheckListener.onLineToggle(checkboxes.indexOf(c), true);
-                    }
+            int[] list = new int[checkboxes.size()];
+            boolean[] checked = new boolean[checkboxes.size()];
+
+            boolean someThingChanged = false;
+
+            for (int i = 0; i < checkboxes.size(); i++) {
+                Checkbox ch = checkboxes.get(i);
+                boolean sameAsClicked = ch.equals(checkbox);
+                if (ch.isChecked() != sameAsClicked) {
+                    someThingChanged = true;
                 }
+                ch.setChecked(sameAsClicked);
+                list[i] = i;
+                checked[i] = sameAsClicked;
+            }
+
+            if (lineCheckListener != null && someThingChanged) {
+                lineCheckListener.onLineToggle(list, checked);
             }
         }
     };
@@ -94,6 +100,6 @@ public class CheckerList extends FrameLayout {
     }
 
     interface LineCheckListener {
-        void onLineToggle(int pos, boolean checked);
+        void onLineToggle(int[] list, boolean[] checked);
     }
 }

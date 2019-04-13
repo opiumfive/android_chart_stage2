@@ -21,6 +21,8 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.draw.AxesRenderer;
 import com.opiumfive.telechart.chart.draw.LineChartRenderer;
 
+import java.util.List;
+
 
 public class LineChartView extends View implements IChart, ChartDataProvider {
 
@@ -222,13 +224,13 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         morphAnimator.startAnimation();
     }
 
-    public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, Line line) {
+    public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, List<Line> lines) {
 
         if (null != targetViewrect) {
             viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
-            viewrectAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, line);
+            viewrectAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, lines);
         }
         postInvalidateOnAnimation();
     }
