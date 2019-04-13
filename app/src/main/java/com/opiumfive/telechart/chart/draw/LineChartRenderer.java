@@ -789,7 +789,7 @@ public class LineChartRenderer {
     }
 
     public void calculateMaxViewrect() {
-        tempMaximumViewrect.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, 0);
+        tempMaximumViewrect.set(Float.MAX_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, Float.MAX_VALUE);
         LineChartData data = dataProvider.getChartData();
 
         if (chart.getType().equals(CType.AREA) || chart.getType().equals(CType.PIE)) {
@@ -798,6 +798,22 @@ public class LineChartRenderer {
             tempMaximumViewrect.right = data.getLines().get(0).getValues().get(points - 1).getX();
             tempMaximumViewrect.top = 100f;
             tempMaximumViewrect.bottom = 0;
+        } else if (chart.getType().equals(CType.DAILY_BAR)) {
+            for (Line line : data.getLines()) {
+                if (!line.isActive()) continue;
+                for (PointValue pointValue : line.getValues()) {
+                    if (pointValue.getX() < tempMaximumViewrect.left) {
+                        tempMaximumViewrect.left = pointValue.getX();
+                    }
+                    if (pointValue.getX() > tempMaximumViewrect.right) {
+                        tempMaximumViewrect.right = pointValue.getX();
+                    }
+                    if (pointValue.getY() > tempMaximumViewrect.top) {
+                        tempMaximumViewrect.top = pointValue.getY();
+                    }
+                }
+            }
+            tempMaximumViewrect.bottom = 0f;
         } else if (chart.getType().equals(CType.STACKED_BAR)) {
             int points = data.getLines().get(0).getValues().size();
             int lines = data.getLines().size();
@@ -811,6 +827,8 @@ public class LineChartRenderer {
                     tempMaximumViewrect.top = localSum;
                 }
             }
+
+            tempMaximumViewrect.bottom = 0f;
 
             tempMaximumViewrect.left = data.getLines().get(0).getValues().get(0).getX();
             tempMaximumViewrect.right = data.getLines().get(0).getValues().get(points - 1).getX();
@@ -826,6 +844,9 @@ public class LineChartRenderer {
                     }
                     if (pointValue.getY() > tempMaximumViewrect.top) {
                         tempMaximumViewrect.top = pointValue.getY();
+                    }
+                    if (pointValue.getY() < tempMaximumViewrect.bottom) {
+                        tempMaximumViewrect.bottom = pointValue.getY();
                     }
                 }
             }
