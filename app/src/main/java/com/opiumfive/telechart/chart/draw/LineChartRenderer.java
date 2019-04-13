@@ -47,6 +47,7 @@ public class LineChartRenderer {
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
     private static final int DEFAULT_LABEL_MARGIN_DP = 2;
     private static final float BITMAP_SCALE_FACTOR = 0.66f;
+    private static final float SWIRL_BITMAP_SCALE_FACTOR = 0.66f;
 
     private static final int MESH_WIDTH = 20;
     private static final int MESH_HEIGHT = 20;
@@ -223,13 +224,24 @@ public class LineChartRenderer {
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
         cacheCanvas.setBitmap(cacheBitmap);
 
-        morphBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
-                (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
-        morphCanvas.setBitmap(morphBitmap);
+        // optimize bitmap size depending on screen width
+        if (chartViewrectHandler.getChartWidth() < 500) {
+            morphBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
+                    (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
+            morphCanvas.setBitmap(morphBitmap);
 
-        boundsBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
-                (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
-        boundsCanvas.setBitmap(boundsBitmap);
+            boundsBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
+                    (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
+            boundsCanvas.setBitmap(boundsBitmap);
+        } else {
+            morphBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * SWIRL_BITMAP_SCALE_FACTOR),
+                    (int) (chartViewrectHandler.getChartHeight() * SWIRL_BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
+            morphCanvas.setBitmap(morphBitmap);
+
+            boundsBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * SWIRL_BITMAP_SCALE_FACTOR),
+                    (int) (chartViewrectHandler.getChartHeight() * SWIRL_BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
+            boundsCanvas.setBitmap(boundsBitmap);
+        }
 
         cacheBitmapPie = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
