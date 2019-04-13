@@ -175,6 +175,7 @@ public class LineChartData {
                 for (int i = 0; i < size; i++) {
                     float currY = lines.get(1).getValues().get(i).getY();
                     float newY = (currY - min2) * scale + offset;
+                    lines.get(1).getValues().get(i).setOriginY(currY);
                     lines.get(1).getValues().get(i).setY(newY);
                 }
             } else {
@@ -187,6 +188,7 @@ public class LineChartData {
                 for (int i = 0; i < size; i++) {
                     float currY = lines.get(0).getValues().get(i).getY();
                     float newY = (currY - min1) * scale + offset;
+                    lines.get(0).getValues().get(i).setOriginY(currY);
                     lines.get(0).getValues().get(i).setY(newY);
                 }
             }

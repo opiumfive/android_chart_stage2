@@ -20,6 +20,12 @@
         <item name="android:button">@drawable/checkbox</item>
     </style>
 
+    <style name="DatesTextView">
+        <item name="android:textColor">?attr/titleColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
     <style name="LightTheme" parent="AppTheme">
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>

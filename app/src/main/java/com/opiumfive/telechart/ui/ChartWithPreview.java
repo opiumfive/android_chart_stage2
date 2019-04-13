@@ -1,8 +1,12 @@
 package com.opiumfive.telechart.ui;
 
 import android.content.Context;
+import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.CType;
@@ -21,7 +25,6 @@ import com.opiumfive.telechart.data.State;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +40,7 @@ public class ChartWithPreview extends LinearLayout {
     private LineChartData data;
     private LineChartData previewData;
     private TextView name;
-    private TextView dates;
+    private TextSwitcher dates;
     private boolean shouldAnimateRect = false;
     private boolean isAnimatingPreview = true;
     private SimpleDateFormat dateFormat = new SimpleDateFormat(TOP_RECT_DATE_FORMAT, Locale.ENGLISH);
@@ -50,8 +53,7 @@ public class ChartWithPreview extends LinearLayout {
                 shouldAnimateRect = true;
 
                 String date = dateFormat.format((long) newViewrect.left) + " - " + dateFormat.format((long) newViewrect.right);
-
-                dates.setText(date);
+                setDatesTextAnimated(date);
             }
         }
     };
@@ -83,7 +85,21 @@ public class ChartWithPreview extends LinearLayout {
         name = findViewById(R.id.name);
         dates = findViewById(R.id.dates);
 
+        dates.setFactory(() -> {
+            TextView textView = new TextView(getContext());
+            textView.setTextAppearance(getContext(), R.style.DatesTextView);
+            return textView;
+        });
+        dates.setInAnimation(context, R.anim.text_fade_in);
+        dates.setOutAnimation(context, R.anim.text_fade_out);
+        dates.setAnimateFirstView(true);
+
+        //dates.setInAnimation(context, android.R.anim.slide_in_left);
+        //dates.setOutAnimation(context, android.R.anim.slide_out_right);
+
+
         chart.setType(cType);
+        chart.setSelectionOnHover(!cType.equals(CType.AREA));
         previewChart.setType(cType);
         name.setText(title);
         if (cType.equals(CType.DAILY_BAR)) {
@@ -211,5 +227,9 @@ public class ChartWithPreview extends LinearLayout {
         boolean[] linesChecked = new boolean[data.getLines().size()];
         for (int i = 0; i < data.getLines().size(); i++) linesChecked[i] = data.getLines().get(i).isActive();
         return new State(previewChart.getCurrentViewrect(), linesChecked);
+    }
+
+    private void setDatesTextAnimated(String date) {
+        dates.setText(date);
     }
 }

@@ -36,14 +36,14 @@ public class SlopScrollView extends ScrollView {
                 super.onTouchEvent(ev);
                 break;
             case MotionEvent.ACTION_MOVE:
-                float dx = x - previousX;
-                float dy = y - previousY;
+                float dx = Math.abs(x - previousX);
+                float dy = Math.abs(y - previousY);
 
-                if (dx > 300 && !doScrolling) {
+                if (dx > 150 && !doScrolling) {
                     blockScrolling = true;
                 }
 
-                if (dy > 300 && !blockScrolling) {
+                if (dy > 150 && !blockScrolling) {
                     doScrolling = true;
                 }
 

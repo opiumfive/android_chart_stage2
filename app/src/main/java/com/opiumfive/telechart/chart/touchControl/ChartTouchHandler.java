@@ -65,7 +65,7 @@ public class ChartTouchHandler {
                     chart.startMorphling(CType.PIE);
                 } else if (chart.getType().equals(CType.PIE)) {
                     chart.startMorphling(CType.AREA);
-                } {
+                } else {
                     isTouched = checkTouch(event.getX());
                     if (isTouched) {
                         needInvalidate = true;

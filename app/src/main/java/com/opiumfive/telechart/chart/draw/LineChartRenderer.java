@@ -38,10 +38,10 @@ import static com.opiumfive.telechart.Settings.SELECTED_VALUES_DATE_FORMAT;
 import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 import static com.opiumfive.telechart.chart.Util.getDrawableFromAttr;
 
-
+// god class, it was no time for arch, all time was taken by performance issues
 public class LineChartRenderer {
 
-    private static final String DETAIL_TITLE_PATTERN = "00000000000";
+    private static final String DETAIL_TITLE_PATTERN = "0000000000000000";
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
@@ -154,6 +154,7 @@ public class LineChartRenderer {
         touchLinePaint.setAntiAlias(true);
         touchLinePaint.setStyle(Paint.Style.FILL);
         touchLinePaint.setColor(getColorFromAttr(context, R.attr.gridColor));
+        touchLinePaint.setAlpha(255 / 10);
         touchLinePaint.setStrokeWidth(Util.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP) / 2f);
 
         detailsTitleColor = getColorFromAttr(context, R.attr.detailTitleColor);
@@ -269,8 +270,6 @@ public class LineChartRenderer {
 
         LineChartData.Bounds bounds = data.getBoundsForViewrect(viewrect);
 
-
-
         switch (chart.getType()) {
             case LINE:
             case LINE_2Y:
@@ -304,13 +303,14 @@ public class LineChartRenderer {
         }
     }
 
+    // make bitmap mesh for twisting
     private void swirl(float cx, float cy, float radius, float twists) {
         float[] src = meshOrig;
         float[] dst = meshVerts;
 
         for (int i = 0; i < MESH_COUNT * 2; i += 2) {
-            float x = src[i+0] - cx;
-            float y = src[i+1] - cy;
+            float x = src[i] - cx;
+            float y = src[i + 1] - cy;
 
             float pixelDistance = (float) Math.sqrt((x * x) + (y * y));
             float pixelAngle = (float) Math.atan2(y, x);
@@ -325,8 +325,8 @@ public class LineChartRenderer {
                 y = (float) Math.sin(pixelAngle) * pixelDistance;
             }
 
-            dst[i+0] = x + cx;
-            dst[i+1] = y + cy;
+            dst[i] = x + cx;
+            dst[i + 1] = y + cy;
         }
     }
 
@@ -697,12 +697,14 @@ public class LineChartRenderer {
 
     public void drawSelectedValues(Canvas canvas) {
         if (isTouched() && !selectedValues.getPoints().isEmpty()) {
-            Rect content = chartViewrectHandler.getContentRectMinusAllMargins();
+            Rect content = chartViewrectHandler.getContentRectMinusAxesMargins();
             float lineX = selectedValues.getTouchX();
-            canvas.drawLine(lineX, content.top, lineX, content.bottom, touchLinePaint);
+            canvas.drawLine(lineX, content.top + 50, lineX, content.bottom, touchLinePaint);
 
-            for (PointValue pointValue : selectedValues.getPoints()) {
-                highlightPoint(canvas, pointValue, lineX, pointValue.getApproxY());
+            if (chart.getType().equals(CType.LINE_2Y) || chart.getType().equals(CType.LINE)) {
+                for (PointValue pointValue : selectedValues.getPoints()) {
+                    highlightPoint(canvas, pointValue, lineX, pointValue.getApproxY());
+                }
             }
 
             drawLabel(canvas);
@@ -949,6 +951,7 @@ public class LineChartRenderer {
 
         for (PointValue pointValue : selectedValues.getPoints()) {
             labelPaint.setColor(pointValue.getColor());
+
             String valueText = String.valueOf((long) pointValue.getY());
             String nameText = pointValue.getLine();
             float valueWidth = Math.max(labelPaint.measureText(valueText.toCharArray(), 0, valueText.length()), labelPaint.measureText(nameText.toCharArray(), 0, nameText.length()));
@@ -995,7 +998,7 @@ public class LineChartRenderer {
 
         for (PointValue pointValue : selectedValues.getPoints()) {
             labelPaint.setColor(pointValue.getColor());
-            String valueText = String.valueOf((long) pointValue.getY());
+            String valueText = String.valueOf((long) pointValue.getOriginY());
             String nameText = pointValue.getLine();
 
             canvas.drawText(valueText.toCharArray(), 0, valueText.length(), textX, textY, labelPaint);

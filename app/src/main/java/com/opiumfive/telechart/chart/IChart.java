@@ -21,4 +21,5 @@ public interface IChart {
     void postDrawIfNeeded();
     void postDrawWithMorphFactor(float factor);
     void startMorphling(CType cType);
+    boolean isSelectionOnHover();
 }

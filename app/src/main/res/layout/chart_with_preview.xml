@@ -29,16 +29,13 @@
                 android:layout_marginBottom="@dimen/half_margin"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <TextSwitcher
                 android:id="@+id/dates"
                 android:layout_width="wrap_content"
-                android:textColor="?attr/titleColor"
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/dates_margin"
-                android:textStyle="bold"
-                android:textSize="13sp"
                 android:layout_marginBottom="@dimen/half_margin"
                 android:layout_height="wrap_content" />
 

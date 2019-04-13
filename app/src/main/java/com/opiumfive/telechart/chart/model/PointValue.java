@@ -36,6 +36,14 @@ public class PointValue {
         return this;
     }
 
+    public void setOriginY(float originY) {
+        this.originY = originY;
+    }
+
+    public float getOriginY() {
+        return originY;
+    }
+
     public void setY(float y) {
         this.y = y;
     }

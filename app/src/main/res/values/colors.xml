@@ -13,16 +13,16 @@
     <color name="gridColor">#182D3B</color>
     <color name="detailTitleColor">#222222</color>
 
-    <color name="colorPrimary_Dark">#242f3e</color>
-    <color name="colorPrimaryDark_Dark">#242f3e</color>
+    <color name="colorPrimary_Dark">#293340</color>
+    <color name="colorPrimaryDark_Dark">#293340</color>
     <color name="colorAccent_Dark">#FFFFFF</color>
-    <color name="windowBackground_Dark">#151e27</color>
+    <color name="windowBackground_Dark">#212936</color>
     <color name="titleColor_Dark">#ffffff</color>
     <color name="textColor_Dark">#FFFFFF</color>
     <color name="labelColor_Dark">#506372</color>
     <color name="previewBackColor_Dark">#96304259</color>
     <color name="previewFrameColor_Dark">#7f6F899E</color>
-    <color name="itemBackground_Dark">#1d2733</color>
+    <color name="itemBackground_Dark">#293340</color>
     <color name="gridColor_Dark">#FFFFFF</color>
     <color name="detailTitleColor_Dark">#dbe5eb</color>
 </resources>

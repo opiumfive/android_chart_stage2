@@ -37,6 +37,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     protected ChartViewrectAnimator viewrectAnimator;
     protected ChartLabelAnimator labelAnimator;
     protected ChartMorphAnimator morphAnimator;
+    protected boolean isSelectionOnHover = true;
 
 
     public LineChartView(Context context) {
@@ -88,6 +89,15 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     public void setType(CType cType) {
         this.cType = cType;
         this.targetType = cType;
+    }
+
+    @Override
+    public boolean isSelectionOnHover() {
+        return isSelectionOnHover;
+    }
+
+    public void setSelectionOnHover(boolean selectionOnHover) {
+        isSelectionOnHover = selectionOnHover;
     }
 
     @Override
