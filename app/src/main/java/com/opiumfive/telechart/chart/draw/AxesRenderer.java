@@ -217,7 +217,7 @@ public class AxesRenderer {
     }
 
     public static float calcYAnimOffsetFactor(int step, int lineNum, float factor) {
-        return (lineNum + 1) * factor * step * (step + 1);
+        return (lineNum) * factor * step * (step + 1);
     }
 
     public Viewrect getCurrentLabelViewrect() {
@@ -295,10 +295,10 @@ public class AxesRenderer {
                                 autoValuesY2Buff = new AxisValues(targetValuesY2Buff);
                             }
 
-                            float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
+                            //float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
 
-                            animStep = Math.abs(currentDiff / 150f / LABEL_ANIM_STEPS);
+                            animStep = Math.abs(currentDiff / 250f / LABEL_ANIM_STEPS);
 
                             float targetTop = targetValuesYBuff.values[targetValuesYBuff.values.length - 1];
                             float targetBottom = targetValuesYBuff.values[0];

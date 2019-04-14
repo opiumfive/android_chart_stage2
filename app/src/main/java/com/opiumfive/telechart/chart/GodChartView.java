@@ -290,7 +290,7 @@ public class GodChartView extends View implements IChart, ChartDataProvider {
 
     public void initiateYAxisAnimation(Viewrect targetViewrect, boolean force) {
         if (axesRenderer.getCurrentLabelViewrect() != null) {
-            float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.05f;
+            float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.1f;
 
             if (force || (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
                     (Math.abs(axesRenderer.getCurrentLabelViewrect().bottom - targetViewrect.bottom) >= diff ||

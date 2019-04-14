@@ -7,7 +7,7 @@
         android:id="@+id/action_theme"
         android:orderInCategory="300"
         android:title="@string/change_theme"
-        android:icon="@drawable/ic_night"
+        android:icon="?attr/icNight"
         android:showAsAction="always" />
 
 </menu>

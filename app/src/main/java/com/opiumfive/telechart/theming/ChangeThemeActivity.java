@@ -119,23 +119,20 @@ public abstract class ChangeThemeActivity extends Activity {
     }
 
     private void recreateActivityCircular(int centerX, int centerY) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Intent intent = new Intent(this, this.getClass());
-            intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL, true);
-            intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL_X, centerX);
-            intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL_Y, centerY);
-            intent.putExtras(getDataForSaveState());
+        Intent intent = new Intent(this, this.getClass());
+        intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL, true);
+        intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL_X, centerX);
+        intent.putExtra(KEY_EXTRA_CIRCULAR_REVEAL_Y, centerY);
+        intent.putExtras(getDataForSaveState());
 
-            startActivity(intent);
-            int animDuration = getResources().getInteger(R.integer.change_theme_time);
-            overridePendingTransition(android.R.anim.fade_in, R.anim.fade_out_long);
-            handler.postDelayed(() -> {
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }, animDuration * 2);
-        } else {
-            recreate();
-        }
+        startActivity(intent);
+        int animDuration = getResources().getInteger(R.integer.change_theme_time);
+        overridePendingTransition(android.R.anim.fade_in, R.anim.fade_out_long);
+        handler.postDelayed(() -> {
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            App.setChangingTheme(false);
+        }, animDuration * 2);
     }
 
     @Override

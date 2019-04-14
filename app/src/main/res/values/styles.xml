@@ -6,7 +6,7 @@
     </style>
 
     <style name="ActionBar.Transparent" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/colorPrimary_Dark</item>
+        <item name="android:background">?attr/colorPrimary</item>
         <item name="android:logo">@drawable/transparent</item>
         <item name="android:title">""</item>
         <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>
@@ -50,6 +50,7 @@
         <item name="detailTitleColor">@color/detailTitleColor</item>
         <item name="zoomOutColor">@color/zoomOutColor</item>
         <item name="detailBackground">@drawable/shadow_light</item>
+        <item name="icNight">@drawable/ic_night</item>
     </style>
 
     <style name="DarkTheme" parent="AppTheme">
@@ -66,6 +67,7 @@
         <item name="gridColor">@color/gridColor_Dark</item>
         <item name="zoomOutColor">@color/zoomOutColor_Dark</item>
         <item name="detailBackground">@drawable/shadow_dark</item>
+        <item name="icNight">@drawable/ic_night_dark</item>
     </style>
 
     <attr name="colorPrimary" format="color"/>
@@ -81,5 +83,6 @@
     <attr name="gridColor" format="color"/>
     <attr name="zoomOutColor" format="color"/>
     <attr name="detailBackground" format="reference"/>
+    <attr name="icNight" format="reference"/>
 
 </resources>
