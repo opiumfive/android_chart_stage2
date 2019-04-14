@@ -38,14 +38,14 @@
 
         </FrameLayout>
 
-        <com.opiumfive.telechart.chart.LineChartView
+        <com.opiumfive.telechart.chart.GodChartView
             android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/margin"
             android:layout_marginRight="@dimen/margin"
             android:layout_height="@dimen/chart_height" />
 
-        <com.opiumfive.telechart.chart.PreviewLineChartView
+        <com.opiumfive.telechart.chart.PreviewGodChartView
             android:id="@+id/chart_preview"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/margin"

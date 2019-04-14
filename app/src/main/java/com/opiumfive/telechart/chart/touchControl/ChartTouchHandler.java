@@ -2,21 +2,19 @@ package com.opiumfive.telechart.chart.touchControl;
 
 import android.content.Context;
 import android.view.MotionEvent;
-import android.view.ViewParent;
 
 import com.opiumfive.telechart.chart.CType;
 import com.opiumfive.telechart.chart.IChart;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
-import com.opiumfive.telechart.chart.touchControl.ChartScroller.ScrollResult;
 import com.opiumfive.telechart.chart.model.SelectedValues;
-import com.opiumfive.telechart.chart.draw.LineChartRenderer;
+import com.opiumfive.telechart.chart.draw.GodChartRenderer;
 
 public class ChartTouchHandler {
 
     protected ChartScroller chartScroller;
     protected IChart chart;
     protected ChartViewrectHandler chartViewrectHandler;
-    protected LineChartRenderer renderer;
+    protected GodChartRenderer renderer;
     protected boolean isScrollEnabled = true;
     protected boolean isValueTouchEnabled = true;
     protected SelectedValues selectedValues = new SelectedValues();

@@ -43,7 +43,7 @@
 
             </FrameLayout>
 
-            <com.opiumfive.telechart.chart.LineChartView
+            <com.opiumfive.telechart.chart.GodChartView
                 android:id="@+id/chart"
                 android:layout_width="match_parent"
                 android:layout_marginLeft="@dimen/margin"
@@ -69,7 +69,7 @@
                 android:clipChildren="false"
                 android:layout_height="wrap_content"/>
 
-            <com.opiumfive.telechart.chart.PreviewLineChartView
+            <com.opiumfive.telechart.chart.PreviewGodChartView
                 android:id="@+id/chart_preview"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/margin"

@@ -19,12 +19,12 @@ import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.draw.AxesRenderer;
-import com.opiumfive.telechart.chart.draw.LineChartRenderer;
+import com.opiumfive.telechart.chart.draw.GodChartRenderer;
 
 import java.util.List;
 
 
-public class LineChartView extends View implements IChart, ChartDataProvider {
+public class GodChartView extends View implements IChart, ChartDataProvider {
 
     protected LineChartData data;
     protected CType cType = CType.LINE;
@@ -34,7 +34,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     protected ChartViewrectHandler chartViewrectHandler;
     protected AxesRenderer axesRenderer;
     protected ChartTouchHandler touchHandler;
-    protected LineChartRenderer chartRenderer;
+    protected GodChartRenderer chartRenderer;
     protected ChartViewrectAnimator viewrectAnimator;
     protected ChartLabelAnimator labelAnimator;
     protected ChartMorphAnimator morphAnimator;
@@ -42,15 +42,15 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
     protected ZoomInListener zoomInListener;
 
 
-    public LineChartView(Context context) {
+    public GodChartView(Context context) {
         this(context, null, 0);
     }
 
-    public LineChartView(Context context, AttributeSet attrs) {
+    public GodChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LineChartView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public GodChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
         chartViewrectHandler = new ChartViewrectHandler();
@@ -72,7 +72,7 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
             }
         });
 
-        setChartRenderer(new LineChartRenderer(context, this, this));
+        setChartRenderer(new GodChartRenderer(context, this, this));
         setChartData(LineChartData.generateDummyData());
     }
 
@@ -192,11 +192,11 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         chartViewrectHandler.setViewrectChangeListener(viewrectChangeListener);
     }
 
-    public LineChartRenderer getChartRenderer() {
+    public GodChartRenderer getChartRenderer() {
         return chartRenderer;
     }
 
-    public void setChartRenderer(LineChartRenderer renderer) {
+    public void setChartRenderer(GodChartRenderer renderer) {
         chartRenderer = renderer;
         resetRendererAndTouchHandler();
         postInvalidateOnAnimation();
@@ -282,26 +282,24 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
 
+            initiateYAxisAnimation(targetAdjustedViewrect, false);
 
-
-            initiateYAxisAnimation(targetAdjustedViewrect);
-
-            postInvalidateOnAnimation();
-
+            //postInvalidateOnAnimation();
         }
-
     }
 
-    public void initiateYAxisAnimation(Viewrect targetViewrect) {
+    public void initiateYAxisAnimation(Viewrect targetViewrect, boolean force) {
         if (axesRenderer.getCurrentLabelViewrect() != null) {
-            float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.0001f;
+            float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.05f;
 
-            if (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
+            if (force || (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
                     (Math.abs(axesRenderer.getCurrentLabelViewrect().bottom - targetViewrect.bottom) >= diff ||
-                            Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetViewrect.top) >= diff)) {
+                            Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetViewrect.top) >= diff))) {
                 labelAnimator.startAnimation(targetViewrect);
                 Log.d("labelanim", "startAnimation");
             }
+
+            postInvalidateOnAnimation();
         }
     }
 

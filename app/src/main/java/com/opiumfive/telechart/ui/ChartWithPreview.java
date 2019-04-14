@@ -9,8 +9,8 @@ import android.widget.ViewSwitcher;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.CType;
-import com.opiumfive.telechart.chart.LineChartView;
-import com.opiumfive.telechart.chart.PreviewLineChartView;
+import com.opiumfive.telechart.chart.GodChartView;
+import com.opiumfive.telechart.chart.PreviewGodChartView;
 import com.opiumfive.telechart.chart.animator.ChartAnimationListener;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Axis;
@@ -33,8 +33,8 @@ import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 
 public class ChartWithPreview extends LinearLayout {
 
-    private LineChartView chart;
-    private PreviewLineChartView previewChart;
+    private GodChartView chart;
+    private PreviewGodChartView previewChart;
     private CheckerList checkboxList;
     private LineChartData data;
     private LineChartData previewData;
@@ -205,7 +205,7 @@ public class ChartWithPreview extends LinearLayout {
 
         // for y-animation trigger
         previewChart.setOnUpTouchListener(() -> {
-            chart.initiateYAxisAnimation(chart.getCurrentViewrect());
+            chart.initiateYAxisAnimation(chart.getCurrentViewrect(), true);
         });
 
         if (state != null && state.getCurrentViewrect() != null) {

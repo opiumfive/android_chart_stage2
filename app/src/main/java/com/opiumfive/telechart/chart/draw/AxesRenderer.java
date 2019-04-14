@@ -298,9 +298,14 @@ public class AxesRenderer {
                             float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
 
-                            animStep = currentDiff / 350f / LABEL_ANIM_STEPS;
+                            animStep = Math.abs(currentDiff / 150f / LABEL_ANIM_STEPS);
 
-                            if (targetDiff < currentDiff) {
+                            float targetTop = targetValuesYBuff.values[targetValuesYBuff.values.length - 1];
+                            float targetBottom = targetValuesYBuff.values[0];
+                            float currentTop = currentValuesYBuff.values[currentValuesYBuff.values.length - 1];
+                            float currentBottom = currentValuesYBuff.values[0];
+
+                            if (currentTop >= targetTop && currentBottom <= targetBottom || currentTop >= targetTop && currentBottom >= targetBottom) {
                                 animDirection = -1f;
                             } else {
                                 animDirection = 1f;
@@ -339,8 +344,8 @@ public class AxesRenderer {
                             autoValuesBufferTab[position].step++;
                             autoValuesYBuff.step++;
 
-                            autoValuesBufferTab[position].alpha -= 1.0f / LABEL_ANIM_STEPS;
-                            autoValuesYBuff.alpha += 1.0f / LABEL_ANIM_STEPS;
+                            autoValuesBufferTab[position].alpha -= 1.0f / LABEL_ANIM_STEPS * 1.5f;
+                            autoValuesYBuff.alpha += 1.0f / LABEL_ANIM_STEPS * 1.5f;
 
                             if (autoValuesBufferTab[position].alpha < 0f) autoValuesBufferTab[position].alpha = 0f;
                             if (autoValuesYBuff.alpha > 1f) autoValuesYBuff.alpha = 1f;

@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
-import android.graphics.Xfermode;
 
 import com.opiumfive.telechart.R;
 import com.opiumfive.telechart.chart.Util;
@@ -20,7 +18,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.ChartDataProvider;
 
 
-public class PreviewLineChartRenderer extends LineChartRenderer {
+public class PreviewGodChartRenderer extends GodChartRenderer {
 
     private static final int DEFAULT_PREVIEW_STROKE_WIDTH_DP = 1;
     private static final int DEFAULT_PREVIEW_STROKE_SIDES_WIDTH_DP = 10;
@@ -42,7 +40,7 @@ public class PreviewLineChartRenderer extends LineChartRenderer {
 
     private Paint previewPaint = new Paint();
 
-    public PreviewLineChartRenderer(Context context, IChart chart, ChartDataProvider dataProvider) {
+    public PreviewGodChartRenderer(Context context, IChart chart, ChartDataProvider dataProvider) {
         super(context, chart, dataProvider);
         previewPaint.setAntiAlias(false);
         cacheCanvas = new Canvas();

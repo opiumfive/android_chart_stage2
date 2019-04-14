@@ -39,7 +39,7 @@ import static com.opiumfive.telechart.chart.Util.getColorFromAttr;
 import static com.opiumfive.telechart.chart.Util.getDrawableFromAttr;
 
 // god class, it was no time for arch, all time was taken by performance issues
-public class LineChartRenderer {
+public class GodChartRenderer {
 
     private static final String DETAIL_TITLE_PATTERN = "0000000000000000";
     private static final String PERCENT_PATTERN = "0000";
@@ -124,7 +124,7 @@ public class LineChartRenderer {
 
     protected Viewrect tempMaximumViewrect = new Viewrect();
 
-    public LineChartRenderer(Context context, IChart chart, ChartDataProvider dataProvider) {
+    public GodChartRenderer(Context context, IChart chart, ChartDataProvider dataProvider) {
         this.density = context.getResources().getDisplayMetrics().density;
         this.scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         this.chart = chart;

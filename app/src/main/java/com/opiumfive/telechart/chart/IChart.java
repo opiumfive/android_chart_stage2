@@ -3,13 +3,13 @@ package com.opiumfive.telechart.chart;
 import com.opiumfive.telechart.chart.draw.ChartViewrectHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
 import com.opiumfive.telechart.chart.model.Viewrect;
-import com.opiumfive.telechart.chart.draw.LineChartRenderer;
+import com.opiumfive.telechart.chart.draw.GodChartRenderer;
 
 public interface IChart {
 
     LineChartData getChartData();
-    LineChartRenderer getChartRenderer();
-    void setChartRenderer(LineChartRenderer renderer);
+    GodChartRenderer getChartRenderer();
+    void setChartRenderer(GodChartRenderer renderer);
     ChartViewrectHandler getChartViewrectHandler();
     void setCurrentViewrect(Viewrect targetViewrect);
     void setMaximumViewrect(Viewrect maximumViewrect);

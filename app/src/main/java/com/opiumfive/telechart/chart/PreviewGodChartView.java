@@ -7,26 +7,26 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 import com.opiumfive.telechart.chart.touchControl.ChartTouchHandler;
 import com.opiumfive.telechart.chart.touchControl.PreviewChartTouchHandler;
 import com.opiumfive.telechart.chart.model.LineChartData;
-import com.opiumfive.telechart.chart.draw.PreviewLineChartRenderer;
+import com.opiumfive.telechart.chart.draw.PreviewGodChartRenderer;
 
 
-public class PreviewLineChartView extends LineChartView {
+public class PreviewGodChartView extends GodChartView {
 
-    protected PreviewLineChartRenderer previewChartRenderer;
+    protected PreviewGodChartRenderer previewChartRenderer;
     protected ChartTouchHandler.OnUpTouchListener onUpTouchListener;
 
-    public PreviewLineChartView(Context context) {
+    public PreviewGodChartView(Context context) {
         this(context, null, 0);
     }
 
-    public PreviewLineChartView(Context context, AttributeSet attrs) {
+    public PreviewGodChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PreviewLineChartView(Context context, AttributeSet attrs, int defStyle) {
+    public PreviewGodChartView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         chartViewrectHandler = new PreviewChartViewrectHandler();
-        previewChartRenderer = new PreviewLineChartRenderer(context, this, this);
+        previewChartRenderer = new PreviewGodChartRenderer(context, this, this);
         touchHandler = new PreviewChartTouchHandler(context, this);
         setChartRenderer(previewChartRenderer);
         setChartData(LineChartData.generateDummyData());
