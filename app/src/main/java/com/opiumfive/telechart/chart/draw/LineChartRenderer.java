@@ -388,6 +388,12 @@ public class LineChartRenderer {
 
             cacheCanvasPie.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
+            boolean isShouldDrawSelectingLines = false;
+            float aroundLineX1 = 0f;
+            float aroundLineY1 = 0f;
+            float aroundLineX21 = 0f;
+            float aroundLineY21 = 0f;
+
             for (int l = 0; l < linesSize; l++) {
                 Line line = lines.get(l);
                 if (!line.isActive() && line.getAlpha() == 0f) continue;
@@ -404,26 +410,23 @@ public class LineChartRenderer {
                         drawCircleOval.inset(-5, -5);
                         cacheCanvasPie.drawArc(drawCircleOval, lastAngle, angle, true, linePaint);
 
-                        innerPointPaint.setStrokeWidth(5);
-
                         sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle))),
                                 (float) (Math.sin(Math.toRadians(lastAngle))));
 
                         final float circleRadius = originCircleOval.width() / 2f + 5;
-                        float x1 = sliceVector.x * circleRadius + originCircleOval.centerX();
-                        float y1 = sliceVector.y * circleRadius + originCircleOval.centerY();
-
-                        cacheCanvasPie.drawLine(originCircleOval.centerX(), originCircleOval.centerY(), x1, y1, innerPointPaint);
+                        aroundLineX1 = sliceVector.x * circleRadius + originCircleOval.centerX();
+                        aroundLineY1 = sliceVector.y * circleRadius + originCircleOval.centerY();
 
                         sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle + angle))),
                                 (float) (Math.sin(Math.toRadians(lastAngle + angle))));
 
-                        x1 = sliceVector.x * circleRadius + originCircleOval.centerX();
-                        y1 = sliceVector.y * circleRadius + originCircleOval.centerY();
-                        cacheCanvasPie.drawLine(originCircleOval.centerX(), originCircleOval.centerY(), x1, y1, innerPointPaint);
+                        aroundLineX21 = sliceVector.x * circleRadius + originCircleOval.centerX();
+                        aroundLineY21 = sliceVector.y * circleRadius + originCircleOval.centerY();
 
                         sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle + angle / 2))),
                                 (float) (Math.sin(Math.toRadians(lastAngle + angle / 2))));
+
+                        isShouldDrawSelectingLines = true;
                     } else {
                         cacheCanvasPie.drawArc(drawCircleOval, lastAngle, angle, true, linePaint);
                     }
@@ -462,6 +465,13 @@ public class LineChartRenderer {
 
                 lastAngle += angle;
             }
+
+            if (isShouldDrawSelectingLines) {
+                innerPointPaint.setStrokeWidth(3);
+                cacheCanvasPie.drawLine(originCircleOval.centerX(), originCircleOval.centerY(), aroundLineX1, aroundLineY1, innerPointPaint);
+                cacheCanvasPie.drawLine(originCircleOval.centerX(), originCircleOval.centerY(), aroundLineX21, aroundLineY21, innerPointPaint);
+            }
+
             isCachedPieBitmapForMorph = true;
         }
 
