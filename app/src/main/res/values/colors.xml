@@ -6,7 +6,7 @@
     <color name="windowBackground">#f0f0f0</color>
     <color name="titleColor">#000000</color>
     <color name="textColor">#222222</color>
-    <color name="labelColor">#96a2aa</color>
+    <color name="labelColor">#8E8E93</color>
     <color name="previewBackColor">#96E2EEF9</color>
     <color name="previewFrameColor">#7f86A9C4</color>
     <color name="itemBackground">#ffffff</color>
@@ -20,7 +20,7 @@
     <color name="windowBackground_Dark">#212936</color>
     <color name="titleColor_Dark">#ffffff</color>
     <color name="textColor_Dark">#FFFFFF</color>
-    <color name="labelColor_Dark">#506372</color>
+    <color name="labelColor_Dark">#A3B1C2</color>
     <color name="previewBackColor_Dark">#96304259</color>
     <color name="previewFrameColor_Dark">#7f6F899E</color>
     <color name="itemBackground_Dark">#293340</color>

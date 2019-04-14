@@ -9,7 +9,7 @@ import com.opiumfive.telechart.chart.model.Viewrect;
 public class ChartViewrectHandler {
 
     protected static final float MAXIMUM_ZOOM = 20f;
-    private static final float KALMAN_FILTER_FACTOR = 0.1f;
+    private static final float KALMAN_FILTER_FACTOR = 0.15f;
     private static final float KALMAN_FILTER_NOISE_FACTOR = 25f;
 
     protected int chartWidth;

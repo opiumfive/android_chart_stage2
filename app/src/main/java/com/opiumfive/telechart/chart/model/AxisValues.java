@@ -25,7 +25,8 @@ public class AxisValues {
         if (obj == null) return false;
         if (this == obj) return true;
         AxisValues other = (AxisValues) obj;
-        float percent = Math.abs(values[values.length - 1] - values[0]) * 0.005f;
-        return valuesNumber == other.valuesNumber && Math.abs(values[values.length - 1] - other.values[other.values.length - 1]) <= percent;
+        float percent = Math.abs(values[values.length - 1] - values[0]) * 0.0001f;
+        return valuesNumber == other.valuesNumber && Math.abs(values[0] - other.values[0]) <= percent &&
+                Math.abs(values[values.length - 1] - other.values[values.length - 1]) <= percent;
     }
 }

@@ -282,17 +282,27 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
             }
             chartRenderer.setCurrentViewrect(targetAdjustedViewrect);
 
-            if (axesRenderer.getCurrentLabelViewrect() != null) {
-                float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.05f;
 
-                if (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
-                        (Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetAdjustedViewrect.top) >= diff)) {
-                    labelAnimator.startAnimation(targetAdjustedViewrect);
-                    Log.d("labelanim", "startAnimation");
-                }
+
+            initiateYAxisAnimation(targetAdjustedViewrect);
+
+            postInvalidateOnAnimation();
+
+        }
+
+    }
+
+    public void initiateYAxisAnimation(Viewrect targetViewrect) {
+        if (axesRenderer.getCurrentLabelViewrect() != null) {
+            float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.0001f;
+
+            if (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
+                    (Math.abs(axesRenderer.getCurrentLabelViewrect().bottom - targetViewrect.bottom) >= diff ||
+                            Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetViewrect.top) >= diff)) {
+                labelAnimator.startAnimation(targetViewrect);
+                Log.d("labelanim", "startAnimation");
             }
         }
-        postInvalidateOnAnimation();
     }
 
     public void setViewrectRecalculation(boolean isEnabled) {

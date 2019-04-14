@@ -70,9 +70,6 @@ public class ChartWithPreview extends LinearLayout {
         public void onAnimationFinished() {
             isAnimatingPreview = true;
             checkboxList.setEnabled(true);
-
-            //chart.postDrawIfNeeded();
-            //chart.toggleAxisAnim();
         }
     };
 
@@ -208,10 +205,8 @@ public class ChartWithPreview extends LinearLayout {
 
         // for y-animation trigger
         previewChart.setOnUpTouchListener(() -> {
-            //chart.toggleAxisAnim();
-            //chart.postDrawIfNeeded();
+            chart.initiateYAxisAnimation(chart.getCurrentViewrect());
         });
-
 
         if (state != null && state.getCurrentViewrect() != null) {
             previewChart.setCurrentViewrect(state.getCurrentViewrect());
