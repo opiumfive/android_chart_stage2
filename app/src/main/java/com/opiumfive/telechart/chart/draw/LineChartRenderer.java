@@ -42,6 +42,7 @@ import static com.opiumfive.telechart.chart.Util.getDrawableFromAttr;
 public class LineChartRenderer {
 
     private static final String DETAIL_TITLE_PATTERN = "0000000000000000";
+    private static final String ARROW_TOOLTIP = "❯";
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
@@ -108,9 +109,10 @@ public class LineChartRenderer {
 
     private final float[] meshVerts = new float[MESH_COUNT * 2];
     private final float[] meshOrig = new float[MESH_COUNT * 2];
-
     private final Matrix meshMatrix = new Matrix();
     private final Matrix meshInverse = new Matrix();
+
+    private int tooltipArrowColor;
 
     private static void setXY(float[] array, int index, float x, float y) {
         array[index * 2] = x;
@@ -159,6 +161,8 @@ public class LineChartRenderer {
         touchLinePaint.setStrokeWidth(Util.dp2px(density, DEFAULT_LINE_STROKE_WIDTH_DP) / 2f);
 
         detailsTitleColor = getColorFromAttr(context, R.attr.detailTitleColor);
+
+        tooltipArrowColor = context.getColor(R.color.tooltipArrowColor);
 
         shadowDrawable = (NinePatchDrawable) getDrawableFromAttr(context, R.attr.detailBackground);
         cacheCanvas = new Canvas();
@@ -272,6 +276,7 @@ public class LineChartRenderer {
             calculateMaxViewrect();
             chartViewrectHandler.setMaxViewrect(tempMaximumViewrect);
             chartViewrectHandler.setCurrentViewrect(chartViewrectHandler.getMaximumViewport());
+            clearTouch();
         }
     }
 
@@ -400,7 +405,7 @@ public class LineChartRenderer {
                 float percent = lineSlice.get(line.getId()) / allMaximum;
 
                 final int numChars = pieValueFormatter.formatValue(labelBuffer, percent * 100);
-                final float labelWidth = labelPaint.measureText(labelBuffer, labelBuffer.length - numChars, numChars);
+                final float labelWidth = 0;
                 final int labelHeight = Math.abs(fontMetrics.ascent);
                 final float centerX = originCircleOval.centerX();
                 final float centerY = originCircleOval.centerY();
@@ -723,6 +728,10 @@ public class LineChartRenderer {
         }
     }
 
+    public boolean checkDetailsTouch(float touchX, float touchY) {
+        return labelBackgroundRect.contains(touchX, touchY);
+    }
+
     public boolean checkTouch(float touchX) {
         selectedValues.clear();
 
@@ -976,31 +985,45 @@ public class LineChartRenderer {
     }
 
     private void drawLabel(Canvas canvas) {
+        labelPaint.setTextSize(Util.sp2px(scaledDensity, dataProvider.getChartData().getValueLabelTextSize()));
         float rawX = selectedValues.getTouchX();
         Rect contentRect = chartViewrectHandler.getContentRectMinusAllMargins();
 
+        boolean isZoomable = chart.getType().equals(CType.AREA);
+
         float titleWidth = labelPaint.measureText(DETAIL_TITLE_PATTERN.toCharArray(), 0, DETAIL_TITLE_PATTERN.length());
 
+        if (isZoomable) {
+            titleWidth += labelPaint.measureText(ARROW_TOOLTIP.toCharArray(), 0, ARROW_TOOLTIP.length()) + labelMargin * 3;
+        }
+
         float maxValueWidth = 0f;
+        float maxNameWidth = 0f;
 
         for (PointValue pointValue : selectedValues.getPoints()) {
-            labelPaint.setColor(pointValue.getColor());
-
-            String valueText = String.valueOf((long) pointValue.getY());
+            String valueText = String.valueOf((long) pointValue.getOriginY());
             String nameText = pointValue.getLine();
-            float valueWidth = Math.max(labelPaint.measureText(valueText.toCharArray(), 0, valueText.length()), labelPaint.measureText(nameText.toCharArray(), 0, nameText.length()));
+            float valueWidth = labelPaint.measureText(valueText.toCharArray(), 0, valueText.length());
+            float nameWidth = labelPaint.measureText(nameText.toCharArray(), 0, nameText.length());
             if (valueWidth > maxValueWidth) {
                 maxValueWidth = valueWidth;
             }
+            if (nameWidth > maxNameWidth) {
+                maxNameWidth = nameWidth;
+            }
         }
 
-        float calculatedWidth = maxValueWidth * selectedValues.getPoints().size() + labelMargin * 4 * (selectedValues.getPoints().size() - 1);
+        float calculatedWidth = maxValueWidth  + maxNameWidth;
         float contentWidth = Math.max(calculatedWidth, titleWidth);
 
         int oneLineHeight = Math.abs(fontMetrics.ascent);
-        int lines = 5;
+        int lines = selectedValues.getPoints().size() + 1;
         float left = rawX - contentWidth / 2 - labelMargin * 3;
         float right = rawX + contentWidth / 2 + labelMargin * 3;
+
+        if (chart.getType().equals(CType.STACKED_BAR) && selectedValues.getPoints().size() > 1) {
+            lines++;
+        }
 
         if (left < contentRect.left) {
             float diff = contentRect.left - left;
@@ -1012,7 +1035,9 @@ public class LineChartRenderer {
             left -= diff;
         }
 
-        labelBackgroundRect.set(left, 0, right, oneLineHeight * lines);
+        float summaryHeight = (oneLineHeight + labelMargin * 4) * lines + labelMargin * 6;
+
+        labelBackgroundRect.set(left, 0, right, summaryHeight);
 
         Rect shadowBackgroundRect = new Rect((int)(labelBackgroundRect.left - detailCornerRadius / 5), (int)(labelBackgroundRect.top - detailCornerRadius / 5),
                 (int)(labelBackgroundRect.right + detailCornerRadius / 5), (int)(labelBackgroundRect.bottom + detailCornerRadius / 5));
@@ -1021,24 +1046,54 @@ public class LineChartRenderer {
         shadowDrawable.draw(canvas);
 
         float textX = labelBackgroundRect.left + labelMargin * 5;
-        float textY = labelBackgroundRect.top + oneLineHeight + labelMargin * 3;
+        float valueX = labelBackgroundRect.right - labelMargin * 5;
+        float textY = labelBackgroundRect.top + oneLineHeight + labelMargin * 4;
 
         String text = dateFormat.format(new Date((long) selectedValues.getPoints().get(0).getX()));
+
+        labelPaint.setTextAlign(Paint.Align.LEFT);
         labelPaint.setColor(detailsTitleColor);
+        labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
         canvas.drawText(text.toCharArray(), 0, text.length(), textX, textY, labelPaint);
 
+        if (isZoomable) {
+            labelPaint.setTextAlign(Paint.Align.RIGHT);
+            labelPaint.setColor(tooltipArrowColor);
+            labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
+            canvas.drawText(ARROW_TOOLTIP.toCharArray(), 0, ARROW_TOOLTIP.length(), textX + titleWidth - labelMargin * 3, textY, labelPaint);
+        }
+
         textY += oneLineHeight + labelMargin * 4;
-        float textYName = textY + oneLineHeight + labelMargin;
+        float sum = 0f;
 
         for (PointValue pointValue : selectedValues.getPoints()) {
-            labelPaint.setColor(pointValue.getColor());
+
+            sum += pointValue.getOriginY();
+
             String valueText = String.valueOf((long) pointValue.getOriginY());
             String nameText = pointValue.getLine();
+            labelPaint.setTextAlign(Paint.Align.LEFT);
+            labelPaint.setTypeface(Typeface.DEFAULT);
+            labelPaint.setColor(detailsTitleColor);
+            canvas.drawText(nameText.toCharArray(), 0, nameText.length(), textX, textY, labelPaint);
+            labelPaint.setTextAlign(Paint.Align.RIGHT);
+            labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
+            labelPaint.setColor(pointValue.getColor());
+            canvas.drawText(valueText.toCharArray(), 0, valueText.length(), valueX, textY, labelPaint);
 
-            canvas.drawText(valueText.toCharArray(), 0, valueText.length(), textX, textY, labelPaint);
-            canvas.drawText(nameText.toCharArray(), 0, nameText.length(), textX, textYName, labelPaint);
+            textY += oneLineHeight + labelMargin * 4;
+        }
 
-            textX += maxValueWidth + labelMargin * 4;
+        if (chart.getType().equals(CType.STACKED_BAR) && selectedValues.getPoints().size() > 1) {
+            String valueText = String.valueOf((long) sum);
+            String nameText = "All";
+            labelPaint.setTextAlign(Paint.Align.LEFT);
+            labelPaint.setColor(detailsTitleColor);
+            labelPaint.setTypeface(Typeface.DEFAULT);
+            canvas.drawText(nameText.toCharArray(), 0, nameText.length(), textX, textY, labelPaint);
+            labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
+            labelPaint.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText(valueText.toCharArray(), 0, valueText.length(), valueX, textY, labelPaint);
         }
     }
 
@@ -1073,6 +1128,7 @@ public class LineChartRenderer {
             isCachedPieBitmapForMorph = false;
             isCachedAreaBitmapForMorph = false;
             chartViewrectHandler.setCurrentViewrect(viewrect);
+            clearTouch();
         }
     }
 

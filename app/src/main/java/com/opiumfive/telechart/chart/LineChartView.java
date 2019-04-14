@@ -238,6 +238,8 @@ public class LineChartView extends View implements IChart, ChartDataProvider {
         if (cType.equals(this.cType)) return;
         targetType = cType;
 
+        chartRenderer.clearTouch();
+
         if (zoomInListener != null) {
             zoomInListener.zoomed(!cType.equals(originType));
         }

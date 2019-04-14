@@ -27,4 +27,6 @@
     <color name="gridColor_Dark">#FFFFFF</color>
     <color name="detailTitleColor_Dark">#dbe5eb</color>
     <color name="zoomOutColor_Dark">#48AAF0</color>
+
+    <color name="tooltipArrowColor">#d2d5d7</color>
 </resources>

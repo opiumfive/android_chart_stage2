@@ -61,10 +61,19 @@ public class ChartTouchHandler {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 boolean isTouched = false;
-                if (chart.getType().equals(CType.AREA)) {
-                    chart.startMorphling(CType.PIE);
-                } else if (chart.getType().equals(CType.PIE)) {
-                    chart.startMorphling(CType.AREA);
+
+                if (renderer.isTouched()) {
+                    boolean izZoomTouch = renderer.checkDetailsTouch(event.getX(), event.getY());
+                    if (izZoomTouch) {
+                        if (chart.getType().equals(CType.AREA)) {
+                            chart.startMorphling(CType.PIE);
+                        }
+                    } else {
+                        isTouched = checkTouch(event.getX());
+                        if (isTouched) {
+                            needInvalidate = true;
+                        }
+                    }
                 } else {
                     isTouched = checkTouch(event.getX());
                     if (isTouched) {
@@ -74,8 +83,8 @@ public class ChartTouchHandler {
                 break;
             case MotionEvent.ACTION_UP:
                 if (renderer.isTouched()) {
-                    renderer.clearTouch();
-                    needInvalidate = true;
+                    //renderer.clearTouch();
+                    //needInvalidate = true;
                 }
                 if (onUpTouchListener != null) {
                     onUpTouchListener.onUp();
@@ -89,8 +98,8 @@ public class ChartTouchHandler {
                 break;
             case MotionEvent.ACTION_CANCEL:
                 if (renderer.isTouched()) {
-                    renderer.clearTouch();
-                    needInvalidate = true;
+                    //renderer.clearTouch();
+                    //needInvalidate = true;
                 }
                 break;
         }
