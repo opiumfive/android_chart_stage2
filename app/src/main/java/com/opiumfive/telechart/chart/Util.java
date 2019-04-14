@@ -17,7 +17,10 @@ import java.util.Locale;
 public class Util {
 
     public static final int DEFAULT_COLOR = Color.parseColor("#DFDFDF");
-
+    private static final float DARKEN_SATURATION = 1.3f;
+    private static final float DARKEN_INTENSITY = 1.0f;
+    private static final float LIGHTEN_SATURATION = 0.7f;
+    private static final float LIGHTEN_INTENSITY = 1.0f;
     private static NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
     static {
@@ -36,6 +39,26 @@ public class Util {
         TypedArray a = context.getTheme().obtainStyledAttributes(new int[] { resId });
         int attributeResourceId = a.getResourceId(0, 0);
         return context.getResources().getDrawable(attributeResourceId);
+    }
+
+    public static int lightenColor(int color) {
+        float[] hsv = new float[3];
+        int alpha = Color.alpha(color);
+        Color.colorToHSV(color, hsv);
+        hsv[1] = Math.min(hsv[1] * LIGHTEN_SATURATION, 1.0f);
+        hsv[2] = hsv[2] * LIGHTEN_INTENSITY;
+        int tempColor = Color.HSVToColor(hsv);
+        return Color.argb(alpha, Color.red(tempColor), Color.green(tempColor), Color.blue(tempColor));
+    }
+
+    public static int darkenColor(int color) {
+        float[] hsv = new float[3];
+        int alpha = Color.alpha(color);
+        Color.colorToHSV(color, hsv);
+        hsv[1] = Math.min(hsv[1] * DARKEN_SATURATION, 1.0f);
+        hsv[2] = hsv[2] * DARKEN_INTENSITY;
+        int tempColor = Color.HSVToColor(hsv);
+        return Color.argb(alpha, Color.red(tempColor), Color.green(tempColor), Color.blue(tempColor));
     }
 
     public static int dp2px(float density, int dp) {
