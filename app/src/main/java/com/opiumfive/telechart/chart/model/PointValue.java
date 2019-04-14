@@ -13,6 +13,7 @@ public class PointValue {
     private int pointRadius;
     private String line;
     private float approxY;
+    private String lineId;
 
     public PointValue() {
         set(0, 0);
@@ -86,6 +87,14 @@ public class PointValue {
 
     public void setLine(String line) {
         this.line = line;
+    }
+
+    public String getLineId() {
+        return lineId;
+    }
+
+    public void setLineId(String lineId) {
+        this.lineId = lineId;
     }
 
     @Override

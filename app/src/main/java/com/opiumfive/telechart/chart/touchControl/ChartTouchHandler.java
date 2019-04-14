@@ -69,13 +69,13 @@ public class ChartTouchHandler {
                             chart.startMorphling(CType.PIE);
                         }
                     } else {
-                        isTouched = checkTouch(event.getX());
+                        isTouched = checkTouch(event.getX(), event.getY());
                         if (isTouched) {
                             needInvalidate = true;
                         }
                     }
                 } else {
-                    isTouched = checkTouch(event.getX());
+                    isTouched = checkTouch(event.getX(), event.getY());
                     if (isTouched) {
                         needInvalidate = true;
                     }
@@ -91,7 +91,7 @@ public class ChartTouchHandler {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                isTouched = checkTouch(event.getX());
+                isTouched = checkTouch(event.getX(), event.getY());
                 if (isTouched) {
                     needInvalidate = true;
                 }
@@ -106,10 +106,10 @@ public class ChartTouchHandler {
         return needInvalidate;
     }
 
-    private boolean checkTouch(float touchX) {
+    private boolean checkTouch(float touchX, float touchY) {
         selectedValues.clear();
 
-        if (renderer.checkTouch(touchX)) {
+        if (renderer.checkTouch(touchX, touchY)) {
             selectedValues.set(renderer.getSelectedValues());
         }
 

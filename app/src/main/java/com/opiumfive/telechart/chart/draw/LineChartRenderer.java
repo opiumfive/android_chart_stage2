@@ -42,6 +42,7 @@ import static com.opiumfive.telechart.chart.Util.getDrawableFromAttr;
 public class LineChartRenderer {
 
     private static final String DETAIL_TITLE_PATTERN = "0000000000000000";
+    private static final String PERCENT_PATTERN = "0000";
     private static final String ARROW_TOOLTIP = "❯";
     private static final String AREA_ALL_TITLE = "All";
     private static final int DEFAULT_LINE_STROKE_WIDTH_DP = 2;
@@ -222,8 +223,6 @@ public class LineChartRenderer {
         calculateCircleOval();
     }
 
-
-
     public void onChartSizeChanged() {
         cacheBitmap = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
@@ -400,7 +399,37 @@ public class LineChartRenderer {
                 drawCircleOval.set(originCircleOval);
 
                 linePaint.setColor(line.getColor());
-                cacheCanvasPie.drawArc(drawCircleOval, lastAngle, angle, true, linePaint);
+                if (isTouched()) {
+                    if (selectedValues.getPoints().get(0).getLineId().equals(line.getId())) {
+                        drawCircleOval.inset(-5, -5);
+                        cacheCanvasPie.drawArc(drawCircleOval, lastAngle, angle, true, linePaint);
+
+                        innerPointPaint.setStrokeWidth(5);
+
+                        sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle))),
+                                (float) (Math.sin(Math.toRadians(lastAngle))));
+
+                        final float circleRadius = originCircleOval.width() / 2f + 5;
+                        float x1 = sliceVector.x * circleRadius + originCircleOval.centerX();
+                        float y1 = sliceVector.y * circleRadius + originCircleOval.centerY();
+
+                        cacheCanvasPie.drawLine(originCircleOval.centerX(), originCircleOval.centerY(), x1, y1, innerPointPaint);
+
+                        sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle + angle))),
+                                (float) (Math.sin(Math.toRadians(lastAngle + angle))));
+
+                        x1 = sliceVector.x * circleRadius + originCircleOval.centerX();
+                        y1 = sliceVector.y * circleRadius + originCircleOval.centerY();
+                        cacheCanvasPie.drawLine(originCircleOval.centerX(), originCircleOval.centerY(), x1, y1, innerPointPaint);
+
+                        sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle + angle / 2))),
+                                (float) (Math.sin(Math.toRadians(lastAngle + angle / 2))));
+                    } else {
+                        cacheCanvasPie.drawArc(drawCircleOval, lastAngle, angle, true, linePaint);
+                    }
+                } else {
+                    cacheCanvasPie.drawArc(drawCircleOval, lastAngle, angle, true, linePaint);
+                }
 
                 // draw slice label
                 float percent = lineSlice.get(line.getId()) / allMaximum;
@@ -451,7 +480,8 @@ public class LineChartRenderer {
         final float right = centerX + circleRadius;
         final float bottom = centerY + circleRadius;
         originCircleOval.set(left, top, right, bottom);
-
+        final float inest = 0.5f * originCircleOval.width() * (1.0f - 0.95f);
+        originCircleOval.inset(inest, inest);
     }
 
     private void normalizeVector(PointF point) {
@@ -751,7 +781,7 @@ public class LineChartRenderer {
             float lineX = selectedValues.getTouchX();
 
             if (chart.getType().equals(CType.LINE_2Y) || chart.getType().equals(CType.LINE) || chart.getType().equals(CType.AREA)) {
-                canvas.drawLine(lineX, content.top + 50, lineX, content.bottom, touchLinePaint);
+                canvas.drawLine(lineX, content.top, lineX, content.bottom, touchLinePaint);
             }
 
             if (chart.getType().equals(CType.LINE_2Y) || chart.getType().equals(CType.LINE)) {
@@ -768,64 +798,144 @@ public class LineChartRenderer {
         return labelBackgroundRect.contains(touchX, touchY);
     }
 
-    public boolean checkTouch(float touchX) {
+    public boolean checkTouch(float touchX, float touchY) {
         selectedValues.clear();
 
         final LineChartData data = dataProvider.getChartData();
-        for (Line line : data.getLines()) {
-            if (!line.isActive()) continue;
 
-            float minDistance = 100f;
-            PointValue minPointDistanceValue = null;
-            PointValue nearPointValue = null;
+        if (chart.getType().equals(CType.PIE)) {
+            List<Line> lines = data.getLines();
 
-            for (int i = 0; i < line.getValues().size(); i++) {
-                PointValue pointValue = line.getValues().get(i);
+            int linesSize = lines.size();
 
-                float rawPointX = chartViewrectHandler.computeRawX(pointValue.getX());
+            for (int l = 0; l < linesSize; l++) {
+                Line line = lines.get(l);
+                if (!line.isActive() && line.getAlpha() == 0f) continue;
+                lineSlice.put(line.getId(), 0f);
+            }
 
-                if (rawPointX < chartViewrectHandler.getContentRectMinusAllMargins().left ||
-                        rawPointX > chartViewrectHandler.getContentRectMinusAllMargins().right) continue;
+            float allMaximum = 0f;
 
-                float dist = Math.abs(touchX - rawPointX);
-                if (dist <= minDistance) {
-                    minDistance = dist;
-                    minPointDistanceValue = pointValue;
-                    if (touchX <= rawPointX) {
-                        if (i == 0) {
-                            nearPointValue = line.getValues().get(i + 1);
+            LineChartData.Bounds bounds = data.getBoundsForViewrect(getCurrentViewrect());
+
+            for (int p = bounds.from; p < bounds.to; p++) {
+                float sum = 0;
+                for (int l = 0; l < linesSize; l++) {
+                    Line line = lines.get(l);
+                    if (!line.isActive() && line.getAlpha() == 0f) continue;
+
+                    PointValue pointValue = line.getValues().get(p);
+
+                    allMaximum += pointValue.getY() * line.getAlpha();
+                    lineSlice.put(line.getId(), lineSlice.get(line.getId()) + pointValue.getY() * line.getAlpha());
+                    sum += pointValue.getY() * line.getAlpha();
+                }
+                maximums[p] = sum;
+            }
+
+            Rect contentRect = chartViewrectHandler.getContentRectMinusAllMargins();
+            final float circleRadius = Math.min(contentRect.width() / 2f, contentRect.height() / 2f);
+            final float centerX = contentRect.centerX();
+            final float centerY = contentRect.centerY();
+
+            sliceVector.set(touchX - centerX, touchY - centerY);
+            float touchRadius = sliceVector.length();
+            boolean withinRadius = touchRadius < circleRadius;
+            if (withinRadius) {
+                final float touchAngle = (pointToAngle(touchX, touchY, centerX, centerY) - rotation + 360f) % 360f;
+                final float sliceScale = 360f / allMaximum;
+
+                float lastAngle = rotation;
+
+                PointValue selectedValue = new PointValue();
+
+                for (int l = 0; l < linesSize; l++) {
+                    Line line = lines.get(l);
+                    if (!line.isActive()) continue;
+                    float angle = lineSlice.get(line.getId()) * sliceScale;
+
+                    if (touchAngle >= lastAngle) {
+                        selectedValue.setLineId(line.getId());
+                        selectedValue.setLine(line.getTitle());
+                        selectedValue.setColor(line.getColor());
+                        selectedValue.setOriginY(lineSlice.get(line.getId()));
+                    }
+
+                    lastAngle += angle;
+                }
+
+                selectedValues.add(selectedValue);
+                selectedValues.setTouchX(touchX);
+            }
+        } else {
+
+            for (Line line : data.getLines()) {
+                if (!line.isActive()) continue;
+
+                float minDistance = 100f;
+                PointValue minPointDistanceValue = null;
+                PointValue nearPointValue = null;
+
+                for (int i = 0; i < line.getValues().size(); i++) {
+                    PointValue pointValue = line.getValues().get(i);
+
+                    float rawPointX = chartViewrectHandler.computeRawX(pointValue.getX());
+
+                    if (rawPointX < chartViewrectHandler.getContentRectMinusAllMargins().left ||
+                            rawPointX > chartViewrectHandler.getContentRectMinusAllMargins().right)
+                        continue;
+
+                    float dist = Math.abs(touchX - rawPointX);
+                    if (dist <= minDistance) {
+                        minDistance = dist;
+                        minPointDistanceValue = pointValue;
+                        if (touchX <= rawPointX) {
+                            if (i == 0) {
+                                nearPointValue = line.getValues().get(i + 1);
+                            } else {
+                                nearPointValue = line.getValues().get(i - 1);
+                            }
                         } else {
-                            nearPointValue = line.getValues().get(i - 1);
-                        }
-                    } else {
-                        if (i >= line.getValues().size() - 1) {
-                            nearPointValue = line.getValues().get(i - 1);
-                        } else {
-                            nearPointValue = line.getValues().get(i + 1);
+                            if (i >= line.getValues().size() - 1) {
+                                nearPointValue = line.getValues().get(i - 1);
+                            } else {
+                                nearPointValue = line.getValues().get(i + 1);
+                            }
                         }
                     }
                 }
-            }
 
-            if (minPointDistanceValue != null) {
-                minPointDistanceValue.setPointRadius(line.getPointRadius());
-                minPointDistanceValue.setColor(line.getColor());
-                minPointDistanceValue.setLine(line.getTitle());
+                if (minPointDistanceValue != null) {
+                    minPointDistanceValue.setPointRadius(line.getPointRadius());
+                    minPointDistanceValue.setColor(line.getColor());
+                    minPointDistanceValue.setLine(line.getTitle());
+                    minPointDistanceValue.setLineId(line.getId());
 
-                float rawPointX = chartViewrectHandler.computeRawX(minPointDistanceValue.getX());
-                float rawPointY = chartViewrectHandler.computeRawY(minPointDistanceValue.getY());
-                float rawNearPointX = chartViewrectHandler.computeRawX(nearPointValue.getX());
-                float rawNearPointY = chartViewrectHandler.computeRawY(nearPointValue.getY());
+                    float rawPointX = chartViewrectHandler.computeRawX(minPointDistanceValue.getX());
+                    float rawPointY = chartViewrectHandler.computeRawY(minPointDistanceValue.getY());
+                    float rawNearPointX = chartViewrectHandler.computeRawX(nearPointValue.getX());
+                    float rawNearPointY = chartViewrectHandler.computeRawY(nearPointValue.getY());
 
-                float k = (rawPointY - rawNearPointY) / (rawPointX - rawNearPointX);
-                minPointDistanceValue.setApproxY(k * touchX + rawPointY - k * rawPointX);
+                    float k = (rawPointY - rawNearPointY) / (rawPointX - rawNearPointX);
+                    minPointDistanceValue.setApproxY(k * touchX + rawPointY - k * rawPointX);
 
-                selectedValues.add(minPointDistanceValue);
-                selectedValues.setTouchX(touchX);
+                    selectedValues.add(minPointDistanceValue);
+                    selectedValues.setTouchX(touchX);
+                }
             }
         }
 
         return isTouched();
+    }
+
+    private float pointToAngle(float x, float y, float centerX, float centerY) {
+        double diffX = x - centerX;
+        double diffY = y - centerY;
+        double radian = Math.atan2(-diffX, diffY);
+
+        float angle = ((float) Math.toDegrees(radian) + 360) % 360;
+        angle += 90f;
+        return angle;
     }
 
     public void recalculateMax() {
@@ -1032,7 +1142,7 @@ public class LineChartRenderer {
         float titleWidth = labelPaint.measureText(DETAIL_TITLE_PATTERN.toCharArray(), 0, DETAIL_TITLE_PATTERN.length());
 
         if (isZoomable) {
-            titleWidth += labelPaint.measureText(ARROW_TOOLTIP.toCharArray(), 0, ARROW_TOOLTIP.length()) + labelMargin * 3;
+            titleWidth += labelPaint.measureText(ARROW_TOOLTIP.toCharArray(), 0, ARROW_TOOLTIP.length()) + labelMargin * 5;
         }
 
         float maxValueWidth = 0f;
@@ -1051,7 +1161,12 @@ public class LineChartRenderer {
             }
         }
 
-        float calculatedWidth = maxValueWidth  + maxNameWidth;
+        float calculatedWidth = maxValueWidth + maxNameWidth;
+
+        if (chart.getType().equals(CType.AREA)) {
+            calculatedWidth += labelPaint.measureText(PERCENT_PATTERN.toCharArray(), 0, PERCENT_PATTERN.length());
+        }
+
         float contentWidth = Math.max(calculatedWidth, titleWidth);
 
         int oneLineHeight = Math.abs(fontMetrics.ascent);
@@ -1079,11 +1194,13 @@ public class LineChartRenderer {
 
         if (chart.getType().equals(CType.STACKED_BAR) && selectedValues.getPoints().size() > 1) {
             lines++;
+        } else if(chart.getType().equals(CType.PIE)) {
+            lines--;
         }
 
         float summaryHeight = (oneLineHeight + labelMargin * 4) * lines + labelMargin * 6;
 
-        labelBackgroundRect.set(left, 0, right, summaryHeight);
+        labelBackgroundRect.set(left, labelMargin * 2, right, summaryHeight + labelMargin * 2);
 
         Rect shadowBackgroundRect = new Rect((int)(labelBackgroundRect.left - detailCornerRadius / 5), (int)(labelBackgroundRect.top - detailCornerRadius / 5),
                 (int)(labelBackgroundRect.right + detailCornerRadius / 5), (int)(labelBackgroundRect.bottom + detailCornerRadius / 5));
@@ -1097,10 +1214,12 @@ public class LineChartRenderer {
 
         String text = dateFormat.format(new Date((long) selectedValues.getPoints().get(0).getX()));
 
-        labelPaint.setTextAlign(Paint.Align.LEFT);
-        labelPaint.setColor(detailsTitleColor);
-        labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
-        canvas.drawText(text.toCharArray(), 0, text.length(), textX, textY, labelPaint);
+        if (!chart.getType().equals(CType.PIE)) {
+            labelPaint.setTextAlign(Paint.Align.LEFT);
+            labelPaint.setColor(detailsTitleColor);
+            labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
+            canvas.drawText(text.toCharArray(), 0, text.length(), textX, textY, labelPaint);
+        }
 
         if (isZoomable) {
             labelPaint.setTextAlign(Paint.Align.RIGHT);
@@ -1109,15 +1228,26 @@ public class LineChartRenderer {
             canvas.drawText(ARROW_TOOLTIP.toCharArray(), 0, ARROW_TOOLTIP.length(), textX + titleWidth - labelMargin * 3, textY, labelPaint);
         }
 
-        textY += oneLineHeight + labelMargin * 4;
+        if (!chart.getType().equals(CType.PIE)) {
+            textY += oneLineHeight + labelMargin * 4;
+        }
+
         float sum = 0f;
 
         for (PointValue pointValue : selectedValues.getPoints()) {
-
             sum += pointValue.getOriginY();
+        }
 
+        for (PointValue pointValue : selectedValues.getPoints()) {
             String valueText = String.valueOf((long) pointValue.getOriginY());
             String nameText = pointValue.getLine();
+
+            if (chart.getType().equals(CType.AREA)) {
+                String percent = (long) (pointValue.getOriginY() / sum * 100) + "%";
+                if (percent.length() == 2) percent = "0" + percent;
+                nameText = percent + " " + nameText;
+            }
+
             labelPaint.setTextAlign(Paint.Align.LEFT);
             labelPaint.setTypeface(Typeface.DEFAULT);
             labelPaint.setColor(detailsTitleColor);
