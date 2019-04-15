@@ -142,12 +142,20 @@ public class ChartWithPreview extends LinearLayout {
     public void setChartData(ChartData chartData, State state) {
         data = DataMapper.mapFromPlainData(chartData);
 
+        int labelColor = 0;
+
+        if (chart.getType().equals(CType.AREA) || chart.getType().equals(CType.STACKED_BAR) || chart.getType().equals(CType.DAILY_BAR)) {
+            labelColor = getColorFromAttr(getContext(), R.attr.areaLabelColor);
+        } else {
+            labelColor = getColorFromAttr(getContext(), R.attr.labelColor);
+        }
+
         data.setAxisXBottom(
                 new Axis()
                         .setHasLines(false)
                         .setFormatter(new DateValueFormatter())
                         .setInside(false)
-                        .setTextColor(getColorFromAttr(getContext(), R.attr.labelColor))
+                        .setTextColor(labelColor)
         );
 
         if (state != null && state.getLinesState() != null) {
@@ -181,7 +189,7 @@ public class ChartWithPreview extends LinearLayout {
                     new Axis()
                             .setHasLines(true)
                             .setLineColor(getColorFromAttr(getContext(), R.attr.gridColor))
-                            .setTextColor(getColorFromAttr(getContext(), R.attr.labelColor))
+                            .setTextColor(labelColor)
             );
         }
 

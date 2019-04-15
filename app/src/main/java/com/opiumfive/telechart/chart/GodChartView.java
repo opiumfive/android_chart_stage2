@@ -3,7 +3,6 @@ package com.opiumfive.telechart.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -299,7 +298,6 @@ public class GodChartView extends View implements IChart, ChartDataProvider {
                             Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetViewrect.top) >= diff))) {
                 lastAnimatedY = System.currentTimeMillis();
                 labelAnimator.startAnimation(targetViewrect);
-                Log.d("labelanim", "startAnimation");
             }
 
             postInvalidateOnAnimation();
