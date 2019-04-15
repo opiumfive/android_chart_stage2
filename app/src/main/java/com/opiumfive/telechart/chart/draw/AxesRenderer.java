@@ -311,9 +311,6 @@ public class AxesRenderer {
                             autoValuesYBuff.alpha = 0f;
 
                             if (chart.getType().equals(CType.LINE_2Y)) {
-                                for (int i = 0; i < autoValuesY2Buff.values.length; i++) {
-                                    autoValuesY2Buff.values[i] -= calcYAnimOffsetFactor(LABEL_ANIM_STEPS, i, animStep) * animDirection;
-                                }
                                 autoValuesY2Buff.alpha = 0f;
                             }
 
@@ -337,29 +334,17 @@ public class AxesRenderer {
                             autoValuesBufferTab[position].step++;
                             autoValuesYBuff.step++;
 
-                            autoValuesBufferTab[position].alpha -= 1.0f / LABEL_ANIM_STEPS * 1.2f;
-                            autoValuesYBuff.alpha += 1.0f / LABEL_ANIM_STEPS * 1.2f;
+                            autoValuesBufferTab[position].alpha -= 1.0f / LABEL_ANIM_STEPS* 1.5f;
+                            autoValuesYBuff.alpha += 1.0f / LABEL_ANIM_STEPS * 1.5f;
 
                             if (autoValuesBufferTab[position].alpha < 0f) autoValuesBufferTab[position].alpha = 0f;
                             if (autoValuesYBuff.alpha > 1f) autoValuesYBuff.alpha = 1f;
-
-                            for (int i = 0; i < autoValuesBufferTab[position].values.length; i++) {
-                                autoValuesBufferTab[position].values[i] = currentValuesYBuff.values[i] + calcYAnimOffsetFactor(autoValuesBufferTab[position].step, i, animStep) * animDirection;
-                            }
-
-                            for (int i = 0; i < autoValuesYBuff.values.length; i++) {
-                                autoValuesYBuff.values[i] = targetValuesYBuff.values[i] + calcYAnimOffsetFactor(LABEL_ANIM_STEPS - autoValuesYBuff.step, i, animStep) * animDirection;
-                            }
 
                             if (chart.getType().equals(CType.LINE_2Y)) {
                                 autoValuesY2Buff.step++;
 
                                 autoValuesY2Buff.alpha += 1.0f / LABEL_ANIM_STEPS;
                                 if (autoValuesY2Buff.alpha > 1f) autoValuesY2Buff.alpha = 1f;
-
-                                for (int i = 0; i < autoValuesY2Buff.values.length; i++) {
-                                    autoValuesY2Buff.values[i] = targetValuesY2Buff.values[i] + calcYAnimOffsetFactor(LABEL_ANIM_STEPS - autoValuesY2Buff.step, i, animStep) * animDirection;
-                                }
                             }
                         }
                     }
@@ -412,7 +397,7 @@ public class AxesRenderer {
         int valueToDrawIndex = 0;
         for (int i = 0; i < autoValuesBufferTab[position].valuesNumber; ++i) {
             if (isAxisVertical) {
-                rawValue = chartViewrectHandler.computeRawY(autoValuesBufferTab[position].rawValues[i]);
+                rawValue = chartViewrectHandler.computeRawYByZone(i, autoValuesBufferTab[position].step, animDirection);
             } else {
                 rawValue = chartViewrectHandler.computeRawX(autoValuesBufferTab[position].values[i]);
             }
@@ -422,9 +407,14 @@ public class AxesRenderer {
 
             if (position == LEFT && (isCurrentlyAnimatingLabels || initialLabelAddition)) {
                 if (isCurrentlyAnimatingLabels) {
-                    rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawY(autoValuesYBuff.values[i]);
+                    if (animDirection < 0) {
+                        rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawYByZone(i, autoValuesYBuff.step, animDirection);
+                    } else {
+                        rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawYByZone(i, LABEL_ANIM_STEPS - autoValuesYBuff.step, -1f);
+                    }
+
                 } else {
-                    rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawY(autoValuesYBuff.rawValues[i]);
+                    rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawYByZone(i, autoValuesYBuff.step, animDirection);
                 }
                 autoValuesToDrawTabY[valueToDrawIndex] = autoValuesYBuff.values[i];
             }

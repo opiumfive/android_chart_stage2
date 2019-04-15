@@ -113,6 +113,12 @@ public class ChartViewrectHandler {
         return contentRectMinusAxesMargins.bottom - pixelOffset;
     }
 
+    public float computeRawYByZone(int zone, int step, float direction) {
+        float offset = step * (step + 1) * (zone + 1) * direction;
+        final float pixelOffset = zone * (contentRectMinusAxesMargins.height() / 6f);
+        return contentRectMinusAxesMargins.bottom - pixelOffset + offset;
+    }
+
     public void computeScrollSurfaceSize(Point out) {
         out.set((int) (maxViewrect.width() * contentRectMinusAllMargins.width() / currentViewrect.width()),
                 (int) (maxViewrect.height() * contentRectMinusAllMargins.height() / currentViewrect.height()));
