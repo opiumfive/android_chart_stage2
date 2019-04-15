@@ -638,7 +638,7 @@ public class AxesRenderer {
                     final float value = targetValuesY2Buff.values[valueToDrawIndex];
                     charsNumber = axis.getFormatter().formatValue(labelBuffer, value);
 
-                    labelY = rawValuesTabY[LEFT] - Util.dp2px(density, 4);
+                    labelY = rawValuesTabY[valueToDrawIndex] - Util.dp2px(density, 4);
 
                     canvas.drawText(labelBuffer, labelBuffer.length - charsNumber, charsNumber, labelX, labelY, labelPaintTab[position]);
                 }
