@@ -6,11 +6,8 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
-import android.widget.CompoundButton;
 
 import com.opiumfive.telechart.chart.model.AxisValues;
-
-import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -176,7 +173,7 @@ public class Util {
 
         float interval = (stop - start) / steps;
 
-        float first = start + interval / 2;
+        float first = start + 0.1f;
 
         outValues.valuesNumber = steps;
 

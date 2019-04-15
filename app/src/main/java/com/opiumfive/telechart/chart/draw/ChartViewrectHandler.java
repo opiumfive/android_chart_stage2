@@ -106,8 +106,8 @@ public class ChartViewrectHandler {
     }
 
     public float computeRawY(float valueY) {
-        final float pixelOffset = (valueY - currentViewrect.bottom) * (contentRectMinusAllMargins.height() / currentViewrect.height());
-        return contentRectMinusAllMargins.bottom - pixelOffset;
+        final float pixelOffset = (valueY - currentViewrect.bottom) * (contentRectMinusAxesMargins.height() / currentViewrect.height());
+        return contentRectMinusAxesMargins.bottom - pixelOffset;
     }
 
     public void computeScrollSurfaceSize(Point out) {

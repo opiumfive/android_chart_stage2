@@ -78,6 +78,7 @@ public class AxesRenderer {
     int framesAnim = 0;
     private Viewrect targetViewrect = null;
     private Viewrect currentLabelViewrect = null;
+    private boolean yRawChanged = false;
 
 
     public void setToggleAnimation(Viewrect targetViewrect) {
@@ -217,7 +218,7 @@ public class AxesRenderer {
     }
 
     public static float calcYAnimOffsetFactor(int step, int lineNum, float factor) {
-        return (lineNum) * factor * step * (step + 1);
+        return (lineNum + 1) * factor * step * (step + 1);
     }
 
     public Viewrect getCurrentLabelViewrect() {
@@ -297,8 +298,10 @@ public class AxesRenderer {
 
                             //float targetDiff = targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - targetValuesYBuff.values[0];
                             float currentDiff = currentValuesYBuff.values[currentValuesYBuff.values.length - 1] - currentValuesYBuff.values[0];
+                            float topDiff = Math.abs(targetValuesYBuff.values[targetValuesYBuff.values.length - 1] - currentValuesYBuff.values[currentValuesYBuff.values.length - 1]);
+                            float botDiff = Math.abs(targetValuesYBuff.values[0] - currentValuesYBuff.values[0]);
 
-                            animStep = Math.abs(currentDiff / 250f / LABEL_ANIM_STEPS);
+                            animStep = Math.abs(currentDiff / 100f / LABEL_ANIM_STEPS);
 
                             float targetTop = targetValuesYBuff.values[targetValuesYBuff.values.length - 1];
                             float targetBottom = targetValuesYBuff.values[0];
@@ -344,8 +347,8 @@ public class AxesRenderer {
                             autoValuesBufferTab[position].step++;
                             autoValuesYBuff.step++;
 
-                            autoValuesBufferTab[position].alpha -= 1.0f / LABEL_ANIM_STEPS * 1.5f;
-                            autoValuesYBuff.alpha += 1.0f / LABEL_ANIM_STEPS * 1.5f;
+                            autoValuesBufferTab[position].alpha -= 1.0f / LABEL_ANIM_STEPS * 1.2f;
+                            autoValuesYBuff.alpha += 1.0f / LABEL_ANIM_STEPS * 1.2f;
 
                             if (autoValuesBufferTab[position].alpha < 0f) autoValuesBufferTab[position].alpha = 0f;
                             if (autoValuesYBuff.alpha > 1f) autoValuesYBuff.alpha = 1f;
@@ -427,7 +430,7 @@ public class AxesRenderer {
             rawValuesTab[position][valueToDrawIndex] = rawValue;
             autoValuesToDrawTab[position][valueToDrawIndex] = autoValuesBufferTab[position].values[i];
 
-            if (position == LEFT) {
+            if (position == LEFT && (isCurrentlyAnimatingLabels || initialLabelAddition)) {
                 if (isCurrentlyAnimatingLabels) {
                     rawValuesTabY[valueToDrawIndex] = chartViewrectHandler.computeRawY(autoValuesYBuff.values[i]);
                 } else {

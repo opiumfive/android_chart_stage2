@@ -40,6 +40,7 @@ public class GodChartView extends View implements IChart, ChartDataProvider {
     protected ChartMorphAnimator morphAnimator;
     protected boolean isSelectionOnHover = true;
     protected ZoomInListener zoomInListener;
+    protected long lastAnimatedY = 0;
 
 
     public GodChartView(Context context) {
@@ -290,11 +291,13 @@ public class GodChartView extends View implements IChart, ChartDataProvider {
 
     public void initiateYAxisAnimation(Viewrect targetViewrect, boolean force) {
         if (axesRenderer.getCurrentLabelViewrect() != null) {
-            float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.1f;
+            float diff = (axesRenderer.getCurrentLabelViewrect().top - axesRenderer.getCurrentLabelViewrect().bottom) * 0.4f;
+            long timeDiff = System.currentTimeMillis() - lastAnimatedY;
 
-            if (force || (!axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
+            if (force || (timeDiff > 750 && !axesRenderer.isCurrentlyAnimatingLabels() && !labelAnimator.isAnimationStarted() &&
                     (Math.abs(axesRenderer.getCurrentLabelViewrect().bottom - targetViewrect.bottom) >= diff ||
                             Math.abs(axesRenderer.getCurrentLabelViewrect().top - targetViewrect.top) >= diff))) {
+                lastAnimatedY = System.currentTimeMillis();
                 labelAnimator.startAnimation(targetViewrect);
                 Log.d("labelanim", "startAnimation");
             }

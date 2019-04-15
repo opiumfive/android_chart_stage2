@@ -1253,7 +1253,7 @@ public class GodChartRenderer {
             String nameText = pointValue.getLine();
 
             if (chart.getType().equals(CType.AREA)) {
-                String percent = (long) (pointValue.getOriginY() / sum * 100) + "%";
+                String percent = (long) Math.round(pointValue.getOriginY() / sum * 100) + "%";
                 if (percent.length() == 2) percent = "0" + percent;
                 nameText = percent + " " + nameText;
             }
