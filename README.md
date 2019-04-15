@@ -1,4 +1,4 @@
-<b>Telegram March contest 2019.</b> 
+<b>Telegram April contest 2019.</b> 
 (March contest - https://github.com/opiumfive/android_chart_stage1)
 
 Goal is to show simple charts with 5 bonuses (I did only last):
