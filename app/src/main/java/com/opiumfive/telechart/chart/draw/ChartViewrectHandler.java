@@ -3,6 +3,7 @@ package com.opiumfive.telechart.chart.draw;
 import android.graphics.Point;
 import android.graphics.Rect;
 
+import com.opiumfive.telechart.chart.Util;
 import com.opiumfive.telechart.chart.animator.ViewrectChangeListener;
 import com.opiumfive.telechart.chart.model.Viewrect;
 
@@ -25,13 +26,15 @@ public class ChartViewrectHandler {
     protected float minViewportHeight;
 
     protected ViewrectChangeListener viewrectChangeListener;
+    private float density;
 
     private float yMaxFilterBuff = 1f;
     private float yMinFilterBuff = 1f;
     private float filterFactor = KALMAN_FILTER_FACTOR;
     private float filterNoise = KALMAN_FILTER_NOISE_FACTOR;
 
-    public ChartViewrectHandler() {
+    public ChartViewrectHandler(float density) {
+        this.density = density;
     }
 
     public void setContentRect(int width, int height, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {

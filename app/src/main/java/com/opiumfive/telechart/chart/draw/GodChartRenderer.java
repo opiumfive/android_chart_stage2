@@ -49,7 +49,7 @@ public class GodChartRenderer {
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
     private static final int DEFAULT_LABEL_MARGIN_DP = 2;
-    private static final float BITMAP_SCALE_FACTOR = 0.66f;
+    private static final float BITMAP_SCALE_FACTOR = 0.55f;
     private static final float SWIRL_BITMAP_SCALE_FACTOR = 0.33f;
 
     private static final int MESH_WIDTH = 20;

@@ -54,7 +54,7 @@ public class GodChartView extends View implements IChart, ChartDataProvider {
     public GodChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        chartViewrectHandler = new ChartViewrectHandler();
+        chartViewrectHandler = new ChartViewrectHandler(context.getResources().getDisplayMetrics().density);
         touchHandler = new ChartTouchHandler(context, this);
         axesRenderer = new AxesRenderer(context, this);
         this.viewrectAnimator = new ChartViewrectAnimator(this);

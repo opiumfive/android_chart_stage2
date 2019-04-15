@@ -25,7 +25,7 @@ public class PreviewGodChartView extends GodChartView {
 
     public PreviewGodChartView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        chartViewrectHandler = new PreviewChartViewrectHandler();
+        chartViewrectHandler = new PreviewChartViewrectHandler(context.getResources().getDisplayMetrics().density);
         previewChartRenderer = new PreviewGodChartRenderer(context, this, this);
         touchHandler = new PreviewChartTouchHandler(context, this);
         setChartRenderer(previewChartRenderer);

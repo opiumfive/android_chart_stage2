@@ -53,15 +53,34 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         this.targetViewrect.set(targetViewrect);
 
         int activeLines = 0;
+        boolean isFirstLine = false;
+
+        if (lines != null && !lines.isEmpty()) {
+            for (int i = 0; i < chart.getChartData().getLines().size(); i++) {
+                Line l = chart.getChartData().getLines().get(i);
+                if (l.isActive()) {
+                    isFirstLine = l.getId().equals(lines.get(0).getId());
+                    break;
+                }
+            }
+        }
+
         for (Line l : chart.getChartData().getLines()) if (l.isActive()) activeLines++;
 
+        animator.setDuration(FAST_ANIMATION_DURATION);
+
         if (chart.getType().equals(CType.AREA) && activeLines > 1) {
-            animator.setInterpolator(areaInterpolator);
+            if (isFirstLine) {
+                animator.setInterpolator(lineInterpolator);
+                animator.setDuration(FAST_ANIMATION_DURATION / 2);
+            } else {
+                animator.setInterpolator(areaInterpolator);
+            }
         } else {
             animator.setInterpolator(lineInterpolator);
         }
         animatingLine = lines;
-        animator.setDuration(FAST_ANIMATION_DURATION);
+
         animator.start();
         chart.toggleAxisAnim(targetViewrect);
     }
@@ -110,8 +129,6 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
 
             chart.setCurrentViewrect(newViewrect);
         }
-
-
     }
 
     @Override
