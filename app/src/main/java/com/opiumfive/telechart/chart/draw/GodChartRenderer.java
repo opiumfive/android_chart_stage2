@@ -250,7 +250,7 @@ public class GodChartRenderer {
         cacheBitmapPie = Bitmap.createBitmap((int) (chartViewrectHandler.getChartWidth() * BITMAP_SCALE_FACTOR),
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
         cacheCanvasPie.setBitmap(cacheBitmapPie);
-        destinationRect.set(0, 0, chartViewrectHandler.getChartWidth(), chartViewrectHandler.getChartHeight());
+        destinationRect.set(0, 0, chartViewrectHandler.getChartWidth(), chartViewrectHandler.getContentRectMinusAxesMargins().bottom);
         calculateCircleOval();
 
         float w = morphBitmap.getWidth();
@@ -490,7 +490,7 @@ public class GodChartRenderer {
         final float right = centerX + circleRadius;
         final float bottom = centerY + circleRadius;
         originCircleOval.set(left, top, right, bottom);
-        final float inest = 0.5f * originCircleOval.width() * (1.0f - 0.95f);
+        final float inest = 0.5f * originCircleOval.width() * (1.0f - 0.98f);
         originCircleOval.inset(inest, inest);
     }
 
