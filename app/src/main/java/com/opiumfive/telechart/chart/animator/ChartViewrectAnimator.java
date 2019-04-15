@@ -38,34 +38,26 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         animator.setDuration(FAST_ANIMATION_DURATION);
     }
 
-    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect) {
-        startAnimationWithToggleLine(startViewrect, targetViewrect, null);
+    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean isFirstLine) {
+        startAnimationWithToggleLine(startViewrect, targetViewrect, null, isFirstLine);
     }
 
-    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean animateMaxToo) {
+    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean animateMaxToo,  boolean isFirstLine) {
         this.animateMaxToo = animateMaxToo;
 
-        startAnimationWithToggleLine(startViewrect, targetViewrect, null);
+        startAnimationWithToggleLine(startViewrect, targetViewrect, null, isFirstLine);
     }
 
-    public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, List<Line> lines) {
+    public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, List<Line> lines, boolean isFirstLine) {
         this.startViewrect.set(startViewrect);
         this.targetViewrect.set(targetViewrect);
 
         int activeLines = 0;
-        boolean isFirstLine = false;
 
-        if (lines != null && !lines.isEmpty()) {
-            for (int i = 0; i < chart.getChartData().getLines().size(); i++) {
-                Line l = chart.getChartData().getLines().get(i);
-                if (l.isActive()) {
-                    isFirstLine = l.getId().equals(lines.get(0).getId());
-                    break;
-                }
-            }
-        }
 
-        for (Line l : chart.getChartData().getLines()) if (l.isActive()) activeLines++;
+        List<Line> chartLines = chart.getChartData().getLines();
+
+        for (Line l : chartLines) if (l.isActive()) activeLines++;
 
         animator.setDuration(FAST_ANIMATION_DURATION);
 

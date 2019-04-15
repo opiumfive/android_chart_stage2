@@ -100,6 +100,6 @@ public class CheckerList extends FrameLayout {
     }
 
     interface LineCheckListener {
-        void onLineToggle(int[] list, boolean[] checked);
+        void onLineToggle(int[] list, boolean[] checked, boolean isFirstLine);
     }
 }

@@ -229,7 +229,7 @@ public class GodChartView extends View implements IChart, ChartDataProvider {
         if (null != targetViewrect) {
             viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
-            viewrectAnimator.startAnimation(current, targetViewrect);
+            viewrectAnimator.startAnimation(current, targetViewrect, false);
         }
         postInvalidateOnAnimation();
     }
@@ -249,13 +249,13 @@ public class GodChartView extends View implements IChart, ChartDataProvider {
         morphAnimator.startAnimation();
     }
 
-    public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, List<Line> lines) {
+    public void setCurrentViewrectAnimatedAdjustingMax(Viewrect targetViewrect, List<Line> lines, boolean isFirstLine) {
 
         if (null != targetViewrect) {
             viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
             Viewrect targetAdjustedViewrect = chartRenderer.calculateAdjustedViewrect(targetViewrect);
-            viewrectAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, lines);
+            viewrectAnimator.startAnimationWithToggleLine(current, targetAdjustedViewrect, lines, isFirstLine);
         }
         postInvalidateOnAnimation();
     }
