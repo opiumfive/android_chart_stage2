@@ -49,7 +49,7 @@ public class GodChartRenderer {
     private static final int DEFAULT_TOUCH_TOLERANCE_MARGIN_DP = 3;
     private static final float ADDITIONAL_VIEWRECT_OFFSET = 0.075f;
     private static final int DEFAULT_LABEL_MARGIN_DP = 2;
-    private static final float BITMAP_SCALE_FACTOR = 0.55f;
+    private static final float BITMAP_SCALE_FACTOR = 0.66f;
     private static final float SWIRL_BITMAP_SCALE_FACTOR = 0.33f;
 
     private static final int MESH_WIDTH = 20;
@@ -95,6 +95,7 @@ public class GodChartRenderer {
     private Paint bitmapPaint;
     private Paint clearPaint = new Paint();
     private Paint bitmapMorphPaint;
+    private float pieHeightfactor = 1f;
     private RectF destinationRect = new RectF();
     private int rotation = 0;
     private PointF sliceVector = new PointF();
@@ -251,6 +252,7 @@ public class GodChartRenderer {
                 (int) (chartViewrectHandler.getChartHeight() * BITMAP_SCALE_FACTOR), Bitmap.Config.ARGB_8888);
         cacheCanvasPie.setBitmap(cacheBitmapPie);
         destinationRect.set(0, 0, chartViewrectHandler.getChartWidth(), chartViewrectHandler.getContentRectMinusAxesMargins().bottom);
+        pieHeightfactor = 1.0f * chartViewrectHandler.getChartHeight() / chartViewrectHandler.getContentRectMinusAxesMargins().bottom;
         calculateCircleOval();
 
         float w = morphBitmap.getWidth();
@@ -413,14 +415,14 @@ public class GodChartRenderer {
                         sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle))),
                                 (float) (Math.sin(Math.toRadians(lastAngle))));
 
-                        final float circleRadius = originCircleOval.width() / 2f + 5;
-                        aroundLineX1 = sliceVector.x * circleRadius + originCircleOval.centerX();
+                        final float circleRadius = originCircleOval.width() / 2f * pieHeightfactor + 5;
+                        aroundLineX1 = sliceVector.x * circleRadius / pieHeightfactor + originCircleOval.centerX();
                         aroundLineY1 = sliceVector.y * circleRadius + originCircleOval.centerY();
 
                         sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle + angle))),
                                 (float) (Math.sin(Math.toRadians(lastAngle + angle))));
 
-                        aroundLineX21 = sliceVector.x * circleRadius + originCircleOval.centerX();
+                        aroundLineX21 = sliceVector.x * circleRadius / pieHeightfactor + originCircleOval.centerX();
                         aroundLineY21 = sliceVector.y * circleRadius + originCircleOval.centerY();
 
                         sliceVector.set((float) (Math.cos(Math.toRadians(lastAngle + angle / 2))),
@@ -485,9 +487,9 @@ public class GodChartRenderer {
         final float circleRadius = Math.min(contentRect.width() / 2f * BITMAP_SCALE_FACTOR, contentRect.height() / 2f * BITMAP_SCALE_FACTOR);
         final float centerX = contentRect.centerX() * BITMAP_SCALE_FACTOR;
         final float centerY = contentRect.centerY() * BITMAP_SCALE_FACTOR;
-        final float left = centerX - circleRadius;
+        final float left = centerX - circleRadius / pieHeightfactor;
         final float top = centerY - circleRadius;
-        final float right = centerX + circleRadius;
+        final float right = centerX + circleRadius / pieHeightfactor;
         final float bottom = centerY + circleRadius;
         originCircleOval.set(left, top, right, bottom);
         final float inest = 0.5f * originCircleOval.width() * (1.0f - 0.97f);
