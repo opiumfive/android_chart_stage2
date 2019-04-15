@@ -217,9 +217,29 @@ public class ChartWithPreview extends LinearLayout {
             previewChart.setCurrentViewrect(tempViewrect);
         }
 
-        checkboxList.setData(data.getLines(), (list, checked, isFirstLine) -> {
+        checkboxList.setData(data.getLines(), (list, checked) -> {
 
             List<Line> linesToAnimate = new ArrayList<>();
+
+            boolean isFirstLinePlus = false;
+            boolean isFirstLineMinus = false;
+
+            int firstActive = 0;
+
+            for (int i = 0; i < data.getLines().size(); i++) {
+                Line line = data.getLines().get(i);
+                if (line.isActive())  {
+                    firstActive = i;
+                    break;
+                }
+            }
+
+            int posInLines = list[0];
+            if (posInLines == firstActive) {
+                isFirstLineMinus = true;
+            } else if (posInLines < firstActive) {
+                isFirstLinePlus = true;
+            }
 
             for (int pos = 0; pos < list.length; pos++) {
                 Line line = data.getLines().get(list[pos]);
@@ -243,7 +263,7 @@ public class ChartWithPreview extends LinearLayout {
             target.left = current.left;
             target.right = current.right;
 
-            chart.setCurrentViewrectAnimatedAdjustingMax(target, linesToAnimate, isFirstLine);
+            chart.setCurrentViewrectAnimatedAdjustingMax(target, linesToAnimate, isFirstLineMinus, isFirstLinePlus);
             previewChart.setCurrentViewrectAnimated(target);
         });
 

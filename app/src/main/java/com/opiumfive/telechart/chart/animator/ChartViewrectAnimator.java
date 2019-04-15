@@ -5,7 +5,6 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
-import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
 import com.opiumfive.telechart.chart.CType;
@@ -27,7 +26,9 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
     private ChartAnimationListener animationListener;
     private List<Line> animatingLine;
     private boolean animateMaxToo = false;
-    private TimeInterpolator areaInterpolator = new AnticipateOvershootInterpolator();
+    private TimeInterpolator areaInterpolator = new AreaInOutInterpolator();
+    private TimeInterpolator areaInInterpolator = new AreaInInterpolator();
+    private TimeInterpolator areaOutInterpolator = new AreaOutInterpolator();
     private TimeInterpolator lineInterpolator = new DecelerateInterpolator();
 
     public ChartViewrectAnimator(IChart chart) {
@@ -38,22 +39,21 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         animator.setDuration(FAST_ANIMATION_DURATION);
     }
 
-    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean isFirstLine) {
-        startAnimationWithToggleLine(startViewrect, targetViewrect, null, isFirstLine);
+    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean isFirstLineMinus, boolean isFirstLinePlus) {
+        startAnimationWithToggleLine(startViewrect, targetViewrect, null, isFirstLineMinus, isFirstLinePlus);
     }
 
-    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean animateMaxToo,  boolean isFirstLine) {
+    public void startAnimation(Viewrect startViewrect, Viewrect targetViewrect, boolean animateMaxToo, boolean isFirstLineMinus, boolean isFirstLinePlus) {
         this.animateMaxToo = animateMaxToo;
 
-        startAnimationWithToggleLine(startViewrect, targetViewrect, null, isFirstLine);
+        startAnimationWithToggleLine(startViewrect, targetViewrect, null, isFirstLineMinus, isFirstLinePlus);
     }
 
-    public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, List<Line> lines, boolean isFirstLine) {
+    public void startAnimationWithToggleLine(Viewrect startViewrect, Viewrect targetViewrect, List<Line> lines, boolean isFirstLineMinus, boolean isFirstLinePlus) {
         this.startViewrect.set(startViewrect);
         this.targetViewrect.set(targetViewrect);
 
         int activeLines = 0;
-
 
         List<Line> chartLines = chart.getChartData().getLines();
 
@@ -62,9 +62,10 @@ public class ChartViewrectAnimator implements AnimatorListener, AnimatorUpdateLi
         animator.setDuration(FAST_ANIMATION_DURATION);
 
         if (chart.getType().equals(CType.AREA) && activeLines > 1) {
-            if (isFirstLine) {
-                animator.setInterpolator(lineInterpolator);
-                animator.setDuration(FAST_ANIMATION_DURATION / 2);
+            if (isFirstLineMinus) {
+                animator.setInterpolator(areaInInterpolator);
+            } else if (isFirstLinePlus) {
+                animator.setInterpolator(areaOutInterpolator);
             } else {
                 animator.setInterpolator(areaInterpolator);
             }

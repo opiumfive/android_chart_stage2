@@ -60,7 +60,7 @@ public class PreviewGodChartView extends GodChartView {
         if (null != targetViewrect) {
             viewrectAnimator.cancelAnimation();
             Viewrect current = getCurrentViewrect();
-            viewrectAnimator.startAnimation(current, targetViewrect, true);
+            viewrectAnimator.startAnimation(current, targetViewrect, true, false, false);
         }
         postInvalidateOnAnimation();
     }

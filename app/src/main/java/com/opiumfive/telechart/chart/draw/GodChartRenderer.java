@@ -490,7 +490,7 @@ public class GodChartRenderer {
         final float right = centerX + circleRadius;
         final float bottom = centerY + circleRadius;
         originCircleOval.set(left, top, right, bottom);
-        final float inest = 0.5f * originCircleOval.width() * (1.0f - 0.98f);
+        final float inest = 0.5f * originCircleOval.width() * (1.0f - 0.97f);
         originCircleOval.inset(inest, inest);
     }
 
