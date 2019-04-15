@@ -1,4 +1,4 @@
-<b>Telegram April contest 2019.</b> 
+<b>Telegram April contest 2019. (1 week)</b> 
 (March contest - https://github.com/opiumfive/android_chart_stage1)
 
 Goal is to show simple charts with 5 bonuses (I did only last):
@@ -14,6 +14,8 @@ Bonus goal: A percentage stacked area chart with 6 data types that zooms into a 
 <b>Result apk:</b> 
 
 https://github.com/opiumfive/android_chart_stage2/blob/master/TChart-v2.0.apk
+
+Sorry for the code, it was only 1 week and almost no free time.
 
 <b>Small result video:</b> 
 
