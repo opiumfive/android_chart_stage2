@@ -22,7 +22,7 @@ import java.util.List;
 
 public class AxesRenderer {
 
-    private static final int DEFAULT_AXIS_MARGIN_DP = 0;
+    private static final int DEFAULT_AXIS_MARGIN_DP = 16;
     private static final int LEFT = 0;
     private static final int BOTTOM = 1;
     private static final int RIGHT = 2;
@@ -197,7 +197,7 @@ public class AxesRenderer {
         if (LEFT == position) {
             labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAllMargins().left + axisMargin;
         } else if (BOTTOM == position) {
-            labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAxesMargins().bottom + axisMargin + labelTextAscentTab[position];
+            labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAxesMargins().bottom + axisMargin / 3 + labelTextAscentTab[position];
         } else if (RIGHT == position) {
             labelBaselineTab[position] = chartViewrectHandler.getContentRectMinusAllMargins().right - axisMargin;
         }
@@ -514,7 +514,7 @@ public class AxesRenderer {
 
         if (LEFT == position) {
             lineX1 = axisMargin + contentRectMargins.left;
-            lineX2 = contentRectMargins.right;
+            lineX2 = contentRectMargins.right - axisMargin;
         } else if (BOTTOM == position) {
             lineY1 = contentRectMargins.top;
             lineY2 = contentRectMargins.bottom;
