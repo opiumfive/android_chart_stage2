@@ -19,6 +19,9 @@ Sorry for the code, it was only 1 week and almost no free time.
 
 <b>Small result video:</b> 
 
+Overall: https://drive.google.com/open?id=1ISAEmVd3YekvpU1Z5BrJZfNqJjVwtmsK
+Area to pie transition: https://github.com/opiumfive/android_chart_stage2/raw/master/area_to_pie_video.mp4
+
 <b>Some notes additional to part 1:</b> 
 - still on canvas;
 - reworked y animations;
@@ -29,4 +32,4 @@ Sorry for the code, it was only 1 week and almost no free time.
 
 
 <b>Telegram review:</b>
-
+waiting
