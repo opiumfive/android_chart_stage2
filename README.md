@@ -31,6 +31,8 @@ Area to pie transition: https://github.com/opiumfive/android_chart_stage2/raw/ma
 - optimized for landscape mode
 - apk size 120kb 
 
+<b>Public review:</b>
+https://contest.dev/chart-android/entry177
 
 <b>Telegram review:</b>
 waiting
