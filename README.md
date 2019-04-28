@@ -35,4 +35,4 @@ Area to pie transition: https://github.com/opiumfive/android_chart_stage2/raw/ma
 https://contest.dev/chart-android/entry177
 
 <b>Telegram review:</b>
-waiting
+https://contest.dev/chart-android/entry177#issue4520
