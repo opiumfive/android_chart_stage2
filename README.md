@@ -36,3 +36,8 @@ https://contest.dev/chart-android/entry177
 
 <b>Telegram review:</b>
 https://contest.dev/chart-android/entry177#issue4520
+
+<b>Todo things:</b>
+- optimize performance of area by using drawColor-clipPath
+- remove antialiasing from several types of chart
+- make proper animation of filter button
