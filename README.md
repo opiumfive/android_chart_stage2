@@ -26,16 +26,13 @@ Area to pie transition: https://github.com/opiumfive/android_chart_stage2/raw/ma
 <b>Some notes additional to part 1:</b> 
 - still on canvas;
 - reworked y animations;
-- optimized performance by bitmap caching;
+- optimized performance for CPU-based drawing functions by bitmap caching;
 - for area to pie chart transition "canvas.drawBitmapMesh()" function used, btw not well documented;
 - optimized for landscape mode
-- apk size 120kb 
+- apk size 120kb with 50kb json data
 
 <b>Public review:</b>
 https://contest.dev/chart-android/entry177
-
-<b>Telegram review:</b>
-https://contest.dev/chart-android/entry177#issue4520
 
 <b>Todo things:</b>
 - optimize performance of area by using drawColor-clipPath
