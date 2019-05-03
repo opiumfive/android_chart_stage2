@@ -1,4 +1,5 @@
 <b>Telegram April contest 2019. (1 week) (Result - <i>4th place</i> due to only 1/5 bonus goal)</b> 
+
 (March contest - https://github.com/opiumfive/android_chart_stage1)
 
 Goal is to show simple charts with 5 bonuses (I did only last):
