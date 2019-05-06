@@ -1,4 +1,4 @@
-<b>Telegram April contest 2019. (1 week) (Result - <i>4th place</i> due to only 1/5 bonus goal)</b> 
+<b>Telegram April contest 2019. (1 week) (Result - <i>4th place</i> due to only 1 of 5 bonus goal)</b> 
 
 (March contest - https://github.com/opiumfive/android_chart_stage1)
 
@@ -16,7 +16,7 @@ Bonus goal: A percentage stacked area chart with 6 data types that zooms into a 
 
 https://github.com/opiumfive/android_chart_stage2/blob/master/TChart-v2.0.apk
 
-Sorry for the code, it was only 1 week and almost no free time.
+Code for renderer is just a god object for all 4 types of charts, it was only 1 week and almost no free time to make code well constructed.
 
 <b>Small result video:</b> 
 
