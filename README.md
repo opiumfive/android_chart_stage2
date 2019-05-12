@@ -1,4 +1,6 @@
-<b>Telegram April contest 2019. (1 week) (Result - <i>4th place</i> due to only 1 of 5 bonus goal)</b> 
+<b>Telegram April contest 2019. (https://t.me/contest/59) (1 week) </b>
+  
+<b>Result - <i>4th place</i> due to only 1 of 5 bonus goal</b> 
 
 (March contest - https://github.com/opiumfive/android_chart_stage1)
 
